@@ -1,0 +1,92 @@
+version: '3'
+
+vars:
+  CONFIGYML: ../data/butterfly.yml
+
+tasks:
+  run:
+    desc: Run the server
+    deps: [templ, css, fmt]
+    dir: 'src'
+    cmds:
+      - go run . -config="{{.CONFIGYML}}"
+
+  build:
+    desc: Build a binary targeting the current OS
+    deps: [fmt]
+    dir: 'src'
+    cmds:
+      - |-
+        CGO_ENABLED=0 \
+          go build \
+            -trimpath \
+            -ldflags="-w -s -X 'go.chimbori.app/butterfly/conf.BuildTimestamp=$(TZ=":America/Los_Angeles" date +"%Y-%m-%d %H:%M:%S")'"
+
+  test:
+    desc: Run all tests
+    dir: 'src'
+    cmds:
+      - go test -count=1 ./...
+
+  testv:
+    desc: Run all tests, with verbose output
+    dir: 'src'
+    cmds:
+      - go test -v -count=1 ./...
+
+  fmt:
+    desc: Reformat all source files, including templates
+    dir: 'src'
+    cmds:
+      - go mod tidy
+      - gofumpt -l -w .
+      - goimports -l -w .
+      - golangci-lint fmt
+
+  lint:
+    desc: Lint sources
+    dir: 'src'
+    cmds:
+      - golangci-lint run
+
+  templ:
+    desc: Regenerate Templ templates
+    dir: 'src'
+    cmds:
+      - templ generate
+      - templ fmt .
+
+  css:
+    desc: Regenerate CSS (minified & pretty-printed)
+    dir: 'src'
+    cmds:
+      - tailwindcss --content "**/*.templ" --input embedfs/static/src.css --output embedfs/static/gen.css
+      - tailwindcss --content "**/*.templ" --input embedfs/static/src.css --output embedfs/static/gen.min.css --minify
+
+  update:
+    desc: Update all dependencies
+    dir: 'src'
+    deps: [fmt]
+    cmds:
+      - go get -u -t ./...
+      - go clean -modcache
+      - go mod tidy
+
+  install:
+    desc: Build and install the binary
+    deps: [fmt]
+    dir: 'src'
+    cmds:
+      - go install .
+
+  setup:
+    desc: Setup pre-requisites on a new machine
+    dir: 'src'
+    env:
+      CGO_CFLAGS: "-DHAVE_STRCHRNUL -mmacosx-version-min=15.4"
+      MACOSX_DEPLOYMENT_TARGET: "15.4"
+    cmds:
+      - brew install tailwindcss
+      - go install github.com/a-h/templ/cmd/templ@latest
+      - go install golang.org/x/tools/cmd/goimports@latest
+      - go install mvdan.cc/gofumpt@latest
