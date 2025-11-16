@@ -35,6 +35,7 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
+	initCache()
 
 	// Set up a graceful cleanup for when the process is terminated.
 	signalCh := make(chan os.Signal, 1)
@@ -71,10 +72,10 @@ func main() {
 			selector = "#link-preview"
 		}
 
-		screenshot, err := takeScreenshot(req.Context(), url, selector)
+		cached, err := findCached(url, selector)
 		if err != nil {
 			err = fmt.Errorf("url: %s, %w", url, err)
-			slog.Error("error taking screenshot", tint.Err(err),
+			slog.Error("error during cache lookup", tint.Err(err),
 				"method", req.Method,
 				"path", req.URL.Path,
 				"url", url,
@@ -83,12 +84,44 @@ func main() {
 			return
 		}
 
-		slog.Info("link preview served",
-			"method", req.Method,
-			"path", req.URL.Path,
-			"url", url)
-		w.Header().Set("Content-Type", "image/png")
-		w.Write(screenshot)
+		if cached != nil {
+			slog.Info("cached screenshot served",
+				"method", req.Method,
+				"path", req.URL.Path,
+				"url", url)
+			w.Header().Set("Content-Type", "image/png")
+			w.Write(cached)
+		} else {
+			screenshot, err := takeScreenshot(req.Context(), url, selector)
+			if err != nil {
+				err = fmt.Errorf("url: %s, %w", url, err)
+				slog.Error("error taking screenshot", tint.Err(err),
+					"method", req.Method,
+					"path", req.URL.Path,
+					"url", url,
+					"status", http.StatusInternalServerError)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			err = writeToCache(url, selector, screenshot)
+			if err != nil {
+				err = fmt.Errorf("error writing to cache: %s, %w", url, err)
+				slog.Error("error taking screenshot", tint.Err(err),
+					"method", req.Method,
+					"path", req.URL.Path,
+					"url", url,
+					"status", http.StatusInternalServerError)
+				// Still continue serving the image to clients even if caching failed.
+			}
+
+			slog.Info("new screenshot generated",
+				"method", req.Method,
+				"path", req.URL.Path,
+				"url", url)
+			w.Header().Set("Content-Type", "image/png")
+			w.Write(screenshot)
+		}
 	})
 
 	addr := net.JoinHostPort(conf.Config.Web.Host, strconv.Itoa(conf.Config.Web.Port))
