@@ -1,0 +1,13 @@
+# butterfly.yml
+
+web:
+  host: "localhost" # localhost   # Set `host` to `localhost` (instead of ``) to prevent the macOS firewall dialog.
+  port: 9999
+  public-url: 'https://bfly.chimbori.com/'
+
+link-preview:
+  domains:
+  - chimbori.com
+  - manas.tungare.name
+
+debug: true

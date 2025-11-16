@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: InterVariable;
+  font-style: normal;
+  font-weight: 400 600 700;
+  font-display: swap;
+  src: url('InterVariable.woff2?v=4.1') format('woff2');
+}
+
+@supports (font-variation-settings: normal) {
+  :root { font-family: InterVariable, sans-serif; }
+}
+
+@theme {
+  --font-sans: Inter,InterVariable,sans-serif;
+  --font-sans--font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
+
+  --color-yellow-light: #FFD92E;
+  --color-yellow-dark: #FFB114;
+}
+
+@layer base {
+  * {
+    @apply font-sans;
+  }
+  body {
+    @apply
+      box-border text-sm/8
+      bg-slate-100 dark:bg-slate-900
+      text-slate-500  dark:text-slate-400
+      flex flex-col md:flex-row;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-slate-950 dark:text-slate-200;
+  }
+  h1 {
+    @apply text-2xl my-4;
+  }
+  h2 {
+    @apply text-xl mb-4;
+    &:where(:not(:first-child)) {
+      @apply mt-6;
+    }
+  }
+  a:link {
+    @apply border-b;
+  }
+  p {
+    @apply mb-6;
+  }
+  section {
+    @apply rounded-xl border border-solid shadow overflow-x-auto
+        p-4 my-4 md:my-8
+        bg-white dark:bg-slate-800
+        border-slate-200 dark:border-slate-900;
+  }
+  pre {
+    @apply text-xs;
+  }
+  td, th {
+    @apply text-left align-top p-0.5;
+  }
+  th {
+    @apply px-4 py-2 text-left font-semibold
+      text-slate-900 dark:text-slate-100
+      border-b-2 border-slate-300 dark:border-slate-600;
+  }
+  tr:hover {
+    @apply bg-slate-50 dark:bg-slate-800/50;
+  }
+  textarea {
+    @apply font-mono;
+  }
+}
+
+@layer components {
+  nav {
+    @apply bg-black
+      relative md:fixed
+      overflow-hidden
+      md:w-16 md:h-screen
+      w-screen h-16
+      flex flex-row md:flex-col;
+
+    a:link {
+      @apply size-16 border-0 no-underline;
+      img {
+        @apply size-8 mx-auto my-4;
+      }
+    }
+  }
+  main {
+    @apply min-w-96 w-full md:w-auto grow
+      ml-0 md:ml-20 md:mr-4
+      mt-2 md:mt-4
+      px-4;
+  }
+  table {
+    th, td {
+      @apply px-2;
+    }
+    tr:nth-child(odd) {
+      @apply bg-white dark:bg-slate-800;
+    }
+    tr:nth-child(even) {
+      @apply bg-slate-100/90 dark:bg-slate-900/90;
+    }
+  }
+  table.dashboard {
+    th.count {
+      @apply text-center;
+    }
+    td.count {
+      @apply text-center pt-2 pb-1 align-middle whitespace-nowrap;
+      a {
+        @apply text-lg font-bold border-0 px-4 py-1 rounded-lg bg-gray-100 dark:bg-gray-900/30;
+      }
+    }
+  }
+  .dashboard-index {
+    @apply w-full my-8 grid gap-4 md:gap-8 grid-cols-[repeat(auto-fill,minmax(96px,1fr))];
+    a {
+      @apply block border-0 text-center mx-auto;
+      img {
+        @apply size-24 bg-slate-800 rounded-xl md:rounded-3xl;
+      }
+      span {
+        @apply block mt-2;
+      }
+    }
+  }
+  input,
+  textarea,
+  select {
+    @apply px-3 py-1 appearance-auto
+      rounded-lg border shadow
+      focus:outline-none focus:ring-2 focus:ring-yellow-dark
+      text-sm leading-relaxed
+      bg-white dark:bg-slate-800
+      border-slate-200 dark:border-slate-900
+      text-slate-900 dark:text-slate-100;
+  }
+  .btn-neutral {
+    @apply px-4 py-1 rounded-3xl cursor-pointer border border-yellow-400 text-sm text-slate-800 font-semibold;
+  }
+  .btn-submit {
+    @apply px-4 py-1 rounded-3xl cursor-pointer border-0 text-sm text-slate-800 font-semibold bg-linear-to-r from-yellow-light to-yellow-dark hover:bg-linear-to-br;
+  }
+  .btn-delete {
+    @apply px-4 py-1 rounded-3xl cursor-pointer text-sm text-white font-semibold
+      bg-red-600 hover:bg-red-700
+      dark:bg-red-700 dark:hover:bg-red-800
+      transition-colors;
+  }
+  .error-message {
+    @apply my-4 p-4 rounded-lg
+      bg-red-100 dark:bg-red-900/30
+      text-red-800 dark:text-red-200
+      border border-red-300 dark:border-red-700;
+  }
+  .htmx-indicator {
+    @apply opacity-0 invisible;
+  }
+  .htmx-request {
+    .htmx-indicator,
+    &.htmx-indicator {
+      @apply opacity-100 visible;
+    }
+  }
+}
