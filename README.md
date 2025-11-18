@@ -33,6 +33,9 @@ Butterfly works well with static sites (using any static site generator) as well
 
 Obviously, that is a bit of a simple example; here’s a more production-worthy example using Tailwind, but you can use (or not use) any Web technologies you want.
 
+<details>
+<summary>View advanced example</summary>
+
 ```html
 <div class="hidden w-[960px]" id="link-preview">
   <div class="flex flex-col h-[540px]">
@@ -49,8 +52,8 @@ Obviously, that is a bit of a simple example; here’s a more production-worthy 
   </div>
 </div>
 ```
-
 Butterfly captures screenshots at a page scale factor of 2.0 (so you get higher-resolution images, like those on a high-DPI display). Remember to set the width and height of your element to be 0.5 * whatever you want the output to be.
+</details>
 
 ## How it works
 
@@ -156,14 +159,14 @@ This model works great if you do not have access to the source of the page, or h
 
 But now,
 - You’ve got to learn a whole new tool.
-- That tool exposes a certain amount of design expressiveness, but nowhere near what the Web platform offers.
+- That tool exposes a certain amount of design expressiveness, but nowhere near what the Web platform offers natively.
 - Anytime you need to change the preview image, you have to visit a completely separate website.
 - Anytime your own webpage changes, you have to remember to update the templates to match the theme.
 - There’s no way to share themes between your website & these third-party tools: colors, gradients, logos must be copy/pasted manually.
 - You have to rely on these companies being around long enough, and not disappearing completely after running out of money or being bought over by a VC.
-- And you have to pay.
+- And you have to pay, based on volume.
 
-Butterfly is none of those things. All you need is the ability to write some HTML/CSS (no JavaScript!) to design your preview image. And it’s free in perpetuity.
+Butterfly is none of those things. All you need is the ability to write some HTML/CSS (no JavaScript necessary!) to design your preview image. And it’s free in perpetuity.
 
 # TODO
 
