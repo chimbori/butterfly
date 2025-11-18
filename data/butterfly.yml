@@ -14,4 +14,4 @@ link-preview:
   # cache:
   #   enabled: false
 
-debug: true
+# debug: true

@@ -3,15 +3,22 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/chromedp/chromedp"
+	"go.chimbori.app/butterfly/conf"
 )
 
+// takeScreenshot captures a high-resolution PNG screenshot of a specific element on a web page.
+// It navigates to the provided URL, ensures the element specified by the CSS selector is visible,
+// and takes a screenshot at 2x scale.
 func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err error) {
-	ctx, cancel := chromedp.NewContext(
-		ctx,
-		// chromedp.WithDebugf(log.Printf),
-	)
+	var cancel context.CancelFunc
+	if conf.Config.Debug {
+		ctx, cancel = chromedp.NewContext(ctx, chromedp.WithDebugf(log.Printf))
+	} else {
+		ctx, cancel = chromedp.NewContext(ctx)
+	}
 	defer cancel()
 
 	if selector == "" {

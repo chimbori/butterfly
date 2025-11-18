@@ -21,8 +21,9 @@ import (
 )
 
 func main() {
-	tintHandler := tint.NewHandler(os.Stderr, &tint.Options{TimeFormat: "2006-01-02 15:04:05.000"})
-	slog.SetDefault(slog.New(tintHandler))
+	slog.SetDefault(slog.New(tint.NewHandler(os.Stderr, &tint.Options{
+		TimeFormat: "2006-01-02 15:04:05.000",
+	})))
 	slog.Info(conf.AppName, "build-timestamp", conf.BuildTimestamp)
 
 	configYmlFlag := flag.String("config", "butterfly.yml", "path to butterfly.yml")
@@ -35,6 +36,15 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
+
+	// If debug mode was turned on in the config file, print logs at DEBUG or above.
+	if conf.Config.Debug {
+		slog.SetDefault(slog.New(tint.NewHandler(os.Stderr, &tint.Options{
+			Level:      slog.LevelDebug,
+			TimeFormat: "2006-01-02 15:04:05.000",
+		})))
+	}
+
 	initCache()
 
 	// Set up a graceful cleanup for when the process is terminated.
