@@ -55,74 +55,7 @@ func main() {
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, req *http.Request) {
 		IndexTempl().Render(req.Context(), w)
 	})
-
-	mux.HandleFunc("GET /link-preview/v1", func(w http.ResponseWriter, req *http.Request) {
-		url, err := validateUrl(req.URL.Query().Get("url"))
-		if err != nil {
-			slog.Error("URL validation failed", tint.Err(err),
-				"method", req.Method,
-				"path", req.URL.Path,
-				"status", http.StatusBadRequest)
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		selector := req.URL.Query().Get("sel")
-		if selector == "" {
-			selector = "#link-preview"
-		}
-
-		cached, err := findCached(url, selector)
-		if err != nil {
-			err = fmt.Errorf("url: %s, %w", url, err)
-			slog.Error("error during cache lookup", tint.Err(err),
-				"method", req.Method,
-				"path", req.URL.Path,
-				"url", url,
-				"status", http.StatusInternalServerError)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		if cached != nil {
-			slog.Info("cached screenshot served",
-				"method", req.Method,
-				"path", req.URL.Path,
-				"url", url)
-			w.Header().Set("Content-Type", "image/png")
-			w.Write(cached)
-		} else {
-			screenshot, err := takeScreenshot(req.Context(), url, selector)
-			if err != nil {
-				err = fmt.Errorf("url: %s, %w", url, err)
-				slog.Error("error taking screenshot", tint.Err(err),
-					"method", req.Method,
-					"path", req.URL.Path,
-					"url", url,
-					"status", http.StatusInternalServerError)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			err = writeToCache(url, selector, screenshot)
-			if err != nil {
-				err = fmt.Errorf("error writing to cache: %s, %w", url, err)
-				slog.Error("error taking screenshot", tint.Err(err),
-					"method", req.Method,
-					"path", req.URL.Path,
-					"url", url,
-					"status", http.StatusInternalServerError)
-				// Still continue serving the image to clients even if caching failed.
-			}
-
-			slog.Info("new screenshot generated",
-				"method", req.Method,
-				"path", req.URL.Path,
-				"url", url)
-			w.Header().Set("Content-Type", "image/png")
-			w.Write(screenshot)
-		}
-	})
+	mux.HandleFunc("GET /link-preview/v1", handleLinkPreview)
 
 	addr := net.JoinHostPort(conf.Config.Web.Host, strconv.Itoa(conf.Config.Web.Port))
 	slog.Info("Listening", "url", "http://"+addr)
