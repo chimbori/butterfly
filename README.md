@@ -7,22 +7,12 @@ Butterfly Social is a quick way to auto-generate link preview images (OpenGraph 
 ## How to use
 
 1. Create a new hidden element inside your existing Web page, using whatever framework or template engine you use today.
-   E.g. here’s an example using Tailwind, but you can use (or not use) any Web technologies you want.
+   E.g. here’s a simple example:
 
     ```html
     <div class="hidden w-[960px]" id="link-preview">
-      <div class="flex flex-col h-[540px]">
-        <div class="px-16 pt-12 pb-8 text-white background-blue">
-          <h1 class="text-shadow-lg text-5xl/18 line-clamp-2">Introducing Butterfly Social</h1>
-        </div>
-        <p class="my-8 px-16 font-display text-3xl/12 line-clamp-2">
-          Automate social link preview images, sourced directly from your Web pages.
-        </p>
-        <p class="mt-auto px-16 pb-16">
-          <img class="inline mr-8 size-16 align-middle" src="/favicon.png">
-          <span class="overflow-hidden font-display text-2xl">from Chimbori</span>
-        </p>
-      </div>
+      <h1>Introducing Butterfly Social!</h1>
+      <p>Automate social link preview images, sourced directly from your Web pages.</p>
     </div>
     ```
 
@@ -38,6 +28,29 @@ Butterfly Social is a quick way to auto-generate link preview images (OpenGraph 
 Test your Butterfly installation by using your original page URL on any social platform.
 
 Butterfly works well with static sites as well as dynamically-generated sites. If you can put a `<div>` on your page, you can use Butterfly.
+
+### If you can put a `<div>` on your page, you can use Butterfly!
+
+Obviously, that is a bit of a simple example; here’s a more production-worthy example using Tailwind, but you can use (or not use) any Web technologies you want.
+
+```html
+<div class="hidden w-[960px]" id="link-preview">
+  <div class="flex flex-col h-[540px]">
+    <div class="px-16 pt-12 pb-8 text-white background-blue">
+      <h1 class="text-shadow-lg text-5xl/18 line-clamp-2">Introducing Butterfly Social</h1>
+    </div>
+    <p class="my-8 px-16 font-display text-3xl/12 line-clamp-2">
+      Automate social link preview images, sourced directly from your Web pages.
+    </p>
+    <p class="mt-auto px-16 pb-16">
+      <img class="inline mr-8 size-16 align-middle" src="/favicon.png">
+      <span class="overflow-hidden font-display text-2xl">from Chimbori</span>
+    </p>
+  </div>
+</div>
+```
+
+Butterfly captures screenshots at a page scale factor of 2.0 (so you get higher-resolution images, like those on a high-DPI display). Remember to set the width and height of your element to be 0.5 * whatever you want the output to be.
 
 ## How it works
 
