@@ -26,7 +26,10 @@ var Config *AppConfig
 type AppConfig struct {
 	DataDir     string // The directory containing `butterfly.yml` is where all data will be stored.
 	LinkPreview struct {
-		Domains []string `yaml:"domains"`
+		Domains    []string `yaml:"domains"`
+		Screenshot struct {
+			Timeout time.Duration `yaml:"timeout"`
+		} `yaml:"screenshot"`
 	} `yaml:"link-preview"`
 	Web struct {
 		Host      string `yaml:"host"`
@@ -62,6 +65,10 @@ func ReadConfig(configYmlFile string) (*AppConfig, error) {
 
 	if len(c.LinkPreview.Domains) == 0 {
 		return nil, fmt.Errorf("Must provide a list of allowed domains in link-preview.domains")
+	}
+
+	if c.LinkPreview.Screenshot.Timeout == 0 {
+		c.LinkPreview.Screenshot.Timeout = 3 * time.Second
 	}
 
 	if c.Web.Host == "" {

@@ -9,5 +9,7 @@ link-preview:
   domains:
   - chimbori.com
   - manas.tungare.name
+  screenshot:
+    timeout: 3s
 
 debug: true

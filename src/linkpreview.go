@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -50,7 +51,9 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
 		w.Write(cached)
 	} else {
-		screenshot, err := takeScreenshot(req.Context(), url, selector)
+		ctx, cancel := context.WithTimeout(req.Context(), conf.Config.LinkPreview.Screenshot.Timeout)
+		defer cancel()
+		screenshot, err := takeScreenshot(ctx, url, selector)
 		if err != nil {
 			err = fmt.Errorf("url: %s, %w", url, err)
 			slog.Error("error taking screenshot", tint.Err(err),
