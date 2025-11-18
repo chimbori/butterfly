@@ -30,6 +30,9 @@ type AppConfig struct {
 		Screenshot struct {
 			Timeout time.Duration `yaml:"timeout"`
 		} `yaml:"screenshot"`
+		Cache struct {
+			Enabled *bool `yaml:"enabled"`
+		} `yaml:"cache"`
 	} `yaml:"link-preview"`
 	Web struct {
 		Host      string `yaml:"host"`
@@ -71,6 +74,11 @@ func ReadConfig(configYmlFile string) (*AppConfig, error) {
 		c.LinkPreview.Screenshot.Timeout = 3 * time.Second
 	}
 
+	// Cache is enabled by default; only disable it when testing or debugging.
+	if c.LinkPreview.Cache.Enabled == nil {
+		enabled := true
+		c.LinkPreview.Cache.Enabled = &enabled
+	}
 	if c.Web.Host == "" {
 		// Don’t replace this by string(…); the net.IP --> string conversion will fail.
 		c.Web.Host = fmt.Sprintf("%s", core.GetOutboundIP())
@@ -79,11 +87,16 @@ func ReadConfig(configYmlFile string) (*AppConfig, error) {
 		c.Web.PublicUrl = "/"
 	}
 
+	// Print warnings for unsafe settings, just as FYI.
 	json, _ := json.MarshalIndent(*c, "", "\t")
 	slog.Info("Config read")
 	fmt.Println(string(json))
 	if c.Debug {
 		slog.Warn("Debug mode is enabled")
+	}
+
+	if !*c.LinkPreview.Cache.Enabled {
+		slog.Warn("Screenshot cache disabled for Link Previews; performance will be affected")
 	}
 
 	return c, err

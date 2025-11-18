@@ -11,5 +11,7 @@ link-preview:
   - manas.tungare.name
   screenshot:
     timeout: 3s
+  # cache:
+  #   enabled: false
 
 debug: true

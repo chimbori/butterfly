@@ -31,16 +31,22 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 		selector = "#link-preview"
 	}
 
-	cached, err := findCached(url, selector)
-	if err != nil {
-		err = fmt.Errorf("url: %s, %w", url, err)
-		slog.Error("error during cache lookup", tint.Err(err),
-			"method", req.Method,
-			"path", req.URL.Path,
-			"url", url,
-			"status", http.StatusInternalServerError)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	var cached []byte
+
+	// Only check cache if enabled
+	if *conf.Config.LinkPreview.Cache.Enabled {
+		var err error
+		cached, err = findCached(url, selector)
+		if err != nil {
+			err = fmt.Errorf("url: %s, %w", url, err)
+			slog.Error("error during cache lookup", tint.Err(err),
+				"method", req.Method,
+				"path", req.URL.Path,
+				"url", url,
+				"status", http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	if cached != nil {
@@ -65,15 +71,18 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		err = writeToCache(url, selector, screenshot)
-		if err != nil {
-			err = fmt.Errorf("error writing to cache: %s, %w", url, err)
-			slog.Error("error taking screenshot", tint.Err(err),
-				"method", req.Method,
-				"path", req.URL.Path,
-				"url", url,
-				"status", http.StatusInternalServerError)
-			// Still continue serving the image to clients even if caching failed.
+		// Only write to cache if enabled
+		if *conf.Config.LinkPreview.Cache.Enabled {
+			err = writeToCache(url, selector, screenshot)
+			if err != nil {
+				err = fmt.Errorf("error writing to cache: %s, %w", url, err)
+				slog.Error("error writing to cache", tint.Err(err),
+					"method", req.Method,
+					"path", req.URL.Path,
+					"url", url,
+					"status", http.StatusInternalServerError)
+				// Still continue serving the image to clients even if caching failed.
+			}
 		}
 
 		slog.Info("new screenshot generated",
