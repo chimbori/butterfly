@@ -25,9 +25,9 @@ Butterfly Social is a quick way to auto-generate link preview images (OpenGraph 
 
 3. There is no step 3.
 
-Test your Butterfly installation by using your original page URL on any social platform.
+Test your Butterfly installation by posting your original page URL on any social platform.
 
-Butterfly works well with static sites as well as dynamically-generated sites. If you can put a `<div>` on your page, you can use Butterfly.
+Butterfly works well with static sites (using any static site generator) as well as dynamically-generated sites (using any CMS or platform).
 
 ### If you can put a `<div>` on your page, you can use Butterfly!
 
@@ -61,6 +61,29 @@ Butterfly captures screenshots at a page scale factor of 2.0 (so you get higher-
 5. (while also caching it).
 
 That’s it.
+
+### Can I use…
+
+- Images?
+
+  Yes.
+
+- SVG backgrounds?
+
+  Also, yes.
+
+- Flexbox? Grid?
+
+  Yes, of course.
+
+- Custom fonts? Proprietary fonts?
+
+  Absolutely.
+
+Why limit yourself to the customization possible in a random WYSIWYG editor, when you have the entire Web platform available to you!
+
+Anything you can design for the Web, you can use to create a link preview image.
+The infinite is possible at Zombocom. The unattainable is unknown at Zombocom.
 
 ## How to deploy
 
@@ -106,7 +129,7 @@ butterfly.your-server.com {
 }
 ```
 
-## Dual Licensed: AGPL & Proprietary
+# Dual Licensed: AGPL & Proprietary
 
 This service is dual-licensed as [Affero GPL](LICENSE.md) (an OSI-approved open-source license) and a Proprietary License.
 
@@ -115,6 +138,32 @@ Feel free (as in freedom!) to install it on your own cheap VPS, as long as you c
 Or, if the AGPL license does not work for your company or organization,
 and/or you’d like to support ongoing development and new features,
 please [contact us](mailto:hello+butterfly@chimbori.com) for a Proprietary License.
+
+# Comparison with Alternatives
+
+There are a lot of paid SaaS tools in this space. Notable among them are:
+  - BannerBear
+  - RenderForm
+  - Templated.io
+  - Imejis.io
+  - Pablle
+  - Orshot
+  - Abyssale
+
+They all work roughly the same way: you design a template using their custom tools, then provide them your data (title, description, etc.), and pay them per-request (or per-render) to create & serve those images for you.
+
+This model works great if you do not have access to the source of the page, or have no influence over the developers who build your website.
+
+But now,
+- You’ve got to learn a whole new tool.
+- That tool exposes a certain amount of design expressiveness, but nowhere near what the Web platform offers.
+- Anytime you need to change the preview image, you have to visit a completely separate website.
+- Anytime your own webpage changes, you have to remember to update the templates to match the theme.
+- There’s no way to share themes between your website & these third-party tools: colors, gradients, logos must be copy/pasted manually.
+- You have to rely on these companies being around long enough, and not disappearing completely after running out of money or being bought over by a VC.
+- And you have to pay.
+
+Butterfly is none of those things. All you need is the ability to write some HTML/CSS (no JavaScript!) to design your preview image. And it’s free in perpetuity.
 
 # TODO
 
