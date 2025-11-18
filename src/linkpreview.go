@@ -104,7 +104,7 @@ func validateUrl(userUrl string) (string, error) {
 	return u.String(), nil
 }
 
-// isAuthorized returns true if the given URL's domain is in the list of authorized domains.
+// isAuthorized returns true if the given URL’s domain is in the list of authorized domains.
 func isAuthorized(u *url.URL) bool {
 	hostname := u.Hostname()
 	for _, domain := range conf.Config.LinkPreview.Domains {

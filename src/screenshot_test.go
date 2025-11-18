@@ -125,7 +125,7 @@ func TestTakeScreenshot_ContextCancellation(t *testing.T) {
 		t.Skip("Skipping test that requires Chrome/Chromium in short mode")
 	}
 
-	// Create a context that's already cancelled
+	// Create a context that’s already cancelled
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel() // Cancel immediately
 
