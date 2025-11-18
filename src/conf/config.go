@@ -71,7 +71,7 @@ func ReadConfig(configYmlFile string) (*AppConfig, error) {
 	}
 
 	if c.LinkPreview.Screenshot.Timeout == 0 {
-		c.LinkPreview.Screenshot.Timeout = 3 * time.Second
+		c.LinkPreview.Screenshot.Timeout = 10 * time.Second
 	}
 
 	// Cache is enabled by default; only disable it when testing or debugging.
