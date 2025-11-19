@@ -55,7 +55,8 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 		slog.Info("cached screenshot served",
 			"method", req.Method,
 			"path", req.URL.Path,
-			"url", url)
+			"url", url,
+			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
 		w.Write(cached)
 	} else {
@@ -90,13 +91,14 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 		slog.Info("new screenshot generated",
 			"method", req.Method,
 			"path", req.URL.Path,
-			"url", url)
+			"url", url,
+			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
 		w.Write(screenshot)
 	}
 }
 
-// Validates a URL provided by the user, and returns a formatted URL string.
+// Validates a URL provided by the user, and returns a formatted URL as a string.
 func validateUrl(userUrl string) (string, error) {
 	if userUrl == "" {
 		return "", errors.New("missing url")
@@ -112,7 +114,7 @@ func validateUrl(userUrl string) (string, error) {
 	}
 
 	if !isAuthorized(u) {
-		return "", errors.New("domain " + u.Host + " not authorized")
+		return "", errors.New("domain " + u.Hostname() + " not authorized")
 	}
 
 	return u.String(), nil
