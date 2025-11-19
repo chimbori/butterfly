@@ -16,13 +16,15 @@ import (
 // GET /link-preview/v1?url={url}&sel={selector}
 // Validates the URL, checks if it’s cached, generates screenshots, and serves them.
 func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
-	url, err := validateUrl(req.URL.Query().Get("url"))
+	reqUrl := req.URL.Query().Get("url")
+	url, err := validateUrl(reqUrl)
 	if err != nil {
 		slog.Error("URL validation failed", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
-			"status", http.StatusBadRequest)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+			"url", reqUrl,
+			"status", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
