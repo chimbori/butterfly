@@ -155,10 +155,6 @@ Butterfly is none of those things. All you need is the ability to write some HTM
 Butterfly Social is just getting started; here’s a brief roadmap.
 
 - 🟢 Handle JS errors when selector does not exist; fallback to other strategies
-- 🟢 Implement and follow multiple strategies, one by one
-  - If selector not found, find title & description to create a screenshot from a default template
-  - If no favicon, hide that area
-  - If no title, use URL instead
 - 🟢 Optimize Chrome resources
 - 🟡 Add an Admin UI to enable evicting specific URLs from the cache & other management functions.
 - 🟡 Add ACLs & support for multiple projects.

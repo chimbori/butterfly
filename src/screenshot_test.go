@@ -4,7 +4,17 @@ import (
 	"context"
 	"testing"
 	"time"
+
+	"github.com/chromedp/chromedp"
+	"go.chimbori.app/butterfly/conf"
 )
+
+func init() {
+	// Initialize config to avoid nil pointer dereference
+	conf.Config = &conf.AppConfig{
+		Debug: true,
+	}
+}
 
 func TestTakeScreenshot_ValidPageVisibleElement(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
@@ -152,4 +162,77 @@ func assertValidPNG(t *testing.T, data []byte) {
 		t.Errorf("Invalid PNG magic bytes: got [%d %d %d %d], expected [137 80 78 71]",
 			data[0], data[1], data[2], data[3])
 	}
+}
+
+func TestFetchTitleAndDescription(t *testing.T) {
+	// Use a data URI instead of a local HTTP server
+	htmlContent := `
+		<html>
+		<head>
+			<title>Test Page Title</title>
+			<meta property="og:title" content="OG Title">
+			<meta property="og:description" content="OG Description">
+		</head>
+		<body></body>
+		</html>
+	`
+	dataURI := "data:text/html," + htmlContent
+
+	// Create a context with a timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	// Create an allocator context (starts the browser)
+	opts := append(chromedp.DefaultExecAllocatorOptions[:],
+		chromedp.Flag("headless", true),
+		chromedp.Flag("disable-gpu", true),
+		chromedp.Flag("no-sandbox", true),
+	)
+	allocCtx, cancelAlloc := chromedp.NewExecAllocator(ctx, opts...)
+	defer cancelAlloc()
+
+	title, description, err := fetchTitleAndDescription(allocCtx, dataURI)
+	if err != nil {
+		t.Fatalf("fetchTitleAndDescription failed: %v", err)
+	}
+
+	if title != "OG Title" {
+		t.Errorf("expected title 'OG Title', got '%s'", title)
+	}
+	if description != "OG Description" {
+		t.Errorf("expected description 'OG Description', got '%s'", description)
+	}
+}
+
+func TestTakeScreenshotWithTemplate(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	opts := append(chromedp.DefaultExecAllocatorOptions[:],
+		chromedp.Flag("headless", true),
+		chromedp.Flag("disable-gpu", true),
+		chromedp.Flag("no-sandbox", true),
+	)
+	allocCtx, cancelAlloc := chromedp.NewExecAllocator(ctx, opts...)
+	defer cancelAlloc()
+
+	template := `
+	<html><body>
+	<div id="link-preview" style="width:100px; height:100px; background:red;">
+		<div id="title"></div>
+		<div id="description"></div>
+	</div>
+	</body></html>
+	`
+
+	png, err := takeScreenshotWithTemplate(allocCtx, "http://example.com", template, "My Title", "My Desc")
+	if err != nil {
+		t.Fatalf("takeScreenshotWithTemplate failed: %v", err)
+	}
+
+	if len(png) == 0 {
+		t.Error("expected png bytes, got empty")
+	}
+
+	assertValidPNG(t, png)
 }

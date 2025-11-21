@@ -10,7 +10,7 @@ link-preview:
   - chimbori.com
   - manas.tungare.name
   # screenshot:
-  #   timeout: 10s
+  #   timeout: 20s
   # cache:
   #   enabled: false
 

@@ -11,6 +11,7 @@ import (
 
 	"github.com/lmittmann/tint"
 	"go.chimbori.app/butterfly/conf"
+	"go.chimbori.app/butterfly/embedfs"
 )
 
 // GET /link-preview/v1?url={url}&sel={selector}
@@ -70,8 +71,32 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 				"path", req.URL.Path,
 				"url", url,
 				"status", http.StatusInternalServerError)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			if !errors.Is(err, ErrMissingSelector) {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			slog.Info("attempting with default template",
+				"method", req.Method,
+				"path", req.URL.Path,
+				"url", url,
+				"status", http.StatusOK)
+			title, description, fetchErr := fetchTitleAndDescription(ctx, url)
+			if fetchErr != nil {
+				err = fmt.Errorf("fetchTitleAndDescription failed: %w", fetchErr)
+			} else {
+				screenshot, err = takeScreenshotWithTemplate(ctx, url, embedfs.DefaultTemplate, title, description)
+			}
+			if err != nil {
+				err = fmt.Errorf("url: %s, %w", url, err)
+				slog.Error("error using default template", tint.Err(err),
+					"method", req.Method,
+					"path", req.URL.Path,
+					"url", url,
+					"status", http.StatusInternalServerError)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 		}
 
 		// Only write to cache if enabled
