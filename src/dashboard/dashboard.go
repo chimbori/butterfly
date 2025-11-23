@@ -16,7 +16,14 @@ func SetupHandlers(mux *http.ServeMux) {
 	chain := alice.New(authHandler)
 
 	mux.Handle("GET /dashboard", chain.Then(homeHandler))
+	mux.Handle("GET /dashboard/logs", chain.Then(logsHandler))
+	mux.Handle("GET /dashboard/logs/data", chain.Then(logsDataHandler))
 }
+
+// GET /dashboard
+var homeHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	HomeTempl(conf.AppName).Render(req.Context(), w)
+})
 
 // Checks whether the user is authorized, and either returns an error, or executes the passed [http.Handler].
 func authHandler(next http.Handler) http.Handler {
@@ -47,8 +54,3 @@ func authHandler(next http.Handler) http.Handler {
 		next.ServeHTTP(w, req)
 	})
 }
-
-// GET /dashboard
-var homeHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	HomeTempl(conf.AppName).Render(req.Context(), w)
-})
