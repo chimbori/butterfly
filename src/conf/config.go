@@ -24,7 +24,10 @@ var BuildTimestamp string
 var Config *AppConfig
 
 type AppConfig struct {
-	DataDir     string // The directory containing `butterfly.yml` is where all data will be stored.
+	DataDir  string // The directory containing `butterfly.yml` is where all data will be stored.
+	Database struct {
+		Url string `yaml:"url"`
+	} `yaml:"database"`
 	LinkPreview struct {
 		Domains    []string `yaml:"domains"`
 		Screenshot struct {

@@ -49,6 +49,22 @@ tasks:
     cmds:
       - golangci-lint run
 
+  sqlc:
+    desc: Regenerate SQLC-generated sources
+    dir: 'src'
+    env:
+      CGO_CFLAGS: "-DHAVE_STRCHRNUL -mmacosx-version-min=15.4"
+      MACOSX_DEPLOYMENT_TARGET: "15.4"
+    cmds:
+      - sqlc generate
+
+  db:
+    desc: Runs PostgreSQL
+    cmds:
+      - cmd: podman machine start
+        ignore_error: true
+      - podman compose up --remove-orphans --build
+
   templ:
     desc: Regenerate Templ templates
     dir: 'src'

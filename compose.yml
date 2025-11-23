@@ -1,0 +1,16 @@
+services:
+  butterfly-db:
+    container_name: butterfly-db
+    image: postgres:17
+    environment:
+      POSTGRES_DB: butterfly
+      POSTGRES_USER: chimbori
+      POSTGRES_PASSWORD: chimbori
+    ports:
+      - 5432:5432
+    volumes:
+      - /Users/Shared/Unsynced/butterfly-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  butterfly-db-data:

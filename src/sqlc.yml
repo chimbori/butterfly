@@ -1,0 +1,20 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    schema: "db/migrations"
+    queries: "db/queries"
+    gen:
+      go:
+        package: "db"
+        out: "db"
+        sql_driver: github.com/jackc/pgx/v5
+        sql_package: pgx/v5
+        emit_pointers_for_null_types: true
+        overrides:
+        - db_type: "timestamptz"
+          go_type:
+            type: "time.Time"
+        - db_type: "timestamptz"
+          nullable: true
+          go_type:
+            type: "*time.Time"
