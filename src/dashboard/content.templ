@@ -1,0 +1,65 @@
+package dashboard
+
+import "fmt"
+import "go.chimbori.app/butterfly/conf"
+
+var S = fmt.Sprint
+var F = fmt.Sprintf
+var N = func(s *string) string {
+	if s == nil {
+		return "–"
+	} else {
+		return *s
+	}
+}
+
+templ ContentTempl(appID string, title string, contents templ.Component) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<title>{ title } </title>
+			<meta name="viewport" content="width=device-width,initial-scale=1"/>
+			<link rel="manifest" href="/app.webmanifest"/>
+			<script src="/static/htmx.min.js"></script>
+			<link rel="stylesheet" href="/static/gen.min.css"/>
+			<link rel="icon" href="/static/favicon.svg"/>
+		</head>
+		<body>
+			@NavBar(appID)
+			<main>
+				<h1>{ title }</h1>
+				@contents
+				{ children... }
+				@FooterTempl()
+			</main>
+		</body>
+	</html>
+}
+
+templ NavBar(appID string) {
+	<nav>
+		<a href="/dashboard" title="Home"><img src="/static/favicon.svg"/></a>
+		<a href={ "/dashboard/logs" } title="Logs"><img src="/static/clipboard-text-clock-outline.svg"/></a>
+	</nav>
+}
+
+templ HomeTempl(appName string) {
+	@ContentTempl("", appName, NilTemplate()) {
+		<div class="dashboard-index"></div>
+	}
+}
+
+templ NilTemplate() {
+}
+
+templ ErrorTempl(msg string) {
+	<div class="error-message">
+		<span class="font-semibold">Error:</span> { msg }
+	</div>
+}
+
+templ FooterTempl() {
+	<footer class="mt-16">
+		<p class="text-xs">{ conf.AppName + " " + conf.BuildTimestamp }</p>
+	</footer>
+}

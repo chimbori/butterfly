@@ -28,6 +28,10 @@ type AppConfig struct {
 	Database struct {
 		Url string `yaml:"url"`
 	} `yaml:"database"`
+	Dashboard struct {
+		Username string `yaml:"username"`
+		Password string `yaml:"password"`
+	} `yaml:"dashboard"`
 	LinkPreview struct {
 		Domains    []string `yaml:"domains"`
 		Screenshot struct {

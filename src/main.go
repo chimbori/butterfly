@@ -19,6 +19,7 @@ import (
 	"github.com/lmittmann/tint"
 	"go.chimbori.app/butterfly/conf"
 	"go.chimbori.app/butterfly/core"
+	"go.chimbori.app/butterfly/dashboard"
 	"go.chimbori.app/butterfly/db"
 	"go.chimbori.app/butterfly/embedfs"
 	"go.chimbori.app/butterfly/slogdb"
@@ -86,6 +87,7 @@ func main() {
 		IndexTempl().Render(req.Context(), w)
 	})
 	mux.HandleFunc("GET /link-preview/v1", handleLinkPreview)
+	dashboard.SetupHandlers(mux)
 
 	addr := net.JoinHostPort(conf.Config.Web.Host, strconv.Itoa(conf.Config.Web.Port))
 	slog.Info("Listening", "url", "http://"+addr)
