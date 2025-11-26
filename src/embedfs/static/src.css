@@ -16,8 +16,18 @@
   --font-sans: Inter,InterVariable,sans-serif;
   --font-sans--font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
 
-  --color-yellow-light: #FFD92E;
-  --color-yellow-dark: #FFB114;
+  --color-theme-lighter: #5191fd;
+  --color-theme-light: #2575fc;
+  --color-theme-dark: #6a11cb;
+  --color-theme-darker: #550ea2;
+}
+
+@utility btn-common {
+  @apply px-4 py-1 rounded-3xl
+    cursor-pointer disabled:cursor-not-allowed
+    text-sm font-semibold transition-colors
+    disabled:bg-linear-to-br disabled:from-gray-100 disabled:to-gray-200 disabled:text-gray-400
+    disabled:hover:bg-linear-to-br disabled:hover:from-gray-200 disabled:hover:to-gray-300 disabled:hover:text-gray-400;
 }
 
 @layer base {
@@ -135,23 +145,26 @@
   select {
     @apply px-3 py-1 appearance-auto
       rounded-lg border shadow
-      focus:outline-none focus:ring-2 focus:ring-yellow-dark
+      focus:outline-none focus:ring-2 focus:ring-theme-dark
       text-sm leading-relaxed
       bg-white dark:bg-slate-800
       border-slate-200 dark:border-slate-900
       text-slate-900 dark:text-slate-100;
   }
   .btn-neutral {
-    @apply px-4 py-1 rounded-3xl cursor-pointer border border-yellow-400 text-sm text-slate-800 font-semibold;
+    @apply btn-common text-slate-800 border-theme-dark;
   }
   .btn-submit {
-    @apply px-4 py-1 rounded-3xl cursor-pointer border-0 text-sm text-slate-800 font-semibold bg-linear-to-r from-yellow-light to-yellow-dark hover:bg-linear-to-br;
+    @apply btn-common text-white
+      bg-linear-to-br from-theme-dark to-theme-darker
+      hover:bg-linear-to-br hover:from-theme-light hover:to-theme-dark;
   }
   .btn-delete {
-    @apply px-4 py-1 rounded-3xl cursor-pointer text-sm text-white font-semibold
-      bg-red-600 hover:bg-red-700
-      dark:bg-red-700 dark:hover:bg-red-800
-      transition-colors;
+    @apply btn-common text-white
+      bg-linear-to-br from-red-500 to-red-400
+      dark:bg-linear-to-br dark:from-red-700 dark:to-red-800
+      hover:bg-linear-to-br hover:from-red-700 hover:to-red-800
+      dark:hover:bg-linear-to-br dark:hover:from-red-500 dark:hover:to-red-600;
   }
   .error-message {
     @apply my-4 p-4 rounded-lg
