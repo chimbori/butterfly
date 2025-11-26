@@ -79,31 +79,50 @@ We strongly recommend deploying using the official Docker image, which includes 
 
 ### Sample `compose.yml`
 
-  ```yml
-  services:
-    butterfly:
-      container_name: butterfly
-      image: ghcr.io/chimbori/butterfly:latest
-      volumes:
-        - $PWD/butterfly-data:/data
-      restart: unless-stopped
+```yml
+services:
+  butterfly:
+    container_name: butterfly
+    image: ghcr.io/chimbori/butterfly:latest
+    volumes:
+      - $PWD/butterfly-data:/data
+    restart: unless-stopped
+    depends_on:
+      - butterfly-db
 
-  volumes:
-    butterfly-data:
-  ```
+  butterfly-db:
+    container_name: butterfly-db
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: butterfly
+      POSTGRES_USER: chimbori
+      POSTGRES_PASSWORD: chimbori
+    volumes:
+      - $PWD/butterfly-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  butterfly-data:
+  butterfly-db-data:
+```
 
 ### Sample `butterfly.yml`
 
-To prevent abuse and to conserve resources, Butterfly mandates that you provide an allow-list of domains. Configure this in the required `butterfly.yml` file, and place it in the `/butterfly-data` volume.
+Butterfly requires basic configuration to be provided via a config file.
+For a full list of configurable options, [see full example](data/butterfly.yml).
 
-```yml
-link-preview:
-  domains:
-    - chimbori.com
-    - manas.tungare.name
-```
+- PostgreSQL Database URL
+  ```yml
+  database:
+    url: postgresql://chimbori:chimbori@butterfly-db:5432/butterfly
+  ```
 
-For other configurable options, check out the sample inside the repository.
+- Dashboard credentials (encrypted via `bcrypt`)
+  ```yml
+  dashboard:
+    username: admin
+    password: "$2a$10$a8LnUkK1UiB.9yQrUp3wyuGsH1AAHhlHVy1cjIaaIUVAwCtGvaX7q" # "test"
+  ```
 
 ### Sample `Caddyfile`
 
@@ -113,6 +132,15 @@ butterfly.your-server.com {
   encode zstd gzip
 }
 ```
+
+### Dashboard UI
+
+To prevent abuse and to conserve resources, Butterfly only allows explicitly-allow-listed domains to be used.
+
+You can configure this list using the Dashboard UI at `https://butterfly.your-server.com/dashboard`. The Dashboard is available as an installable PWA (Progressive Web Application) that can be “installed” locally using any modern browser.
+
+<img src="assets/screenshot-pwa.png">
+
 
 # Dual Licensed: AGPL & Proprietary
 
@@ -149,17 +177,3 @@ But now,
 - And you have to pay, based on volume.
 
 Butterfly is none of those things. All you need is the ability to write some HTML/CSS (no JavaScript necessary!) to design your preview image. And it’s free in perpetuity.
-
-# TODO
-
-Butterfly Social is just getting started; here’s a brief roadmap.
-
-- 🟢 Handle JS errors when selector does not exist; fallback to other strategies
-- 🟢 Optimize Chrome resources
-- 🟡 Add an Admin UI to enable evicting specific URLs from the cache & other management functions.
-- 🟡 Add ACLs & support for multiple projects.
-  - Set up PostgreSQL
-  - Log access & errors to SQL
-- 🔴 Add EXIF info to cover image (to be used as alt text)
-
-(🟢: P0, 🟡: P1, 🔴: P2)
