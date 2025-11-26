@@ -13,9 +13,6 @@ dashboard:
   password: '$2a$10$a8LnUkK1UiB.9yQrUp3wyuGsH1AAHhlHVy1cjIaaIUVAwCtGvaX7q'  # "test"
 
 link-preview:
-  domains:
-  - chimbori.com
-  - manas.tungare.name
   # screenshot:
   #   timeout: 20s
   # cache:
