@@ -6,7 +6,7 @@ vars:
 tasks:
   run:
     desc: Run the server
-    deps: [test, sqlc, templ, css, fmt]
+    deps: [sqlc, templ, css, fmt]
     dir: 'src'
     cmds:
       - go run . -config="{{.CONFIGYML}}"
