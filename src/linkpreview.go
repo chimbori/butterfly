@@ -152,12 +152,24 @@ func validateUrl(ctx context.Context, q *db.Queries, userUrl string) (string, er
 	return u.String(), nil
 }
 
-// isAuthorized returns true if the given URL’s domain is in the list of authorized domains.
+// isAuthorized returns true if the given URL's domain is in the list of authorized domains.
+// As a side effect, if the domain is not authorized and doesn’t exist in the database,
+// it will be added (default blocked) for future triage.
 func isAuthorized(ctx context.Context, q *db.Queries, u *url.URL) (bool, error) {
 	hostname := u.Hostname()
 	authorized, err := q.IsAuthorized(ctx, hostname)
 	if err != nil {
 		return false, err
 	}
+
+	// If not authorized, add it to the database for future triage.
+	if !authorized {
+		_, err = q.InsertUnauthorizedDomain(ctx, hostname)
+		if err != nil {
+			// Log the error but don’t fail the authorization check.
+			slog.Error("failed to insert unauthorized domain", tint.Err(err), "domain", hostname)
+		}
+	}
+
 	return authorized, nil
 }

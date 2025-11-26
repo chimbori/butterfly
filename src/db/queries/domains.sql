@@ -12,6 +12,12 @@ INSERT INTO domains (domain, include_subdomains, authorized, updated_at)
     updated_at = NOW()
   RETURNING *;
 
+-- name: InsertUnauthorizedDomain :one
+INSERT INTO domains (domain, include_subdomains, authorized, updated_at)
+  VALUES ($1, false, NULL, NOW())
+  ON CONFLICT(domain) DO NOTHING
+  RETURNING *;
+
 -- name: DeleteDomain :exec
 DELETE FROM domains
   WHERE domain = $1;
