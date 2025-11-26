@@ -1,4 +1,4 @@
-package main
+package linkpreview
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 
 var linkPreviewCacheDir string
 
-func initCache() {
+func InitCache() {
 	linkPreviewCacheDir = filepath.Join(conf.Config.DataDir, "cache", "link-preview")
 }
 

@@ -1,4 +1,4 @@
-package main
+package linkpreview
 
 import (
 	"os"
@@ -22,7 +22,7 @@ func setupTestCache(t *testing.T) string {
 	conf.Config.DataDir = tempDir
 
 	// Initialize cache
-	initCache()
+	InitCache()
 
 	return tempDir
 }

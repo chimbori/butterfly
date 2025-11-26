@@ -1,4 +1,4 @@
-package main
+package linkpreview
 
 import (
 	"context"
@@ -14,6 +14,10 @@ import (
 	"go.chimbori.app/butterfly/db"
 	"go.chimbori.app/butterfly/embedfs"
 )
+
+func SetupHandlers(mux *http.ServeMux) {
+	mux.HandleFunc("GET /link-preview/v1", handleLinkPreview)
+}
 
 // GET /link-preview/v1?url={url}&sel={selector}
 // Validates the URL, checks if it’s cached, generates screenshots, and serves them.

@@ -22,6 +22,7 @@ import (
 	"go.chimbori.app/butterfly/dashboard"
 	"go.chimbori.app/butterfly/db"
 	"go.chimbori.app/butterfly/embedfs"
+	"go.chimbori.app/butterfly/linkpreview"
 	"go.chimbori.app/butterfly/slogdb"
 )
 
@@ -66,7 +67,7 @@ func main() {
 	slog.SetDefault(slog.New(slogdb.NewDBHandler(tintHandler, db.Pool)))
 	slog.Info("Database error logging enabled")
 
-	initCache()
+	linkpreview.InitCache()
 
 	// Set up a graceful cleanup for when the process is terminated.
 	signalCh := make(chan os.Signal, 1)
@@ -86,7 +87,7 @@ func main() {
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, req *http.Request) {
 		IndexTempl().Render(req.Context(), w)
 	})
-	mux.HandleFunc("GET /link-preview/v1", handleLinkPreview)
+	linkpreview.SetupHandlers(mux)
 	dashboard.SetupHandlers(mux)
 
 	addr := net.JoinHostPort(conf.Config.Web.Host, strconv.Itoa(conf.Config.Web.Port))
