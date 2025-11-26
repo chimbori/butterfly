@@ -65,6 +65,17 @@ tasks:
         ignore_error: true
       - podman compose up --remove-orphans --build
 
+  drop:
+    desc: Drop all tables from the database to prepare for an import
+    cmds:
+      - echo "DROP SCHEMA PUBLIC CASCADE; CREATE SCHEMA PUBLIC;" | psql "postgresql://chimbori:chimbori@localhost:5432/butterfly"
+
+  import:
+    desc: Imports PostgreSQL from a local file
+    deps: [drop]
+    cmds:
+      - bunzip2 butterfly.sql.bz2 --stdout | psql "postgresql://chimbori:chimbori@localhost:5432/butterfly"
+
   templ:
     desc: Regenerate Templ templates
     dir: 'src'
