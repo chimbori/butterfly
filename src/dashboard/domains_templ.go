@@ -174,7 +174,7 @@ func DomainsListTempl(domains []db.Domain) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " hx-include=\"closest tr\" hx-put=\"/dashboard/domains\" hx-vals='{\"authorized\":\"block\"}' class=\"btn-delete\">Block</button></td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " hx-include=\"closest tr\" hx-put=\"/dashboard/domains\" hx-vals='{\"authorized\":\"block\"}' class=\"btn-delete\">Block</button> <img class=\"align-middle inline mx-2 cursor-pointer\" hx-confirm=\"Remove from list?\" hx-include=\"closest tr\" title=\"Remove\" hx-delete=\"/dashboard/domains\" width=\"24\" height=\"24\" src=\"/static/close.svg\"></td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

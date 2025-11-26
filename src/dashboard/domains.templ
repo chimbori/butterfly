@@ -81,6 +81,16 @@ templ DomainsListTempl(domains []db.Domain) {
 						hx-vals='{"authorized":"block"}'
 						class="btn-delete"
 					>Block</button>
+					<img
+						class="align-middle inline mx-2 cursor-pointer"
+						hx-confirm="Remove from list?"
+						hx-include="closest tr"
+						title="Remove"
+						hx-delete="/dashboard/domains"
+						width="24"
+						height="24"
+						src="/static/close.svg"
+					/>
 				</td>
 			</tr>
 		}
