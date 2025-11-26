@@ -10,6 +10,7 @@ require (
 	github.com/lmittmann/tint v1.1.2
 	github.com/pressly/goose/v3 v3.26.0
 	golang.org/x/crypto v0.45.0
+	golang.org/x/net v0.47.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 

@@ -6,10 +6,13 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/chromedp/chromedp"
 	"go.chimbori.app/butterfly/conf"
+	"golang.org/x/net/html"
 )
 
 var ErrMissingSelector = errors.New("selector not found")
@@ -103,24 +106,69 @@ func takeScreenshotWithTemplate(ctx context.Context, url, templateContent, title
 // fetchTitleAndDescription retrieves the title and description from a web page.
 // OpenGraph tags are preferred (og:title, og:description), but document title is used as a fallback.
 func fetchTitleAndDescription(ctx context.Context, url string) (title, description string, err error) {
-	var cancel context.CancelFunc
-	if conf.Config.Debug {
-		ctx, cancel = chromedp.NewContext(ctx, chromedp.WithDebugf(log.Printf))
+	var doc *html.Node
+
+	// Handle data URIs directly
+	if strings.HasPrefix(url, "data:text/html,") {
+		htmlContent := strings.TrimPrefix(url, "data:text/html,")
+		doc, err = html.Parse(strings.NewReader(htmlContent))
+		if err != nil {
+			return "", "", err
+		}
 	} else {
-		ctx, cancel = chromedp.NewContext(ctx)
+		// Handle HTTP(S) URLs
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+		if err != nil {
+			return "", "", err
+		}
+		req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; Butterfly/1.0; +https://butterfly.chimbori.com/)")
+
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			return "", "", err
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			return "", "", fmt.Errorf("HTTP %d: %s", resp.StatusCode, resp.Status)
+		}
+
+		doc, err = html.Parse(resp.Body)
+		if err != nil {
+			return "", "", err
+		}
 	}
-	defer cancel()
 
 	var ogTitle, ogDesc, docTitle string
-	err = chromedp.Run(ctx,
-		chromedp.Navigate(url),
-		chromedp.Text("title", &docTitle, chromedp.ByQuery),
-		chromedp.AttributeValue(`meta[property="og:title"]`, "content", &ogTitle, nil, chromedp.ByQuery),
-		chromedp.AttributeValue(`meta[property="og:description"]`, "content", &ogDesc, nil, chromedp.ByQuery),
-	)
-	if err != nil {
-		return "", "", err
+	var parse func(*html.Node)
+	parse = func(n *html.Node) {
+		if n.Type == html.ElementNode {
+			if n.Data == "title" && docTitle == "" {
+				if n.FirstChild != nil {
+					docTitle = n.FirstChild.Data
+				}
+			} else if n.Data == "meta" {
+				var property, content string
+				for _, attr := range n.Attr {
+					switch attr.Key {
+					case "property":
+						property = attr.Val
+					case "content":
+						content = attr.Val
+					}
+				}
+				if property == "og:title" && ogTitle == "" {
+					ogTitle = content
+				} else if property == "og:description" && ogDesc == "" {
+					ogDesc = content
+				}
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			parse(c)
+		}
 	}
+	parse(doc)
 
 	if ogTitle != "" {
 		title = ogTitle
@@ -128,5 +176,5 @@ func fetchTitleAndDescription(ctx context.Context, url string) (title, descripti
 		title = docTitle
 	}
 	description = ogDesc
-	return title, description, nil
+	return strings.TrimSpace(title), strings.TrimSpace(description), nil
 }

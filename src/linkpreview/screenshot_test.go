@@ -182,16 +182,7 @@ func TestFetchTitleAndDescription(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	// Create an allocator context (starts the browser)
-	opts := append(chromedp.DefaultExecAllocatorOptions[:],
-		chromedp.Flag("headless", true),
-		chromedp.Flag("disable-gpu", true),
-		chromedp.Flag("no-sandbox", true),
-	)
-	allocCtx, cancelAlloc := chromedp.NewExecAllocator(ctx, opts...)
-	defer cancelAlloc()
-
-	title, description, err := fetchTitleAndDescription(allocCtx, dataURI)
+	title, description, err := fetchTitleAndDescription(ctx, dataURI)
 	if err != nil {
 		t.Fatalf("fetchTitleAndDescription failed: %v", err)
 	}
