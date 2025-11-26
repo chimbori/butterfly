@@ -11,7 +11,7 @@ templ LogsTempl(appName string) {
 }
 
 templ LogsTableTempl(logs []db.Log) {
-	<table class="dashboard">
+	<table class="dashboard w-full">
 		<thead>
 			<tr>
 				<th>Time</th>
@@ -27,7 +27,7 @@ templ LogsTableTempl(logs []db.Log) {
 		<tbody>
 			for _, log := range logs {
 				<tr>
-					<td class="whitespace-nowrap">{ log.LoggedAt.Time.Format("2006-01-02 15:04:05") }</td>
+					<td class="whitespace-nowrap">{ log.LoggedAt.Format("2006-01-02 15:04:05") }</td>
 					<td>{ N(log.RequestMethod) }</td>
 					<td>{ N(log.RequestPath) }</td>
 					<td>

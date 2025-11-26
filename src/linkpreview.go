@@ -11,6 +11,7 @@ import (
 
 	"github.com/lmittmann/tint"
 	"go.chimbori.app/butterfly/conf"
+	"go.chimbori.app/butterfly/db"
 	"go.chimbori.app/butterfly/embedfs"
 )
 
@@ -18,7 +19,8 @@ import (
 // Validates the URL, checks if it’s cached, generates screenshots, and serves them.
 func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 	reqUrl := req.URL.Query().Get("url")
-	url, err := validateUrl(reqUrl)
+	queries := db.New(db.Pool)
+	url, err := validateUrl(req.Context(), queries, reqUrl)
 	if err != nil {
 		slog.Error("URL validation failed", tint.Err(err),
 			"method", req.Method,
@@ -124,7 +126,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 }
 
 // Validates a URL provided by the user, and returns a formatted URL as a string.
-func validateUrl(userUrl string) (string, error) {
+func validateUrl(ctx context.Context, q *db.Queries, userUrl string) (string, error) {
 	if userUrl == "" {
 		return "", errors.New("missing url")
 	}
@@ -138,7 +140,12 @@ func validateUrl(userUrl string) (string, error) {
 		return "", errors.New("invalid url")
 	}
 
-	if !isAuthorized(u) {
+	authorized, err := isAuthorized(ctx, q, u)
+	if err != nil {
+		return "", err
+	}
+
+	if !authorized {
 		return "", errors.New("domain " + u.Hostname() + " not authorized")
 	}
 
@@ -146,12 +153,11 @@ func validateUrl(userUrl string) (string, error) {
 }
 
 // isAuthorized returns true if the given URL’s domain is in the list of authorized domains.
-func isAuthorized(u *url.URL) bool {
+func isAuthorized(ctx context.Context, q *db.Queries, u *url.URL) (bool, error) {
 	hostname := u.Hostname()
-	for _, domain := range conf.Config.LinkPreview.Domains {
-		if hostname == domain || strings.HasSuffix(hostname, "."+domain) {
-			return true
-		}
+	authorized, err := q.IsAuthorized(ctx, hostname)
+	if err != nil {
+		return false, err
 	}
-	return false
+	return authorized, nil
 }

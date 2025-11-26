@@ -1,15 +1,67 @@
 package main
 
 import (
+	"context"
+	"os"
 	"testing"
 
-	"go.chimbori.app/butterfly/conf"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"go.chimbori.app/butterfly/core"
+	"go.chimbori.app/butterfly/db"
 )
 
+func setupTestDB(t *testing.T) (*pgxpool.Pool, *db.Queries) {
+	// Skip if running short tests
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+
+	// Connect to the database
+	dbURL := os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		dbURL = "postgresql://chimbori:chimbori@localhost:5432/butterfly"
+	}
+
+	pool, err := pgxpool.New(context.Background(), dbURL)
+	if err != nil {
+		t.Fatalf("Unable to connect to database: %v", err)
+	}
+
+	// Clean up domains table before each test
+	_, err = pool.Exec(context.Background(), "DELETE FROM domains")
+	if err != nil {
+		pool.Close()
+		t.Fatalf("Unable to clean domains table: %v", err)
+	}
+
+	queries := db.New(pool)
+	return pool, queries
+}
+
 func TestValidateUrl_RejectsUnauthorizedDomains(t *testing.T) {
-	// Setup: Configure authorized domains
-	conf.Config = &conf.AppConfig{}
-	conf.Config.LinkPreview.Domains = []string{"chimbori.com", "manas.tungare.name"}
+	pool, queries := setupTestDB(t)
+	defer pool.Close()
+
+	ctx := context.Background()
+
+	// Setup: Add authorized domains to database
+	_, err := queries.UpsertDomain(ctx, db.UpsertDomainParams{
+		Domain:            "chimbori.com",
+		IncludeSubdomains: core.Ptr(true),
+		Authorized:        core.Ptr(true),
+	})
+	if err != nil {
+		t.Fatalf("Failed to insert test domain: %v", err)
+	}
+
+	_, err = queries.UpsertDomain(ctx, db.UpsertDomainParams{
+		Domain:            "manas.tungare.name",
+		IncludeSubdomains: core.Ptr(false),
+		Authorized:        core.Ptr(true),
+	})
+	if err != nil {
+		t.Fatalf("Failed to insert test domain: %v", err)
+	}
 
 	tests := []struct {
 		name        string
@@ -66,7 +118,7 @@ func TestValidateUrl_RejectsUnauthorizedDomains(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := validateUrl(tt.url)
+			result, err := validateUrl(ctx, queries, tt.url)
 
 			if tt.shouldError {
 				if err == nil {
@@ -90,7 +142,11 @@ func TestValidateUrl_RejectsUnauthorizedDomains(t *testing.T) {
 }
 
 func TestValidateUrl_EmptyUrl(t *testing.T) {
-	_, err := validateUrl("")
+	pool, queries := setupTestDB(t)
+	defer pool.Close()
+
+	ctx := context.Background()
+	_, err := validateUrl(ctx, queries, "")
 	if err == nil {
 		t.Error("Expected error for empty URL")
 	}
@@ -100,20 +156,33 @@ func TestValidateUrl_EmptyUrl(t *testing.T) {
 }
 
 func TestValidateUrl_InvalidUrl(t *testing.T) {
-	conf.Config = &conf.AppConfig{}
-	conf.Config.LinkPreview.Domains = []string{"chimbori.com"}
+	pool, queries := setupTestDB(t)
+	defer pool.Close()
 
-	_, err := validateUrl("ht!tp://invalid url with spaces")
+	ctx := context.Background()
+	_, err := validateUrl(ctx, queries, "ht!tp://invalid url with spaces")
 	if err == nil {
 		t.Error("Expected error for invalid URL")
 	}
 }
 
 func TestValidateUrl_AddsHttpsPrefix(t *testing.T) {
-	conf.Config = &conf.AppConfig{}
-	conf.Config.LinkPreview.Domains = []string{"chimbori.com"}
+	pool, queries := setupTestDB(t)
+	defer pool.Close()
 
-	result, err := validateUrl("chimbori.com/page")
+	ctx := context.Background()
+
+	// Add authorized domain to database
+	_, err := queries.UpsertDomain(ctx, db.UpsertDomainParams{
+		Domain:            "chimbori.com",
+		IncludeSubdomains: core.Ptr(true),
+		Authorized:        core.Ptr(true),
+	})
+	if err != nil {
+		t.Fatalf("Failed to insert test domain: %v", err)
+	}
+
+	result, err := validateUrl(ctx, queries, "chimbori.com/page")
 	if err != nil {
 		t.Errorf("Expected no error, but got: %s", err.Error())
 	}

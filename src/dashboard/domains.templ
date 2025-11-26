@@ -1,0 +1,98 @@
+package dashboard
+
+import "go.chimbori.app/butterfly/db"
+
+templ DomainsTempl(domains []db.Domain) {
+	@ContentTempl("", "Domains", NilTemplate()) {
+		<section>
+			<form
+				class="flex"
+				hx-target="#domains-list"
+				hx-swap="innerHTML transition:true"
+			>
+				<input type="text" name="domain" placeholder="example.com" required class="grow"/>
+				<label class="mx-4">
+					<input type="checkbox" name="include_subdomains"/> Include Subdomains
+				</label>
+				<input type="hidden" name="authorized" value="allow"/>
+				<button
+					class="btn-submit"
+					hx-put="/dashboard/domains"
+					hx-include="closest form"
+					hx-vals='{"authorized":"allow"}'
+				>Add Domain</button>
+			</form>
+		</section>
+		<section>
+			<div id="domains-list">
+				@DomainsListTempl(domains)
+			</div>
+		</section>
+	}
+}
+
+templ DomainsListTempl(domains []db.Domain) {
+	<table class="dashboard w-full" id="domains-list" hx-target="#domains-list" hx-swap="innerHTML transition:true">
+		<tr>
+			<th>Domain</th>
+			<th class="text-center">Include Subdomains</th>
+			<th>Updated</th>
+			<th>Actions</th>
+		</tr>
+		for _, d := range domains {
+			<tr>
+				<td>
+					{ d.Domain }
+					<input type="hidden" name="domain" value={ d.Domain }/>
+				</td>
+				<td class="text-center">
+					<label>
+						<input
+							hx-put="/dashboard/domains"
+							hx-include="closest tr"
+							type="checkbox"
+							name="include_subdomains"
+							checked?={ *d.IncludeSubdomains }
+						/>
+					</label>
+				</td>
+				<td>{ d.UpdatedAt.Format("2006-01-02 15:04:05") }</td>
+				<td>
+					<input
+						type="hidden"
+						name="authorized"
+						value={ getAuthorizedAttrValue(d) }
+					/>
+					<button
+						if d.Authorized != nil && *d.Authorized {
+							disabled
+						}
+						hx-include="closest tr"
+						hx-put="/dashboard/domains"
+						hx-vals='{"authorized":"allow"}'
+						class="btn-submit"
+					>Allow</button>
+					<button
+						if d.Authorized != nil && !*d.Authorized {
+							disabled
+						}
+						hx-include="closest tr"
+						hx-put="/dashboard/domains"
+						hx-vals='{"authorized":"block"}'
+						class="btn-delete"
+					>Block</button>
+				</td>
+			</tr>
+		}
+	</table>
+}
+
+func getAuthorizedAttrValue(d db.Domain) string {
+	if d.Authorized == nil {
+		return ""
+	} else if *d.Authorized {
+		return "allow"
+	} else {
+		return "block"
+	}
+}

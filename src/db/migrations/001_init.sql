@@ -2,7 +2,7 @@
 
 CREATE TABLE logs (
   _id             BIGSERIAL PRIMARY KEY,
-  logged_at       TIMESTAMP NOT NULL DEFAULT NOW(),
+  logged_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
   request_method  TEXT,
   request_path    TEXT,

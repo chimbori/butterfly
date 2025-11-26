@@ -33,7 +33,6 @@ type AppConfig struct {
 		Password string `yaml:"password"`
 	} `yaml:"dashboard"`
 	LinkPreview struct {
-		Domains    []string `yaml:"domains"`
 		Screenshot struct {
 			Timeout time.Duration `yaml:"timeout"`
 		} `yaml:"screenshot"`
@@ -72,10 +71,6 @@ func ReadConfig(configYmlFile string) (*AppConfig, error) {
 	}
 
 	c.DataDir = filepath.Dir(configYmlPath)
-
-	if len(c.LinkPreview.Domains) == 0 {
-		return nil, fmt.Errorf("Must provide a list of allowed domains in link-preview.domains")
-	}
 
 	if c.LinkPreview.Screenshot.Timeout == 0 {
 		c.LinkPreview.Screenshot.Timeout = 20 * time.Second

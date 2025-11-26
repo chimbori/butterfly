@@ -39,6 +39,7 @@ templ ContentTempl(appID string, title string, contents templ.Component) {
 templ NavBar(appID string) {
 	<nav>
 		<a href="/dashboard" title="Home"><img src="/static/favicon.svg"/></a>
+		<a href={ "/dashboard/domains" } title="Domains"><img src="/static/domain.svg"/></a>
 		<a href={ "/dashboard/logs" } title="Logs"><img src="/static/clipboard-text-clock-outline.svg"/></a>
 	</nav>
 }

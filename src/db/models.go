@@ -5,12 +5,20 @@
 package db
 
 import (
-	"github.com/jackc/pgx/v5/pgtype"
+	"time"
 )
+
+type Domain struct {
+	ID                int64
+	UpdatedAt         time.Time
+	Domain            string
+	IncludeSubdomains *bool
+	Authorized        *bool
+}
 
 type Log struct {
 	ID            int64
-	LoggedAt      pgtype.Timestamp
+	LoggedAt      time.Time
 	RequestMethod *string
 	RequestPath   *string
 	HttpStatus    *int32

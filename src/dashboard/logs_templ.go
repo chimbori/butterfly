@@ -79,7 +79,7 @@ func LogsTableTempl(logs []db.Log) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<table class=\"dashboard\"><thead><tr><th>Time</th><th>Method</th><th>Path</th><th>Status</th><th>URL</th><th>Hostname</th><th>Message</th><th>Error</th></tr></thead> <tbody>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<table class=\"dashboard w-full\"><thead><tr><th>Time</th><th>Method</th><th>Path</th><th>Status</th><th>URL</th><th>Hostname</th><th>Message</th><th>Error</th></tr></thead> <tbody>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -89,9 +89,9 @@ func LogsTableTempl(logs []db.Log) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(log.LoggedAt.Time.Format("2006-01-02 15:04:05"))
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(log.LoggedAt.Format("2006-01-02 15:04:05"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/logs.templ`, Line: 30, Col: 84}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/logs.templ`, Line: 30, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {

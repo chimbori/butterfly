@@ -258,6 +258,9 @@
   .inline {
     display: inline;
   }
+  .table {
+    display: table;
+  }
   .w-\[960px\] {
     width: 960px;
   }
