@@ -3,7 +3,6 @@
 web:
   host: "localhost" # Set `host` to `localhost` (instead of ``) to prevent the macOS firewall dialog.
   port: 9999
-  public-url: 'https://bfly.chimbori.net/'
 
 database:
   url: postgresql://chimbori:chimbori@localhost:5432/butterfly

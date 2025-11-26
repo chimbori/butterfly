@@ -28,6 +28,10 @@ type AppConfig struct {
 	Database struct {
 		Url string `yaml:"url"`
 	} `yaml:"database"`
+	Web struct {
+		Host string `yaml:"host"`
+		Port int    `yaml:"port"`
+	} `yaml:"web"`
 	Dashboard struct {
 		Username string `yaml:"username"`
 		Password string `yaml:"password"`
@@ -40,11 +44,6 @@ type AppConfig struct {
 			Enabled *bool `yaml:"enabled"`
 		} `yaml:"cache"`
 	} `yaml:"link-preview"`
-	Web struct {
-		Host      string `yaml:"host"`
-		Port      int    `yaml:"port"`
-		PublicUrl string `yaml:"public-url"`
-	} `yaml:"web"`
 	Debug bool `yaml:"debug"`
 }
 
@@ -84,9 +83,6 @@ func ReadConfig(configYmlFile string) (*AppConfig, error) {
 	if c.Web.Host == "" {
 		// Don’t replace this by string(…); the net.IP --> string conversion will fail.
 		c.Web.Host = fmt.Sprintf("%s", core.GetOutboundIP())
-	}
-	if c.Web.PublicUrl == "" {
-		c.Web.PublicUrl = "/"
 	}
 
 	// Print warnings for unsafe settings, just as FYI.

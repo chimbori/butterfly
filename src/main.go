@@ -81,7 +81,7 @@ func main() {
 	// Set up the Web server and start serving.
 	mux := http.NewServeMux()
 	core.SetupHealthz(mux)
-	core.ServeWebManifest(mux, conf.AppName, conf.Config.Web.PublicUrl, "#FFD92E")
+	core.ServeWebManifest(mux, conf.AppName, "/dashboard", "#2575fc")
 	embedfs.ServeStaticFS(mux)
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, req *http.Request) {
 		IndexTempl().Render(req.Context(), w)
