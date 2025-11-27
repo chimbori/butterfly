@@ -14,10 +14,9 @@ templ LogsTableTempl(logs []db.Log) {
 	<table class="dashboard w-full">
 		<thead>
 			<tr>
-				<th>Time</th>
-				<th>Method</th>
-				<th>Path</th>
+				<th>Timestamp</th>
 				<th>Status</th>
+				<th>Request</th>
 				<th>URL</th>
 				<th>Hostname</th>
 				<th>Message</th>
@@ -27,20 +26,29 @@ templ LogsTableTempl(logs []db.Log) {
 		<tbody>
 			for _, log := range logs {
 				<tr>
-					<td class="whitespace-nowrap">{ log.LoggedAt.Format("2006-01-02 15:04:05") }</td>
-					<td>{ N(log.RequestMethod) }</td>
-					<td>{ N(log.RequestPath) }</td>
+					<td class="max-w-md truncate whitespace-nowrap">{ log.LoggedAt.Format("2006-01-02 15:04:05") }</td>
 					<td>
 						if log.HttpStatus != nil {
-							{ F("%d", *log.HttpStatus) }
+							<span class={ "font-bold px-2 py-1 rounded", getStatusBadgeClass(*log.HttpStatus) }>{ F("%d", *log.HttpStatus) }</span>
 						}
 					</td>
-					<td class="break-all">{ N(log.Url) }</td>
-					<td>{ N(log.Hostname) }</td>
-					<td>{ N(log.Message) }</td>
-					<td class="text-red-600">{ N(log.Err) }</td>
+					<td class="max-w-md truncate whitespace-nowrap">{ N(log.RequestMethod) } { N(log.RequestPath) }</td>
+					<td class="max-w-md truncate">{ N(log.Url) }</td>
+					<td class="max-w-md truncate">{ N(log.Hostname) }</td>
+					<td class="max-w-md truncate">{ N(log.Message) }</td>
+					<td class="max-w-md truncate">{ N(log.Err) }</td>
 				</tr>
 			}
 		</tbody>
 	</table>
+}
+
+func getStatusBadgeClass(statusCode int32) string {
+	if statusCode >= 500 {
+		return "text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900/30"
+	}
+	if statusCode >= 400 {
+		return "text-yellow-700 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30"
+	}
+	return "bg-slate-200 dark:bg-slate-900"
 }
