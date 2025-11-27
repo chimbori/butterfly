@@ -44,13 +44,13 @@ func LogsTempl(appName string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section hx-get=\"/dashboard/logs/data\" hx-trigger=\"load\" hx-swap=\"innerHTML\"><p>Loading logs...</p></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section hx-get=\"/dashboard/logs/data\" hx-trigger=\"load\" hx-swap=\"innerHTML\"><img class=\"htmx-indicator inline py-1\" id=\"spinner\" src=\"/static/3-dots-move.svg\" alt=\"...\"></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = ContentTempl("", appName, NilTemplate()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ContentTempl("Logs", NilTemplate()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -41,7 +41,7 @@ func authHandler(next http.Handler) http.Handler {
 				"status", http.StatusUnauthorized)
 			w.Header().Add("WWW-Authenticate", fmt.Sprintf(`Basic realm="%s"`, conf.AppName))
 			w.WriteHeader(http.StatusUnauthorized)
-			ContentTempl("", "Unauthorized", ErrorTempl("Please provide valid credentials to access this section.")).Render(req.Context(), w)
+			ContentTempl("Unauthorized", ErrorTempl("Please provide valid credentials to access this section.")).Render(req.Context(), w)
 			return
 		}
 
@@ -52,7 +52,7 @@ func authHandler(next http.Handler) http.Handler {
 				"path", req.URL.Path,
 				"status", http.StatusUnauthorized)
 			w.WriteHeader(http.StatusUnauthorized)
-			ContentTempl("", "Unauthorized", ErrorTempl("Please provide valid credentials to access this section.")).Render(req.Context(), w)
+			ContentTempl("Unauthorized", ErrorTempl("Please provide valid credentials to access this section.")).Render(req.Context(), w)
 			return
 		}
 

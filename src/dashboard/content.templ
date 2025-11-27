@@ -13,7 +13,7 @@ var N = func(s *string) string {
 	}
 }
 
-templ ContentTempl(appID string, title string, contents templ.Component) {
+templ ContentTempl(title string, contents templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -25,7 +25,7 @@ templ ContentTempl(appID string, title string, contents templ.Component) {
 			<link rel="icon" href="/static/favicon.svg"/>
 		</head>
 		<body>
-			@NavBar(appID)
+			@NavBar()
 			<main>
 				<h1>{ title }</h1>
 				@contents
@@ -36,7 +36,7 @@ templ ContentTempl(appID string, title string, contents templ.Component) {
 	</html>
 }
 
-templ NavBar(appID string) {
+templ NavBar() {
 	<nav>
 		<a href="/dashboard" title="Home"><img src="/static/favicon.svg"/></a>
 		<a href={ "/dashboard/domains" } title="Domains"><img src="/static/domain.svg"/></a>
@@ -45,7 +45,7 @@ templ NavBar(appID string) {
 }
 
 templ HomeTempl(appName string) {
-	@ContentTempl("", appName, NilTemplate()) {
+	@ContentTempl(appName, NilTemplate()) {
 		<div class="dashboard-index"></div>
 	}
 }

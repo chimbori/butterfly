@@ -3,9 +3,9 @@ package dashboard
 import "go.chimbori.app/butterfly/db"
 
 templ LogsTempl(appName string) {
-	@ContentTempl("", appName, NilTemplate()) {
+	@ContentTempl("Logs", NilTemplate()) {
 		<section hx-get="/dashboard/logs/data" hx-trigger="load" hx-swap="innerHTML">
-			<p>Loading logs...</p>
+			<img class="htmx-indicator inline py-1" id="spinner" src="/static/3-dots-move.svg" alt="..."/>
 		</section>
 	}
 }
