@@ -66,51 +66,60 @@ func TestValidateUrl_RejectsUnauthorizedDomains(t *testing.T) {
 	tests := []struct {
 		name        string
 		url         string
+		hostname    string
 		shouldError bool
 		errorMsg    string
 	}{
 		{
 			name:        "Authorized domain - chimbori.com",
 			url:         "https://chimbori.com/page",
+			hostname:    "chimbori.com",
 			shouldError: false,
 		},
 		{
 			name:        "Authorized domain - subdomain of chimbori.com",
 			url:         "https://apps.chimbori.com/page",
+			hostname:    "apps.chimbori.com",
 			shouldError: false,
 		},
 		{
 			name:        "Authorized domain - manas.tungare.name",
 			url:         "https://manas.tungare.name/article",
+			hostname:    "manas.tungare.name",
 			shouldError: false,
 		},
 		{
 			name:        "Unauthorized domain - google.com",
 			url:         "https://google.com",
+			hostname:    "google.com",
 			shouldError: true,
 			errorMsg:    "domain google.com not authorized",
 		},
 		{
 			name:        "Unauthorized non-SSL domain - example.com",
 			url:         "http://example.com/test",
+			hostname:    "example.com",
 			shouldError: true,
 			errorMsg:    "domain example.com not authorized",
 		},
 		{
 			name:        "Unauthorized domain - malicious.chimbori.com.evil.com",
 			url:         "https://malicious.chimbori.com.evil.com",
+			hostname:    "malicious.chimbori.com.evil.com",
 			shouldError: true,
 			errorMsg:    "domain malicious.chimbori.com.evil.com not authorized",
 		},
 		{
 			name:        "Unauthorized domain - chimboricom (no dot)",
 			url:         "https://chimboricom.attacker.com",
+			hostname:    "chimboricom.attacker.com",
 			shouldError: true,
 			errorMsg:    "domain chimboricom.attacker.com not authorized",
 		},
 		{
 			name:        "Unauthorized non-SSL subdomain",
 			url:         "http://unauthorized.example.com",
+			hostname:    "unauthorized.example.com",
 			shouldError: true,
 			errorMsg:    "domain unauthorized.example.com not authorized",
 		},
@@ -118,23 +127,26 @@ func TestValidateUrl_RejectsUnauthorizedDomains(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := validateUrl(ctx, queries, tt.url)
+			url, hostname, err := validateUrl(ctx, queries, tt.url)
 
+			if hostname != tt.hostname {
+				t.Errorf("Expected valid hostname, even for unauthorized domain, but got [%s]", hostname)
+			}
 			if tt.shouldError {
 				if err == nil {
-					t.Errorf("Expected error for URL %s, but got none", tt.url)
+					t.Errorf("Expected error for URL [%s], but got none", tt.url)
 				} else if err.Error() != tt.errorMsg {
 					t.Errorf("Expected error message '%s', but got '%s'", tt.errorMsg, err.Error())
 				}
-				if result != "" {
-					t.Errorf("Expected empty result for unauthorized domain, but got %s", result)
+				if url != "" {
+					t.Errorf("Expected empty validated URL for unauthorized domain, but got [%s]", url)
 				}
 			} else {
 				if err != nil {
-					t.Errorf("Expected no error for URL %s, but got: %s", tt.url, err.Error())
+					t.Errorf("Expected no error for URL [%s], but got: [%s]", tt.url, err.Error())
 				}
-				if result == "" {
-					t.Errorf("Expected non-empty result for authorized domain")
+				if url == "" {
+					t.Errorf("Expected non-empty validated URL for authorized domain")
 				}
 			}
 		})
@@ -146,12 +158,18 @@ func TestValidateUrl_EmptyUrl(t *testing.T) {
 	defer pool.Close()
 
 	ctx := context.Background()
-	_, err := validateUrl(ctx, queries, "")
+	url, hostname, err := validateUrl(ctx, queries, "")
 	if err == nil {
 		t.Error("Expected error for empty URL")
 	}
 	if err.Error() != "missing url" {
-		t.Errorf("Expected 'missing url' error, got: %s", err.Error())
+		t.Errorf("Expected 'missing url' error, got: [%s]", err.Error())
+	}
+	if url != "" {
+		t.Errorf("Expected empty validated URL for empty URL, but got [%s]", url)
+	}
+	if hostname != "" {
+		t.Errorf("Expected empty hostname for empty URL, but got [%s]", hostname)
 	}
 }
 
@@ -160,9 +178,15 @@ func TestValidateUrl_InvalidUrl(t *testing.T) {
 	defer pool.Close()
 
 	ctx := context.Background()
-	_, err := validateUrl(ctx, queries, "ht!tp://invalid url with spaces")
+	url, hostname, err := validateUrl(ctx, queries, "ht!tp://invalid url with spaces")
 	if err == nil {
 		t.Error("Expected error for invalid URL")
+	}
+	if url != "" {
+		t.Errorf("Expected empty validated URL for invalid URL, but got [%s]", url)
+	}
+	if hostname != "" {
+		t.Errorf("Expected empty hostname for unparseable URL, but got [%s]", hostname)
 	}
 }
 
@@ -182,11 +206,14 @@ func TestValidateUrl_AddsHttpsPrefix(t *testing.T) {
 		t.Fatalf("Failed to insert test domain: %v", err)
 	}
 
-	result, err := validateUrl(ctx, queries, "chimbori.com/page")
+	url, hostname, err := validateUrl(ctx, queries, "chimbori.com/page")
 	if err != nil {
 		t.Errorf("Expected no error, but got: %s", err.Error())
 	}
-	if result != "https://chimbori.com/page" {
-		t.Errorf("Expected https:// prefix to be added, got: %s", result)
+	if url != "https://chimbori.com/page" {
+		t.Errorf("Expected https:// prefix to be added, got: [%s]", url)
+	}
+	if hostname != "chimbori.com" {
+		t.Errorf("Expected correct hostname for URL without https:// prefix, got: [%s]", hostname)
 	}
 }

@@ -24,12 +24,13 @@ func SetupHandlers(mux *http.ServeMux) {
 func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 	reqUrl := req.URL.Query().Get("url")
 	queries := db.New(db.Pool)
-	url, err := validateUrl(req.Context(), queries, reqUrl)
+	url, hostname, err := validateUrl(req.Context(), queries, reqUrl)
 	if err != nil {
 		slog.Error("URL validation failed", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
 			"url", reqUrl,
+			"hostname", hostname,
 			"status", http.StatusUnauthorized)
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -52,6 +53,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 				"method", req.Method,
 				"path", req.URL.Path,
 				"url", url,
+				"hostname", hostname,
 				"status", http.StatusInternalServerError)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -63,6 +65,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			"method", req.Method,
 			"path", req.URL.Path,
 			"url", url,
+			"hostname", hostname,
 			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
 		w.Write(cached)
@@ -76,6 +79,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 				"method", req.Method,
 				"path", req.URL.Path,
 				"url", url,
+				"hostname", hostname,
 				"status", http.StatusInternalServerError)
 			if !errors.Is(err, ErrMissingSelector) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -86,6 +90,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 				"method", req.Method,
 				"path", req.URL.Path,
 				"url", url,
+				"hostname", hostname,
 				"status", http.StatusOK)
 			title, description, fetchErr := fetchTitleAndDescription(ctx, url)
 			if fetchErr != nil {
@@ -99,6 +104,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 					"method", req.Method,
 					"path", req.URL.Path,
 					"url", url,
+					"hostname", hostname,
 					"status", http.StatusInternalServerError)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
@@ -114,6 +120,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 					"method", req.Method,
 					"path", req.URL.Path,
 					"url", url,
+					"hostname", hostname,
 					"status", http.StatusInternalServerError)
 				// Still continue serving the image to clients even if caching failed.
 			}
@@ -123,6 +130,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			"method", req.Method,
 			"path", req.URL.Path,
 			"url", url,
+			"hostname", hostname,
 			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
 		w.Write(screenshot)
@@ -130,30 +138,30 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 }
 
 // Validates a URL provided by the user, and returns a formatted URL as a string.
-func validateUrl(ctx context.Context, q *db.Queries, userUrl string) (string, error) {
+func validateUrl(ctx context.Context, q *db.Queries, userUrl string) (validatedUrl string, hostname string, err error) {
 	if userUrl == "" {
-		return "", errors.New("missing url")
+		return "", "", errors.New("missing url")
 	}
 
-	if !strings.HasPrefix(userUrl, "https://") && !strings.HasPrefix(userUrl, "http://") {
+	if !strings.HasPrefix(userUrl, "https://") && !strings.HasPrefix(userUrl, "http://") && !strings.Contains(userUrl, "://") {
 		userUrl = "https://" + userUrl
 	}
 
 	u, err := url.Parse(userUrl)
 	if err != nil {
-		return "", errors.New("invalid url")
+		return "", "", errors.New("invalid url")
 	}
 
 	authorized, err := isAuthorized(ctx, q, u)
 	if err != nil {
-		return "", err
+		return "", u.Hostname(), err
 	}
 
 	if !authorized {
-		return "", errors.New("domain " + u.Hostname() + " not authorized")
+		return "", u.Hostname(), errors.New("domain " + u.Hostname() + " not authorized")
 	}
 
-	return u.String(), nil
+	return u.String(), u.Hostname(), nil
 }
 
 // isAuthorized returns true if the given URL's domain is in the list of authorized domains.
