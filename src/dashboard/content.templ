@@ -46,7 +46,17 @@ templ NavBar() {
 
 templ HomeTempl(appName string) {
 	@ContentTempl(appName, NilTemplate()) {
-		<div class="dashboard-index"></div>
+		<p>Automated social link preview images, sourced directly from your Web pages</p>
+		<div class="dashboard-index">
+			<a href={ "/dashboard/domains" } title="Domains">
+				<img class="p-6" src={ "/static/domain.svg" }/>
+				<span class="mt-4">Domains</span>
+			</a>
+			<a href={ "/dashboard/logs" } title="Logs">
+				<img class="p-6" src={ "/static/clipboard-text-clock-outline.svg" }/>
+				<span class="mt-4">Logs</span>
+			</a>
+		</div>
 	}
 }
 
