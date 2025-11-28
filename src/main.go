@@ -38,8 +38,7 @@ func main() {
 	var err error
 	if conf.Config, err = conf.ReadConfig(*configYmlFlag); err != nil {
 		slog.Error("Failed to parse config", tint.Err(err))
-		flag.PrintDefaults()
-		os.Exit(1)
+		// Proceed with defaults.
 	}
 
 	// If debug mode was turned on in the config file, print logs at DEBUG or above.
@@ -50,6 +49,10 @@ func main() {
 		})))
 	}
 
+	if conf.Config.Database.Url == "" {
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
 	// Run migrations using [database/sql] before connecting to the DB using [pgxpool.Pool].
 	if err := core.RunMigrations(conf.Config.Database.Url, db.EmbedMigrations); err != nil {
 		slog.Error("Error running critical migrations", tint.Err(err))

@@ -11,7 +11,7 @@ import (
 
 func init() {
 	// Initialize config to avoid nil pointer dereference
-	conf.Config = &conf.AppConfig{
+	conf.Config = conf.AppConfig{
 		Debug: true,
 	}
 }

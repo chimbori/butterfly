@@ -18,7 +18,7 @@ func setupTestCache(t *testing.T) string {
 	}
 
 	// Setup config
-	conf.Config = &conf.AppConfig{}
+	conf.Config = conf.AppConfig{}
 	conf.Config.DataDir = tempDir
 
 	// Initialize cache
