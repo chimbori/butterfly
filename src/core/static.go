@@ -31,7 +31,7 @@ func ServeWebManifest(mux *http.ServeMux, appName, url, themeColor string) {
 	mux.HandleFunc("GET /app.webmanifest", func(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Content-Type", "application/manifest+json")
 		var dst bytes.Buffer
-		json.Compact(&dst, []byte(fmt.Sprintf(appWebManifestTemplate, appName, url, themeColor)))
+		json.Compact(&dst, fmt.Appendf(nil, appWebManifestTemplate, appName, url, themeColor))
 		w.Write(dst.Bytes())
 	})
 }
