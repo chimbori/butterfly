@@ -74,14 +74,14 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 		defer cancel()
 		screenshot, err := takeScreenshot(ctx, url, selector)
 		if err != nil {
-			err = fmt.Errorf("url: %s, %w", url, err)
-			slog.Error("error taking screenshot", tint.Err(err),
-				"method", req.Method,
-				"path", req.URL.Path,
-				"url", url,
-				"hostname", hostname,
-				"status", http.StatusInternalServerError)
 			if !errors.Is(err, ErrMissingSelector) {
+				err = fmt.Errorf("url: %s, %w", url, err)
+				slog.Error("error taking screenshot", tint.Err(err),
+					"method", req.Method,
+					"path", req.URL.Path,
+					"url", url,
+					"hostname", hostname,
+					"status", http.StatusInternalServerError)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
