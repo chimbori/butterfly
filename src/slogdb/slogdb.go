@@ -74,7 +74,7 @@ func (h *DBHandler) writeToDatabase(ctx context.Context, r slog.Record) {
 
 	r.Attrs(func(a slog.Attr) bool {
 		switch a.Key {
-		case "err":
+		case "err": // Must match github.com/lmittmann/tint [errKey] for [tint.Err()] to work
 			if s := a.Value.String(); s != "" {
 				slogErr = &s
 			}

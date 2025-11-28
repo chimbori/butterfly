@@ -17,8 +17,7 @@ var getDomainsHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.R
 	queries := db.New(db.Pool)
 	domains, err := queries.ListDomains(ctx)
 	if err != nil {
-		slog.Error("failed to list domains",
-			"error", tint.Err(err),
+		slog.Error("failed to list domains", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
 			"url", req.URL.String(),
@@ -36,8 +35,7 @@ var putDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Re
 
 	err := req.ParseForm()
 	if err != nil {
-		slog.Error("failed to parse form",
-			"error", tint.Err(err),
+		slog.Error("failed to parse form", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
 			"url", req.URL.String(),
@@ -48,8 +46,7 @@ var putDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Re
 	domain := strings.TrimSpace(req.FormValue("domain"))
 	if domain == "" {
 		err := fmt.Errorf("empty domain")
-		slog.Error(err.Error(),
-			"error", tint.Err(err),
+		slog.Error(err.Error(), tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
 			"url", req.URL.String(),
@@ -67,8 +64,7 @@ var putDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Re
 		Authorized:        isAuthorized(authorizeAction),
 	})
 	if err != nil {
-		slog.Error("failed to update domain",
-			"error", tint.Err(err),
+		slog.Error("failed to update domain", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
 			"url", req.URL.String(),
@@ -80,8 +76,7 @@ var putDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Re
 	// Return the updated list
 	domains, err := queries.ListDomains(ctx)
 	if err != nil {
-		slog.Error("failed to list domains",
-			"error", tint.Err(err),
+		slog.Error("failed to list domains", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
 			"url", req.URL.String(),
@@ -100,8 +95,7 @@ var deleteDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http
 	domain := req.URL.Query().Get("domain")
 	err := queries.DeleteDomain(ctx, domain)
 	if err != nil {
-		slog.Error("failed to delete domain",
-			"error", tint.Err(err),
+		slog.Error("failed to delete domain", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
 			"url", req.URL.String(),
@@ -113,8 +107,7 @@ var deleteDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http
 	// Return the updated list
 	domains, err := queries.ListDomains(ctx)
 	if err != nil {
-		slog.Error("failed to list domains",
-			"error", tint.Err(err),
+		slog.Error("failed to list domains", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
 			"url", req.URL.String(),
