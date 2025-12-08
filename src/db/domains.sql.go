@@ -19,24 +19,15 @@ func (q *Queries) DeleteDomain(ctx context.Context, domain string) error {
 	return err
 }
 
-const insertUnauthorizedDomain = `-- name: InsertUnauthorizedDomain :one
+const insertUnauthorizedDomain = `-- name: InsertUnauthorizedDomain :exec
 INSERT INTO domains (domain, include_subdomains, authorized, updated_at)
   VALUES ($1, false, NULL, NOW())
   ON CONFLICT(domain) DO NOTHING
-  RETURNING _id, updated_at, domain, include_subdomains, authorized
 `
 
-func (q *Queries) InsertUnauthorizedDomain(ctx context.Context, domain string) (Domain, error) {
-	row := q.db.QueryRow(ctx, insertUnauthorizedDomain, domain)
-	var i Domain
-	err := row.Scan(
-		&i.ID,
-		&i.UpdatedAt,
-		&i.Domain,
-		&i.IncludeSubdomains,
-		&i.Authorized,
-	)
-	return i, err
+func (q *Queries) InsertUnauthorizedDomain(ctx context.Context, domain string) error {
+	_, err := q.db.Exec(ctx, insertUnauthorizedDomain, domain)
+	return err
 }
 
 const isAuthorized = `-- name: IsAuthorized :one

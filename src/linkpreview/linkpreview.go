@@ -176,7 +176,7 @@ func isAuthorized(ctx context.Context, q *db.Queries, u *url.URL) (bool, error) 
 
 	// If not authorized, add it to the database for future triage.
 	if !authorized {
-		_, err = q.InsertUnauthorizedDomain(ctx, hostname)
+		err = q.InsertUnauthorizedDomain(ctx, hostname)
 		if err != nil {
 			// Log the error but don’t fail the authorization check.
 			slog.Error("failed to insert unauthorized domain", tint.Err(err), "domain", hostname)
