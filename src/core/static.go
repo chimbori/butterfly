@@ -4,16 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log/slog"
 	"net/http"
 )
-
-func SetupHealthz(mux *http.ServeMux) {
-	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, req *http.Request) {
-		slog.Info("/healthz: ok", "from", ReadUserIP(req))
-		w.Write([]byte("ok"))
-	})
-}
 
 var appWebManifestTemplate = `{
   "name": "%s",

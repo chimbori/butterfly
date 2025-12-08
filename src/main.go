@@ -31,6 +31,7 @@ func main() {
 	slog.SetDefault(slog.New(tintHandler))
 	slog.Info(conf.AppName, "build-timestamp", conf.BuildTimestamp)
 
+	healthCheckFlag := flag.Bool("healthcheck", false, "verify health of running service & exit")
 	configYmlFlag := flag.String("config", "butterfly.yml", "path to butterfly.yml")
 	flag.Parse()
 
@@ -39,6 +40,10 @@ func main() {
 	if conf.Config, err = conf.ReadConfig(*configYmlFlag); err != nil {
 		slog.Error("Failed to parse config", tint.Err(err))
 		// Proceed with defaults.
+	}
+
+	if *healthCheckFlag {
+		os.Exit(core.VerifyHealthCheck(conf.Config.Web.Port))
 	}
 
 	// If debug mode was turned on in the config file, print logs at DEBUG or above.
@@ -84,7 +89,7 @@ func main() {
 
 	// Set up the Web server and start serving.
 	mux := http.NewServeMux()
-	core.SetupHealthz(mux)
+	core.SetupHealthCheck(mux)
 	core.ServeWebManifest(mux, conf.AppName, "/dashboard", "#2575fc")
 	embedfs.ServeStaticFS(mux)
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, req *http.Request) {

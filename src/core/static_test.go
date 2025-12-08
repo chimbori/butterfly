@@ -7,55 +7,6 @@ import (
 	"testing"
 )
 
-func TestSetupHealthz(t *testing.T) {
-	mux := http.NewServeMux()
-	SetupHealthz(mux)
-
-	t.Run("GET /healthz returns ok", func(t *testing.T) {
-		req := httptest.NewRequest("GET", "/healthz", nil)
-		req.RemoteAddr = "192.168.1.1:12345"
-		w := httptest.NewRecorder()
-
-		mux.ServeHTTP(w, req)
-
-		if w.Code != http.StatusOK {
-			t.Errorf("Expected status code %d, got %d", http.StatusOK, w.Code)
-		}
-
-		expectedBody := "ok"
-		if w.Body.String() != expectedBody {
-			t.Errorf("Expected body %q, got %q", expectedBody, w.Body.String())
-		}
-	})
-
-	t.Run("POST /healthz not allowed", func(t *testing.T) {
-		req := httptest.NewRequest("POST", "/healthz", nil)
-		w := httptest.NewRecorder()
-
-		mux.ServeHTTP(w, req)
-
-		if w.Code != http.StatusMethodNotAllowed {
-			t.Errorf("Expected status code %d, got %d", http.StatusMethodNotAllowed, w.Code)
-		}
-	})
-
-	t.Run("healthz with X-Forwarded-For header", func(t *testing.T) {
-		req := httptest.NewRequest("GET", "/healthz", nil)
-		req.Header.Set("X-Forwarded-For", "1.1.1.1")
-		w := httptest.NewRecorder()
-
-		mux.ServeHTTP(w, req)
-
-		if w.Code != http.StatusOK {
-			t.Errorf("Expected status code %d, got %d", http.StatusOK, w.Code)
-		}
-
-		if w.Body.String() != "ok" {
-			t.Errorf("Expected body %q, got %q", "ok", w.Body.String())
-		}
-	})
-}
-
 func TestServeWebManifest(t *testing.T) {
 	tests := []struct {
 		name       string
