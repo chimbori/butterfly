@@ -43,7 +43,7 @@ func main() {
 	}
 
 	if *healthCheckFlag {
-		os.Exit(core.VerifyHealthCheck(conf.Config.Web.Port))
+		os.Exit(core.VerifyHealthCheck(conf.Config.Web.Host, conf.Config.Web.Port))
 	}
 
 	// If debug mode was turned on in the config file, print logs at DEBUG or above.
