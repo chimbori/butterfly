@@ -83,7 +83,7 @@ func setDefaultsAndPrint(c *AppConfig) {
 		c.Web.Host = fmt.Sprintf("%s", core.GetOutboundIP())
 	}
 	if c.Web.Port == 0 {
-		c.Web.Port = 9090
+		c.Web.Port = 9999
 	}
 
 	// Cache is enabled by default; only disable it when testing or debugging.
