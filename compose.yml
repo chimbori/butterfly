@@ -11,6 +11,11 @@ services:
     volumes:
       - /Users/Shared/Unsynced/butterfly-db-data:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/butterfly", "--config=/data/butterfly.yml", "--healthcheck"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   butterfly-db-data:

@@ -79,6 +79,8 @@ We strongly recommend deploying using the official Docker image, which includes 
 
 ### Sample `compose.yml`
 
+A more advanced example is available in [compose.yml](compose.yml).
+
 ```yml
 services:
   butterfly:
@@ -133,14 +135,13 @@ butterfly.your-server.com {
 }
 ```
 
-### Dashboard UI
+## Dashboard UI
 
 To prevent abuse and to conserve resources, Butterfly only allows explicitly-allow-listed domains to be used.
 
 You can configure this list using the Dashboard UI at `https://butterfly.your-server.com/dashboard`. The Dashboard is available as an installable PWA (Progressive Web Application) that can be “installed” locally using any modern browser.
 
 <img src="assets/screenshot-pwa.png">
-
 
 # Dual Licensed: AGPL & Proprietary
 
