@@ -20,6 +20,7 @@ RUN go build \
 
 FROM chromedp/headless-shell:latest
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=builder /etc/ssl/certs /etc/ssl/certs
 COPY --from=builder /app/butterfly /butterfly
 EXPOSE 9999
 
