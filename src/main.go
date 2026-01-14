@@ -15,15 +15,15 @@ import (
 
 	_ "time/tzdata"
 
+	"chimbori.dev/butterfly/conf"
+	"chimbori.dev/butterfly/core"
+	"chimbori.dev/butterfly/dashboard"
+	"chimbori.dev/butterfly/db"
+	"chimbori.dev/butterfly/embedfs"
+	"chimbori.dev/butterfly/linkpreview"
+	"chimbori.dev/butterfly/slogdb"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/lmittmann/tint"
-	"go.chimbori.app/butterfly/conf"
-	"go.chimbori.app/butterfly/core"
-	"go.chimbori.app/butterfly/dashboard"
-	"go.chimbori.app/butterfly/db"
-	"go.chimbori.app/butterfly/embedfs"
-	"go.chimbori.app/butterfly/linkpreview"
-	"go.chimbori.app/butterfly/slogdb"
 )
 
 func main() {

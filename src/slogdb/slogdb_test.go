@@ -6,9 +6,9 @@ import (
 	"os"
 	"testing"
 
+	"chimbori.dev/butterfly/db"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/lmittmann/tint"
-	"go.chimbori.app/butterfly/db"
 )
 
 // TestDBHandler tests that logs are written to the database as expected.

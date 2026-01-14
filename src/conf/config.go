@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"go.chimbori.app/butterfly/core"
+	"chimbori.dev/butterfly/core"
 	"gopkg.in/yaml.v3"
 )
 

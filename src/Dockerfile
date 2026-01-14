@@ -14,7 +14,7 @@ COPY . .
 
 RUN go build \
   -trimpath \
-  -ldflags="-w -s -X 'go.chimbori.app/butterfly/conf.BuildTimestamp=$(TZ=":America/Los_Angeles" date +"%Y-%m-%d %H:%M:%S")'"
+  -ldflags="-w -s -X 'chimbori.dev/butterfly/conf.BuildTimestamp=$(TZ=":America/Los_Angeles" date +"%Y-%m-%d %H:%M:%S")'"
 
 # Copy to deployable image, with Chrome Headless
 

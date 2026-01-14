@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"chimbori.dev/butterfly/conf"
 	"github.com/chromedp/chromedp"
-	"go.chimbori.app/butterfly/conf"
 )
 
 func init() {

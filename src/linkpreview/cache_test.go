@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"go.chimbori.app/butterfly/conf"
+	"chimbori.dev/butterfly/conf"
 )
 
 func setupTestCache(t *testing.T) string {

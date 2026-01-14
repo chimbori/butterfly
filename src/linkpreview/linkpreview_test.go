@@ -5,9 +5,9 @@ import (
 	"os"
 	"testing"
 
+	"chimbori.dev/butterfly/core"
+	"chimbori.dev/butterfly/db"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"go.chimbori.app/butterfly/core"
-	"go.chimbori.app/butterfly/db"
 )
 
 func setupTestDB(t *testing.T) (*pgxpool.Pool, *db.Queries) {

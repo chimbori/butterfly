@@ -1,4 +1,4 @@
-module go.chimbori.app/butterfly
+module chimbori.dev/butterfly
 
 go 1.25.4
 

@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"strings"
 
+	"chimbori.dev/butterfly/conf"
 	"github.com/chromedp/chromedp"
-	"go.chimbori.app/butterfly/conf"
 	"golang.org/x/net/html"
 )
 

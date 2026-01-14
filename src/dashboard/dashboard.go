@@ -5,10 +5,10 @@ import (
 	"log/slog"
 	"net/http"
 
+	"chimbori.dev/butterfly/conf"
+	"chimbori.dev/butterfly/core"
 	"github.com/justinas/alice"
 	"github.com/lmittmann/tint"
-	"go.chimbori.app/butterfly/conf"
-	"go.chimbori.app/butterfly/core"
 	"golang.org/x/crypto/bcrypt"
 )
 

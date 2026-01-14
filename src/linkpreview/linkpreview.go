@@ -9,10 +9,10 @@ import (
 	"net/url"
 	"strings"
 
+	"chimbori.dev/butterfly/conf"
+	"chimbori.dev/butterfly/db"
+	"chimbori.dev/butterfly/embedfs"
 	"github.com/lmittmann/tint"
-	"go.chimbori.app/butterfly/conf"
-	"go.chimbori.app/butterfly/db"
-	"go.chimbori.app/butterfly/embedfs"
 )
 
 func SetupHandlers(mux *http.ServeMux) {

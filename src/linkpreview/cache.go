@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"go.chimbori.app/butterfly/conf"
-	"go.chimbori.app/butterfly/core"
+	"chimbori.dev/butterfly/conf"
+	"chimbori.dev/butterfly/core"
 )
 
 var linkPreviewCacheDir string

@@ -4,9 +4,9 @@ import (
 	"log/slog"
 	"net/http"
 
+	"chimbori.dev/butterfly/conf"
+	"chimbori.dev/butterfly/db"
 	"github.com/lmittmann/tint"
-	"go.chimbori.app/butterfly/conf"
-	"go.chimbori.app/butterfly/db"
 )
 
 // GET /dashboard/logs
