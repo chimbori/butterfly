@@ -7,13 +7,21 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"strings"
 
 	"chimbori.dev/butterfly/conf"
+	"chimbori.dev/butterfly/core"
 	"chimbori.dev/butterfly/db"
 	"chimbori.dev/butterfly/embedfs"
 	"github.com/lmittmann/tint"
 )
+
+var cache *core.Cache
+
+func InitCache() {
+	cache = core.NewCache(filepath.Join(conf.Config.DataDir, "cache", "link-previews"))
+}
 
 func SetupHandlers(mux *http.ServeMux) {
 	mux.HandleFunc("GET /link-preview/v1", handleLinkPreview)
@@ -46,7 +54,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 	// Only check cache if enabled
 	if *conf.Config.LinkPreview.Cache.Enabled {
 		var err error
-		cached, err = findCached(url)
+		cached, err = cache.Find(url)
 		if err != nil {
 			err = fmt.Errorf("url: %s, %w", url, err)
 			slog.Error("error during cache lookup", tint.Err(err),
@@ -115,7 +123,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 
 		// Only write to cache if enabled
 		if *conf.Config.LinkPreview.Cache.Enabled {
-			err = writeToCache(url, screenshot)
+			err = cache.Write(url, screenshot)
 			if err != nil {
 				err = fmt.Errorf("error writing to cache: %s, %w", url, err)
 				slog.Error("error writing to cache", tint.Err(err),
@@ -207,4 +215,9 @@ func isAuthorized(ctx context.Context, q *db.Queries, u *url.URL) (bool, error) 
 	}
 
 	return authorized, nil
+}
+
+// DeleteCached removes a cached screenshot file from disk.
+func DeleteCached(url string) error {
+	return cache.Delete(url)
 }
