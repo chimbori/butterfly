@@ -1,4 +1,4 @@
-package linkpreviews
+package validation
 
 import (
 	"context"
@@ -127,7 +127,7 @@ func TestValidateUrl_RejectsUnauthorizedDomains(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			url, hostname, err := validateUrl(ctx, queries, tt.url)
+			url, hostname, err := ValidateUrl(ctx, queries, tt.url)
 
 			if hostname != tt.hostname {
 				t.Errorf("Expected valid hostname, even for unauthorized domain, but got [%s]", hostname)
@@ -158,7 +158,7 @@ func TestValidateUrl_EmptyUrl(t *testing.T) {
 	defer pool.Close()
 
 	ctx := context.Background()
-	url, hostname, err := validateUrl(ctx, queries, "")
+	url, hostname, err := ValidateUrl(ctx, queries, "")
 	if err == nil {
 		t.Error("Expected error for empty URL")
 	}
@@ -178,7 +178,7 @@ func TestValidateUrl_InvalidUrl(t *testing.T) {
 	defer pool.Close()
 
 	ctx := context.Background()
-	url, hostname, err := validateUrl(ctx, queries, "ht!tp://invalid url with spaces")
+	url, hostname, err := ValidateUrl(ctx, queries, "ht!tp://invalid url with spaces")
 	if err == nil {
 		t.Error("Expected error for invalid URL")
 	}
@@ -206,7 +206,7 @@ func TestValidateUrl_AddsHttpsPrefix(t *testing.T) {
 		t.Fatalf("Failed to insert test domain: %v", err)
 	}
 
-	url, hostname, err := validateUrl(ctx, queries, "chimbori.com/page")
+	url, hostname, err := ValidateUrl(ctx, queries, "chimbori.com/page")
 	if err != nil {
 		t.Errorf("Expected no error, but got: %s", err.Error())
 	}
