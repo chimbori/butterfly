@@ -44,7 +44,7 @@ func DomainsTempl(domains []db.Domain) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section><form class=\"flex\" hx-target=\"#domains-list\" hx-swap=\"innerHTML transition:true\"><input type=\"text\" name=\"domain\" placeholder=\"example.com\" required class=\"grow\"> <label class=\"mx-4\"><input type=\"checkbox\" name=\"include_subdomains\"> Include Subdomains</label> <input type=\"hidden\" name=\"authorized\" value=\"allow\"> <button class=\"btn-submit\" hx-put=\"/dashboard/domains\" hx-include=\"closest form\" hx-vals='{\"authorized\":\"allow\"}'>Add Domain</button></form></section><section><div id=\"domains-list\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section><form class=\"flex\" hx-target=\"#domains-list\" hx-swap=\"innerHTML transition:true\"><input type=\"text\" name=\"domain\" placeholder=\"example.com\" required class=\"grow\"> <label class=\"mx-4\"><input type=\"checkbox\" name=\"include_subdomains\"> Include Subdomains</label> <input type=\"hidden\" name=\"authorized\" value=\"allow\"> <button class=\"btn-submit\" hx-put=\"/dashboard/link-previews\" hx-include=\"closest form\" hx-vals='{\"authorized\":\"allow\"}'>Add Domain</button></form></section><section><div id=\"domains-list\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -58,7 +58,7 @@ func DomainsTempl(domains []db.Domain) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = ContentTempl("Domains", NilTemplate()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ContentTempl("Link Previews", NilTemplate()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -118,7 +118,7 @@ func DomainsListTempl(domains []db.Domain) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"></td><td class=\"text-center\"><label><input hx-put=\"/dashboard/domains\" hx-include=\"closest tr\" type=\"checkbox\" name=\"include_subdomains\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"></td><td class=\"text-center\"><label><input hx-put=\"/dashboard/link-previews\" hx-include=\"closest tr\" type=\"checkbox\" name=\"include_subdomains\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -164,7 +164,7 @@ func DomainsListTempl(domains []db.Domain) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, " hx-include=\"closest tr\" hx-put=\"/dashboard/domains\" hx-vals='{\"authorized\":\"allow\"}' class=\"btn-submit\">Allow</button> <button")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, " hx-include=\"closest tr\" hx-put=\"/dashboard/link-previews\" hx-vals='{\"authorized\":\"allow\"}' class=\"btn-submit\">Allow</button> <button")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -174,7 +174,7 @@ func DomainsListTempl(domains []db.Domain) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " hx-include=\"closest tr\" hx-put=\"/dashboard/domains\" hx-vals='{\"authorized\":\"block\"}' class=\"btn-delete\">Block</button> <img class=\"align-middle inline mx-2 cursor-pointer\" hx-confirm=\"Remove from list?\" hx-include=\"closest tr\" title=\"Remove\" hx-delete=\"/dashboard/domains\" width=\"24\" height=\"24\" src=\"/static/close.svg\"></td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " hx-include=\"closest tr\" hx-put=\"/dashboard/link-previews\" hx-vals='{\"authorized\":\"block\"}' class=\"btn-delete\">Block</button> <img class=\"align-middle inline mx-2 cursor-pointer\" hx-confirm=\"Remove from list?\" hx-include=\"closest tr\" title=\"Remove\" hx-delete=\"/dashboard/link-previews\" width=\"24\" height=\"24\" src=\"/static/close.svg\"></td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

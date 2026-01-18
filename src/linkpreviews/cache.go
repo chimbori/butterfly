@@ -1,4 +1,4 @@
-package linkpreview
+package linkpreviews
 
 import (
 	"fmt"

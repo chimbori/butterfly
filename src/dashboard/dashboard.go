@@ -17,9 +17,9 @@ func SetupHandlers(mux *http.ServeMux) {
 
 	mux.Handle("GET /dashboard", chain.Then(homeHandler))
 
-	mux.Handle("GET /dashboard/domains", chain.Then(getDomainsHandler))
-	mux.Handle("PUT /dashboard/domains", chain.Then(putDomainHandler))
-	mux.Handle("DELETE /dashboard/domains", chain.Then(deleteDomainHandler))
+	mux.Handle("GET /dashboard/link-previews", chain.Then(getDomainsHandler))
+	mux.Handle("PUT /dashboard/link-previews", chain.Then(putDomainHandler))
+	mux.Handle("DELETE /dashboard/link-previews", chain.Then(deleteDomainHandler))
 
 	mux.Handle("GET /dashboard/logs", chain.Then(logsHandler))
 	mux.Handle("GET /dashboard/logs/data", chain.Then(logsDataHandler))

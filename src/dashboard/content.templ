@@ -39,7 +39,7 @@ templ ContentTempl(title string, contents templ.Component) {
 templ NavBar() {
 	<nav>
 		<a href="/dashboard" title="Home"><img src="/static/favicon.svg"/></a>
-		<a href={ "/dashboard/domains" } title="Domains"><img src="/static/domain.svg"/></a>
+		<a href={ "/dashboard/link-previews" } title="Link Previews"><img src="/static/tooltip-image.svg"/></a>
 		<a href={ "/dashboard/logs" } title="Logs"><img src="/static/clipboard-text-clock-outline.svg"/></a>
 	</nav>
 }
@@ -48,9 +48,9 @@ templ HomeTempl(appName string) {
 	@ContentTempl(appName, NilTemplate()) {
 		<p>Automated social link preview images, sourced directly from your Web pages</p>
 		<div class="dashboard-index">
-			<a href={ "/dashboard/domains" } title="Domains">
-				<img class="p-6" src={ "/static/domain.svg" }/>
-				<span class="mt-4">Domains</span>
+			<a href={ "/dashboard/link-previews" } title="Link Previews">
+				<img class="p-6" src={ "/static/tooltip-image.svg" }/>
+				<span class="mt-4">Link Previews</span>
 			</a>
 			<a href={ "/dashboard/logs" } title="Logs">
 				<img class="p-6" src={ "/static/clipboard-text-clock-outline.svg" }/>

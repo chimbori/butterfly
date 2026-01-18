@@ -128,15 +128,15 @@ func NavBar() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 templ.SafeURL
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs("/dashboard/domains")
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs("/dashboard/link-previews")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/content.templ`, Line: 42, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/content.templ`, Line: 42, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" title=\"Domains\"><img src=\"/static/domain.svg\"></a> <a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" title=\"Link Previews\"><img src=\"/static/tooltip-image.svg\"></a> <a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -195,28 +195,28 @@ func HomeTempl(appName string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 templ.SafeURL
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs("/dashboard/domains")
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs("/dashboard/link-previews")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/content.templ`, Line: 51, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/content.templ`, Line: 51, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" title=\"Domains\"><img class=\"p-6\" src=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" title=\"Link Previews\"><img class=\"p-6\" src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("/static/domain.svg")
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("/static/tooltip-image.svg")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/content.templ`, Line: 52, Col: 47}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/content.templ`, Line: 52, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"> <span class=\"mt-4\">Domains</span></a> <a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"> <span class=\"mt-4\">Link Previews</span></a> <a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
