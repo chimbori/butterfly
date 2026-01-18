@@ -43,6 +43,11 @@ type AppConfig struct {
 			Enabled *bool `yaml:"enabled"`
 		} `yaml:"cache"`
 	} `yaml:"link-preview"`
+	QrCode struct {
+		Cache struct {
+			Enabled *bool `yaml:"enabled"`
+		} `yaml:"cache"`
+	} `yaml:"qr-code"`
 	Debug bool `yaml:"debug"`
 }
 
@@ -87,13 +92,19 @@ func setDefaultsAndPrint(c *AppConfig) {
 		c.Web.Port = 9999
 	}
 
-	// Cache is enabled by default; only disable it when testing or debugging.
+	// Cache for Link Previews is enabled by default; only disable it when testing or debugging.
 	if c.LinkPreview.Cache.Enabled == nil {
 		enabled := true
 		c.LinkPreview.Cache.Enabled = &enabled
 	}
 	if c.LinkPreview.Screenshot.Timeout == 0 {
 		c.LinkPreview.Screenshot.Timeout = 20 * time.Second
+	}
+
+	// Cache for QR Codes is enabled by default; only disable it when testing or debugging.
+	if c.QrCode.Cache.Enabled == nil {
+		enabled := true
+		c.QrCode.Cache.Enabled = &enabled
 	}
 
 	// Print warnings for unsafe settings, just as FYI.
@@ -105,5 +116,8 @@ func setDefaultsAndPrint(c *AppConfig) {
 
 	if !*c.LinkPreview.Cache.Enabled {
 		slog.Warn("Screenshot cache disabled for Link Previews; performance will be affected")
+	}
+	if !*c.QrCode.Cache.Enabled {
+		slog.Warn("Cache disabled for QR Codes; performance will be affected")
 	}
 }
