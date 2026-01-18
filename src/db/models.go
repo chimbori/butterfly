@@ -35,3 +35,11 @@ type Log struct {
 	Message       *string
 	Err           *string
 }
+
+type QrCode struct {
+	ID             int64
+	Url            string
+	GeneratedAt    *time.Time
+	LastAccessedAt *time.Time
+	AccessCount    *int32
+}
