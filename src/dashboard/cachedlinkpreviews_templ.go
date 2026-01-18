@@ -32,121 +32,134 @@ func CachedLinkPreviewsTempl(linkPreviews []db.LinkPreview) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<table class=\"dashboard w-full\" id=\"cached-link-previews\" hx-target=\"#cached-link-previews\" hx-swap=\"innerHTML transition:true\"><tr><th>URL</th><th>Generated</th><th>Accessed</th><th class=\"text-center\">Access Count</th><th>Actions</th></tr>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"cached-link-previews\" hx-target=\"#cached-link-previews\" hx-swap=\"innerHTML transition:true\" class=\"grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-8 p-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, s := range linkPreviews {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<tr><td class=\"max-w-xs truncate\" title=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"flex flex-col items-center gap-2 max-w-full\"><input type=\"hidden\" name=\"url\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(s.Url)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 21, Col: 47}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 14, Col: 49}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"> <a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 templ.SafeURL
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(s.Url))
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/link-preview/v1?url=" + s.Url))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 22, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 16, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" target=\"_blank\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" target=\"_blank\" title=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(truncateUrl(s.Url))
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(s.Url)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 23, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 18, Col: 18}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</a> <input type=\"hidden\" name=\"url\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" class=\"block\"><img src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(s.Url)
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/link-preview/v1?url=" + s.Url)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 25, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 22, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"></td><td>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" alt=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(s.GeneratedAt.Format("2006-01-02 15:04:05"))
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(truncateUrl(s.Url))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 27, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 23, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</td><td>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"max-w-full h-auto rounded-lg transition-shadow\"></a><div class=\"text-xs text-center truncate\" title=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(s.LastAccessedAt.Format("2006-01-02 15:04:05"))
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(s.Url)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 28, Col: 56}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 27, Col: 59}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</td><td class=\"text-center\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(F("%d", *s.AccessCount))
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(truncateUrl(s.Url))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 29, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 28, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</td><td class=\"whitespace-nowrap\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div class=\"text-xs text-gray-500 text-center\"><div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var9 templ.SafeURL
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/link-preview/v1?url=" + s.Url))
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(F("%d", *s.AccessCount))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 32, Col: 59}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 31, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" target=\"_blank\" title=\"View Link Preview\" class=\"btn-neutral\">View</a> <button hx-post=\"/dashboard/link-previews/regenerate\" hx-include=\"closest tr\" hx-confirm=\"Regenerate link preview? This will delete the cached version.\" class=\"btn-submit\" title=\"Regenerate Link Preview\">Regenerate</button> <img class=\"align-middle inline mx-2 cursor-pointer\" hx-confirm=\"Delete this cached link preview?\" hx-include=\"closest tr\" title=\"Delete\" hx-delete=\"/dashboard/link-previews/url\" width=\"24\" height=\"24\" src=\"/static/close.svg\"></td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " views</div></div><div class=\"flex gap-1 flex-wrap justify-center\"><a href=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var10 templ.SafeURL
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(s.Url))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/cachedlinkpreviews.templ`, Line: 35, Col: 33}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" target=\"_blank\" title=\"Visit URL\" class=\"btn-submit text-xs px-2 py-1\">Visit</a> <button hx-confirm=\"Delete this cached link preview?\" hx-include=\"closest div\" title=\"Delete\" hx-delete=\"/dashboard/link-previews/url\" class=\"btn-submit text-xs px-2 py-1\">Delete</button></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</table>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
