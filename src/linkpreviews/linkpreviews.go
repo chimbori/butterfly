@@ -69,6 +69,8 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
 		w.Write(cached)
+		recordLinkPreviewCreated(url)
+
 	} else {
 		ctx, cancel := context.WithTimeout(req.Context(), conf.Config.LinkPreview.Screenshot.Timeout)
 		defer cancel()
@@ -134,6 +136,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
 		w.Write(screenshot)
+		recordLinkPreviewCreated(url)
 	}
 }
 
@@ -162,6 +165,26 @@ func validateUrl(ctx context.Context, q *db.Queries, userUrl string) (validatedU
 	}
 
 	return u.String(), u.Hostname(), nil
+}
+
+// Record when a link preview is created (for the first time)
+func recordLinkPreviewCreated(url string) {
+	queries := db.New(db.Pool)
+	err := queries.RecordLinkPreviewCreated(context.Background(), url)
+	if err != nil {
+		slog.Error("failed to log link preview created", tint.Err(err))
+	}
+	// Don’t return an error to the caller; fulfill the request anyway.
+}
+
+// Record when a link preview is accessed from the cache
+func recordLinkPreviewAccessed(url string) {
+	queries := db.New(db.Pool)
+	err := queries.RecordLinkPreviewAccessed(context.Background(), url)
+	if err != nil {
+		slog.Error("failed to log link preview created", tint.Err(err))
+	}
+	// Don’t return an error to the caller; fulfill the request anyway.
 }
 
 // isAuthorized returns true if the given URL's domain is in the list of authorized domains.

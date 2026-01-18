@@ -11,24 +11,7 @@ import (
 	"github.com/lmittmann/tint"
 )
 
-// GET /dashboard/link-previews - List all domains
-var getDomainsHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	ctx := req.Context()
-	queries := db.New(db.Pool)
-	domains, err := queries.ListDomains(ctx)
-	if err != nil {
-		slog.Error("failed to list domains", tint.Err(err),
-			"method", req.Method,
-			"path", req.URL.Path,
-			"url", req.URL.String(),
-			"status", http.StatusInternalServerError)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	DomainsTempl(domains).Render(ctx, w)
-})
-
-// PUT /dashboard/link-previews - Add a new domain, or update existing one if present.
+// PUT /dashboard/link-previews/domain - Add a new domain, or update existing one if present.
 var putDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	queries := db.New(db.Pool)
@@ -84,10 +67,10 @@ var putDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Re
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	DomainsListTempl(domains).Render(ctx, w)
+	AuthorizedDomainsTempl(domains).Render(ctx, w)
 })
 
-// DELETE /dashboard/link-previews?domain=example.com - Delete a domain
+// DELETE /dashboard/link-previews/domain?domain=example.com - Delete a domain
 var deleteDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	queries := db.New(db.Pool)
@@ -115,7 +98,7 @@ var deleteDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	DomainsListTempl(domains).Render(ctx, w)
+	AuthorizedDomainsTempl(domains).Render(ctx, w)
 })
 
 func isAuthorized(authorizeAction string) *bool {

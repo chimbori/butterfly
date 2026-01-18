@@ -1,0 +1,58 @@
+package dashboard
+
+import "chimbori.dev/butterfly/db"
+
+templ CachedLinkPreviewsTempl(linkPreviews []db.LinkPreview) {
+	<table
+		class="dashboard w-full"
+		id="cached-link-previews"
+		hx-target="#cached-link-previews"
+		hx-swap="innerHTML transition:true"
+	>
+		<tr>
+			<th>URL</th>
+			<th>Generated</th>
+			<th>Accessed</th>
+			<th class="text-center">Access Count</th>
+			<th>Actions</th>
+		</tr>
+		for _, s := range linkPreviews {
+			<tr>
+				<td class="max-w-xs truncate" title={ s.Url }>
+					<a href={ templ.SafeURL(s.Url) } target="_blank">
+						{ truncateUrl(s.Url) }
+					</a>
+					<input type="hidden" name="url" value={ s.Url }/>
+				</td>
+				<td>{ s.GeneratedAt.Format("2006-01-02 15:04:05") }</td>
+				<td>{ s.LastAccessedAt.Format("2006-01-02 15:04:05") }</td>
+				<td class="text-center">{ F("%d", *s.AccessCount) }</td>
+				<td class="whitespace-nowrap">
+					<a
+						href={ templ.SafeURL("/link-preview/v1?url=" + s.Url) }
+						target="_blank"
+						title="View Link Preview"
+						class="btn-neutral"
+					>View</a>
+					<button
+						hx-post="/dashboard/link-previews/regenerate"
+						hx-include="closest tr"
+						hx-confirm="Regenerate link preview? This will delete the cached version."
+						class="btn-submit"
+						title="Regenerate Link Preview"
+					>Regenerate</button>
+					<img
+						class="align-middle inline mx-2 cursor-pointer"
+						hx-confirm="Delete this cached link preview?"
+						hx-include="closest tr"
+						title="Delete"
+						hx-delete="/dashboard/link-previews/url"
+						width="24"
+						height="24"
+						src="/static/close.svg"
+					/>
+				</td>
+			</tr>
+		}
+	</table>
+}

@@ -16,6 +16,14 @@ type Domain struct {
 	Authorized        *bool
 }
 
+type LinkPreview struct {
+	ID             int64
+	Url            string
+	GeneratedAt    *time.Time
+	LastAccessedAt *time.Time
+	AccessCount    *int32
+}
+
 type Log struct {
 	ID            int64
 	LoggedAt      time.Time

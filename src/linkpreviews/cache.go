@@ -66,3 +66,13 @@ func writeToCache(url string, png []byte) (err error) {
 	f.Sync()
 	return nil
 }
+
+// DeleteCached removes a cached screenshot file from disk.
+func DeleteCached(url string) error {
+	cachePath := buildCachePath(url)
+	absPath, err := filepath.Abs(cachePath)
+	if err != nil {
+		return err
+	}
+	return os.Remove(absPath)
+}

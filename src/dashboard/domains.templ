@@ -2,37 +2,13 @@ package dashboard
 
 import "chimbori.dev/butterfly/db"
 
-templ DomainsTempl(domains []db.Domain) {
-	@ContentTempl("Link Previews", NilTemplate()) {
-		<section>
-			<form
-				class="flex"
-				hx-target="#domains-list"
-				hx-swap="innerHTML transition:true"
-			>
-				<input type="text" name="domain" placeholder="example.com" required class="grow"/>
-				<label class="mx-4">
-					<input type="checkbox" name="include_subdomains"/> Include Subdomains
-				</label>
-				<input type="hidden" name="authorized" value="allow"/>
-				<button
-					class="btn-submit"
-					hx-put="/dashboard/link-previews"
-					hx-include="closest form"
-					hx-vals='{"authorized":"allow"}'
-				>Add Domain</button>
-			</form>
-		</section>
-		<section>
-			<div id="domains-list">
-				@DomainsListTempl(domains)
-			</div>
-		</section>
-	}
-}
-
-templ DomainsListTempl(domains []db.Domain) {
-	<table class="dashboard w-full" id="domains-list" hx-target="#domains-list" hx-swap="innerHTML transition:true">
+templ AuthorizedDomainsTempl(domains []db.Domain) {
+	<table
+		class="dashboard w-full"
+		id="authorized-domains"
+		hx-target="#authorized-domains"
+		hx-swap="innerHTML transition:true"
+	>
 		<tr>
 			<th>Domain</th>
 			<th class="text-center">Include Subdomains</th>
@@ -48,7 +24,7 @@ templ DomainsListTempl(domains []db.Domain) {
 				<td class="text-center">
 					<label>
 						<input
-							hx-put="/dashboard/link-previews"
+							hx-put="/dashboard/link-previews/domain"
 							hx-include="closest tr"
 							type="checkbox"
 							name="include_subdomains"
@@ -68,7 +44,7 @@ templ DomainsListTempl(domains []db.Domain) {
 							disabled
 						}
 						hx-include="closest tr"
-						hx-put="/dashboard/link-previews"
+						hx-put="/dashboard/link-previews/domain"
 						hx-vals='{"authorized":"allow"}'
 						class="btn-submit"
 					>Allow</button>
@@ -77,7 +53,7 @@ templ DomainsListTempl(domains []db.Domain) {
 							disabled
 						}
 						hx-include="closest tr"
-						hx-put="/dashboard/link-previews"
+						hx-put="/dashboard/link-previews/domain"
 						hx-vals='{"authorized":"block"}'
 						class="btn-delete"
 					>Block</button>
@@ -86,7 +62,7 @@ templ DomainsListTempl(domains []db.Domain) {
 						hx-confirm="Remove from list?"
 						hx-include="closest tr"
 						title="Remove"
-						hx-delete="/dashboard/link-previews"
+						hx-delete="/dashboard/link-previews/domain"
 						width="24"
 						height="24"
 						src="/static/close.svg"
@@ -95,14 +71,4 @@ templ DomainsListTempl(domains []db.Domain) {
 			</tr>
 		}
 	</table>
-}
-
-func getAuthorizedAttrValue(d db.Domain) string {
-	if d.Authorized == nil {
-		return ""
-	} else if *d.Authorized {
-		return "allow"
-	} else {
-		return "block"
-	}
 }

@@ -1,0 +1,52 @@
+package dashboard
+
+import "chimbori.dev/butterfly/db"
+
+templ LinkPreviewsTempl(domains []db.Domain, linkPreviews []db.LinkPreview) {
+	@ContentTempl("Link Previews", NilTemplate()) {
+		<section>
+			<form
+				class="flex"
+				hx-target="#authorized-domains"
+				hx-swap="innerHTML transition:true"
+			>
+				<input type="text" name="domain" placeholder="example.com" required class="grow"/>
+				<label class="mx-4">
+					<input type="checkbox" name="include_subdomains"/> Include Subdomains
+				</label>
+				<input type="hidden" name="authorized" value="allow"/>
+				<button
+					class="btn-submit"
+					hx-put="/dashboard/link-previews/domain"
+					hx-include="closest form"
+					hx-vals='{"authorized":"allow"}'
+				>Add Domain</button>
+			</form>
+		</section>
+		<section>
+			<h2>Authorized Domains</h2>
+			@AuthorizedDomainsTempl(domains)
+		</section>
+		<section>
+			<h2>Cached Link Previews</h2>
+			@CachedLinkPreviewsTempl(linkPreviews)
+		</section>
+	}
+}
+
+func getAuthorizedAttrValue(d db.Domain) string {
+	if d.Authorized == nil {
+		return ""
+	} else if *d.Authorized {
+		return "allow"
+	} else {
+		return "block"
+	}
+}
+
+func truncateUrl(url string) string {
+	if len(url) > 60 {
+		return url[:57] + "..."
+	}
+	return url
+}
