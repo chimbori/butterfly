@@ -54,7 +54,8 @@ func ReadConfig(configYmlFile string) (AppConfig, error) {
 	}
 
 	c := &AppConfig{}
-	configYmlPath, err := filepath.Abs(configYmlFile)
+	var err error
+	configYmlPath, err = filepath.Abs(configYmlFile)
 	if err != nil {
 		setDefaultsAndPrint(c)
 		return *c, fmt.Errorf("Failed to get path to config file: %w", err)
