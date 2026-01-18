@@ -9,16 +9,16 @@ import (
 	"chimbori.dev/butterfly/core"
 )
 
-var linkPreviewCacheDir string
+var CacheRoot string
 
 func InitCache() {
-	linkPreviewCacheDir = filepath.Join(conf.Config.DataDir, "cache", "link-preview")
+	CacheRoot = filepath.Join(conf.Config.DataDir, "cache", "link-previews")
 }
 
-// findCached attempts to retrieve a cached PNG image for the given URL and selector.
+// findCached attempts to retrieve a cached PNG image for the given URL.
 // An [err] return means the cache has an issue; it does not mean the lookup failed.
-func findCached(url, selector string) (png []byte, err error) {
-	cachePath := buildCachePath(url, selector)
+func findCached(url string) (png []byte, err error) {
+	cachePath := buildCachePath(url)
 	absPath, err := filepath.Abs(cachePath)
 	if err != nil {
 		return nil, err
@@ -42,13 +42,13 @@ func findCached(url, selector string) (png []byte, err error) {
 }
 
 // Shard files using the first two characters of the MD5 to prevent too many files in one directory.
-func buildCachePath(url, selector string) string {
-	md5 := core.MD5(url + selector)
-	return filepath.Join(linkPreviewCacheDir, md5[:2], md5)
+func buildCachePath(url string) string {
+	md5 := core.MD5(url)
+	return filepath.Join(CacheRoot, md5[:2], md5)
 }
 
-func writeToCache(url, selector string, png []byte) (err error) {
-	cachePath := buildCachePath(url, selector)
+func writeToCache(url string, png []byte) (err error) {
+	cachePath := buildCachePath(url)
 	absPath, err := filepath.Abs(cachePath)
 	if err != nil {
 		return err

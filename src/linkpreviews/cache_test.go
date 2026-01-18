@@ -36,9 +36,9 @@ func TestInitCache(t *testing.T) {
 	tempDir := setupTestCache(t)
 	defer cleanupTestCache(t, tempDir)
 
-	expectedCacheDir := filepath.Join(tempDir, "cache", "link-preview")
-	if linkPreviewCacheDir != expectedCacheDir {
-		t.Errorf("Expected cache dir %s, got %s", expectedCacheDir, linkPreviewCacheDir)
+	expectedCacheDir := filepath.Join(tempDir, "cache", "link-previews")
+	if CacheRoot != expectedCacheDir {
+		t.Errorf("Expected cache dir %s, got %s", expectedCacheDir, CacheRoot)
 	}
 }
 
@@ -47,30 +47,26 @@ func TestBuildCachePath(t *testing.T) {
 	defer cleanupTestCache(t, tempDir)
 
 	tests := []struct {
-		name     string
-		url      string
-		selector string
+		name string
+		url  string
 	}{
 		{
-			name:     "Simple URL and selector",
-			url:      "https://example.com",
-			selector: "#content",
+			name: "Simple URL and selector",
+			url:  "https://example.com",
 		},
 		{
-			name:     "Complex URL with query params",
-			url:      "https://example.com/page?param=value",
-			selector: "#main-content",
+			name: "Complex URL with query params",
+			url:  "https://example.com/page?param=value",
 		},
 		{
-			name:     "URL with fragment",
-			url:      "https://example.com/page#section",
-			selector: "body",
+			name: "URL with fragment",
+			url:  "https://example.com/page#section",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cachePath := buildCachePath(tt.url, tt.selector)
+			cachePath := buildCachePath(tt.url)
 
 			// Verify path contains the cache directory
 			if !filepath.IsAbs(cachePath) {
@@ -79,7 +75,7 @@ func TestBuildCachePath(t *testing.T) {
 			}
 
 			// Check that path is within the cache directory
-			relPath, err := filepath.Rel(linkPreviewCacheDir, cachePath)
+			relPath, err := filepath.Rel(CacheRoot, cachePath)
 			if err != nil {
 				t.Errorf("Cache path not within cache directory: %s", err)
 			}
@@ -95,13 +91,13 @@ func TestBuildCachePath(t *testing.T) {
 			}
 
 			// Verify the path is consistent for same inputs
-			cachePath2 := buildCachePath(tt.url, tt.selector)
+			cachePath2 := buildCachePath(tt.url)
 			if cachePath != cachePath2 {
 				t.Errorf("Cache path not consistent: %s != %s", cachePath, cachePath2)
 			}
 
 			// Verify different inputs produce different paths
-			differentPath := buildCachePath(tt.url+"different", tt.selector)
+			differentPath := buildCachePath(tt.url + "different")
 			if cachePath == differentPath {
 				t.Errorf("Different inputs produced same cache path")
 			}
@@ -114,17 +110,16 @@ func TestWriteToCache_AndFindCached(t *testing.T) {
 	defer cleanupTestCache(t, tempDir)
 
 	url := "https://example.com/test"
-	selector := "#content"
 	testData := []byte("test PNG data")
 
 	// Write to cache
-	err := writeToCache(url, selector, testData)
+	err := writeToCache(url, testData)
 	if err != nil {
 		t.Fatalf("Failed to write to cache: %s", err)
 	}
 
 	// Find cached data
-	cached, err := findCached(url, selector)
+	cached, err := findCached(url)
 	if err != nil {
 		t.Fatalf("Failed to find cached data: %s", err)
 	}
@@ -144,10 +139,9 @@ func TestFindCached_NotFound(t *testing.T) {
 	defer cleanupTestCache(t, tempDir)
 
 	url := "https://nonexistent.com"
-	selector := "#missing"
 
 	// Try to find non-existent cached data
-	cached, err := findCached(url, selector)
+	cached, err := findCached(url)
 	if err != nil {
 		t.Fatalf("Expected no error for cache miss, got: %s", err)
 	}
@@ -162,16 +156,15 @@ func TestWriteToCache_CreatesDirectories(t *testing.T) {
 	defer cleanupTestCache(t, tempDir)
 
 	url := "https://example.com/nested/path"
-	selector := "#deep-content"
 	testData := []byte("nested cache data")
 
 	// Verify cache directory doesn’t exist yet
-	cachePath := buildCachePath(url, selector)
+	cachePath := buildCachePath(url)
 	absPath, _ := filepath.Abs(cachePath)
 	dirPath := filepath.Dir(absPath)
 
 	// Write to cache (should create directories)
-	err := writeToCache(url, selector, testData)
+	err := writeToCache(url, testData)
 	if err != nil {
 		t.Fatalf("Failed to write to cache: %s", err)
 	}
@@ -187,7 +180,7 @@ func TestWriteToCache_CreatesDirectories(t *testing.T) {
 	}
 
 	// Verify file exists and contains correct data
-	cached, err := findCached(url, selector)
+	cached, err := findCached(url)
 	if err != nil {
 		t.Fatalf("Failed to find cached data: %s", err)
 	}
@@ -202,18 +195,17 @@ func TestWriteToCache_OverwritesExisting(t *testing.T) {
 	defer cleanupTestCache(t, tempDir)
 
 	url := "https://example.com/update"
-	selector := "#content"
 	originalData := []byte("original data")
 	updatedData := []byte("updated data")
 
 	// Write original data
-	err := writeToCache(url, selector, originalData)
+	err := writeToCache(url, originalData)
 	if err != nil {
 		t.Fatalf("Failed to write original data: %s", err)
 	}
 
 	// Verify original data
-	cached, err := findCached(url, selector)
+	cached, err := findCached(url)
 	if err != nil {
 		t.Fatalf("Failed to find original cached data: %s", err)
 	}
@@ -222,13 +214,13 @@ func TestWriteToCache_OverwritesExisting(t *testing.T) {
 	}
 
 	// Overwrite with updated data
-	err = writeToCache(url, selector, updatedData)
+	err = writeToCache(url, updatedData)
 	if err != nil {
 		t.Fatalf("Failed to write updated data: %s", err)
 	}
 
 	// Verify updated data
-	cached, err = findCached(url, selector)
+	cached, err = findCached(url)
 	if err != nil {
 		t.Fatalf("Failed to find updated cached data: %s", err)
 	}
@@ -242,17 +234,16 @@ func TestWriteToCache_EmptyData(t *testing.T) {
 	defer cleanupTestCache(t, tempDir)
 
 	url := "https://example.com/empty"
-	selector := "#content"
 	emptyData := []byte{}
 
 	// Write empty data
-	err := writeToCache(url, selector, emptyData)
+	err := writeToCache(url, emptyData)
 	if err != nil {
 		t.Fatalf("Failed to write empty data: %s", err)
 	}
 
 	// Find cached data
-	cached, err := findCached(url, selector)
+	cached, err := findCached(url)
 	if err != nil {
 		t.Fatalf("Failed to find cached data: %s", err)
 	}
@@ -272,12 +263,10 @@ func TestBuildCachePath_Sharding(t *testing.T) {
 
 	// Test that files are sharded using first 2 characters of MD5
 	url := "https://example.com/shard-test"
-	selector := "#content"
-
-	cachePath := buildCachePath(url, selector)
+	cachePath := buildCachePath(url)
 
 	// Get relative path from cache dir
-	relPath, err := filepath.Rel(linkPreviewCacheDir, cachePath)
+	relPath, err := filepath.Rel(CacheRoot, cachePath)
 	if err != nil {
 		t.Fatalf("Failed to get relative path: %s", err)
 	}
@@ -297,44 +286,5 @@ func TestBuildCachePath_Sharding(t *testing.T) {
 		if relPath[2] != '/' && relPath[2] != '\\' {
 			t.Errorf("Expected sharding directory separator at position 2, got: %c", relPath[2])
 		}
-	}
-}
-
-func TestFindCached_DifferentSelectorsSamePath(t *testing.T) {
-	tempDir := setupTestCache(t)
-	defer cleanupTestCache(t, tempDir)
-
-	url := "https://example.com/page"
-	selector1 := "#content1"
-	selector2 := "#content2"
-	data1 := []byte("content 1 data")
-	data2 := []byte("content 2 data")
-
-	// Write data with different selectors
-	err := writeToCache(url, selector1, data1)
-	if err != nil {
-		t.Fatalf("Failed to write data1: %s", err)
-	}
-
-	err = writeToCache(url, selector2, data2)
-	if err != nil {
-		t.Fatalf("Failed to write data2: %s", err)
-	}
-
-	// Verify both can be retrieved independently
-	cached1, err := findCached(url, selector1)
-	if err != nil {
-		t.Fatalf("Failed to find cached data1: %s", err)
-	}
-	if string(cached1) != string(data1) {
-		t.Errorf("Data1 mismatch: expected %s, got %s", string(data1), string(cached1))
-	}
-
-	cached2, err := findCached(url, selector2)
-	if err != nil {
-		t.Fatalf("Failed to find cached data2: %s", err)
-	}
-	if string(cached2) != string(data2) {
-		t.Errorf("Data2 mismatch: expected %s, got %s", string(data2), string(cached2))
 	}
 }

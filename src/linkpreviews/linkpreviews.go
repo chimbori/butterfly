@@ -46,7 +46,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 	// Only check cache if enabled
 	if *conf.Config.LinkPreview.Cache.Enabled {
 		var err error
-		cached, err = findCached(url, selector)
+		cached, err = findCached(url)
 		if err != nil {
 			err = fmt.Errorf("url: %s, %w", url, err)
 			slog.Error("error during cache lookup", tint.Err(err),
@@ -113,7 +113,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 
 		// Only write to cache if enabled
 		if *conf.Config.LinkPreview.Cache.Enabled {
-			err = writeToCache(url, selector, screenshot)
+			err = writeToCache(url, screenshot)
 			if err != nil {
 				err = fmt.Errorf("error writing to cache: %s, %w", url, err)
 				slog.Error("error writing to cache", tint.Err(err),
