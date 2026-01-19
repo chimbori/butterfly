@@ -10,7 +10,7 @@ templ CachedLinkPreviewsTempl(linkPreviews []db.LinkPreview) {
 		class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-8 p-4"
 	>
 		for _, s := range linkPreviews {
-			<div class="flex flex-col items-center gap-2 max-w-full">
+			<div class="link-preview flex flex-col items-center gap-2 max-w-full">
 				<input type="hidden" name="url" value={ s.Url }/>
 				<a
 					href={ templ.SafeURL("/link-preview/v1?url=" + s.Url) }
@@ -39,7 +39,7 @@ templ CachedLinkPreviewsTempl(linkPreviews []db.LinkPreview) {
 					>Visit</a>
 					<button
 						hx-confirm="Delete this cached link preview?"
-						hx-include="closest div"
+						hx-include="closest .link-preview"
 						title="Delete"
 						hx-delete="/dashboard/link-previews/url"
 						class="btn-submit text-xs px-2 py-1"

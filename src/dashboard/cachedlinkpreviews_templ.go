@@ -37,7 +37,7 @@ func CachedLinkPreviewsTempl(linkPreviews []db.LinkPreview) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, s := range linkPreviews {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"flex flex-col items-center gap-2 max-w-full\"><input type=\"hidden\" name=\"url\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"link-preview flex flex-col items-center gap-2 max-w-full\"><input type=\"hidden\" name=\"url\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -154,7 +154,7 @@ func CachedLinkPreviewsTempl(linkPreviews []db.LinkPreview) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" target=\"_blank\" title=\"Visit URL\" class=\"btn-submit text-xs px-2 py-1\">Visit</a> <button hx-confirm=\"Delete this cached link preview?\" hx-include=\"closest div\" title=\"Delete\" hx-delete=\"/dashboard/link-previews/url\" class=\"btn-submit text-xs px-2 py-1\">Delete</button></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" target=\"_blank\" title=\"Visit URL\" class=\"btn-submit text-xs px-2 py-1\">Visit</a> <button hx-confirm=\"Delete this cached link preview?\" hx-include=\"closest .link-preview\" title=\"Delete\" hx-delete=\"/dashboard/link-previews/url\" class=\"btn-submit text-xs px-2 py-1\">Delete</button></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
