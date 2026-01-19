@@ -17,14 +17,14 @@ func SetupHandlers(mux *http.ServeMux) {
 
 	mux.Handle("GET /dashboard", chain.Then(homeHandler))
 
-	mux.Handle("GET /dashboard/link-previews", chain.Then(linkPreviewsHandler))
+	mux.Handle("GET /dashboard/link-previews", chain.Then(linkPreviewsPageHandler))
 
 	mux.Handle("PUT /dashboard/link-previews/domain", chain.Then(putDomainHandler))
 	mux.Handle("DELETE /dashboard/link-previews/domain", chain.Then(deleteDomainHandler))
 
-	mux.Handle("GET /dashboard/link-previews/list", chain.Then(getCachedLinkPreviewsHandler))
-	mux.Handle("POST /dashboard/link-previews/regenerate", chain.Then(regenerateCachedLinkPreviewHandler))
-	mux.Handle("DELETE /dashboard/link-previews/url", chain.Then(deleteCachedLinkPreviewHandler))
+	mux.Handle("GET /dashboard/link-previews/list", chain.Then(linkPreviewsListHandler))
+	mux.Handle("POST /dashboard/link-previews/regenerate", chain.Then(regenerateLinkPreviewHandler))
+	mux.Handle("DELETE /dashboard/link-previews/url", chain.Then(deleteLinkPreviewHandler))
 
 	mux.Handle("GET /dashboard/logs", chain.Then(logsHandler))
 	mux.Handle("GET /dashboard/logs/data", chain.Then(logsDataHandler))

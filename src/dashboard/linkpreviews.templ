@@ -2,7 +2,7 @@ package dashboard
 
 import "chimbori.dev/butterfly/db"
 
-templ LinkPreviewsTempl(domains []db.Domain, linkPreviews []db.LinkPreview) {
+templ LinkPreviewsPageTempl(domains []db.Domain, linkPreviews []db.LinkPreview) {
 	@ContentTempl("Link Previews", NilTemplate()) {
 		<section>
 			<form
@@ -29,9 +29,57 @@ templ LinkPreviewsTempl(domains []db.Domain, linkPreviews []db.LinkPreview) {
 		</section>
 		<section>
 			<h2>Cached Link Previews</h2>
-			@CachedLinkPreviewsTempl(linkPreviews)
+			@LinkPreviewsListTempl(linkPreviews)
 		</section>
 	}
+}
+
+templ LinkPreviewsListTempl(linkPreviews []db.LinkPreview) {
+	<div
+		id="cached-link-previews"
+		hx-target="#cached-link-previews"
+		hx-swap="innerHTML transition:true"
+		class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-8 p-4"
+	>
+		for _, s := range linkPreviews {
+			<div class="link-preview flex flex-col items-center gap-2 max-w-full">
+				<input type="hidden" name="url" value={ s.Url }/>
+				<a
+					href={ templ.SafeURL("/link-preview/v1?url=" + s.Url) }
+					target="_blank"
+					title={ s.Url }
+					class="block"
+				>
+					<img
+						src={ "/link-preview/v1?url=" + s.Url }
+						alt={ truncateUrl(s.Url) }
+						class="max-w-full h-auto rounded-lg transition-shadow"
+					/>
+				</a>
+				<div class="text-xs text-center truncate" title={ s.Url }>
+					{ truncateUrl(s.Url) }
+				</div>
+				<div class="text-xs text-gray-500 text-center">
+					<div>{ F("%d", *s.AccessCount) } views</div>
+				</div>
+				<div class="flex gap-1 flex-wrap justify-center">
+					<a
+						href={ templ.SafeURL(s.Url) }
+						target="_blank"
+						title="Visit URL"
+						class="btn-submit text-xs px-2 py-1"
+					>Visit</a>
+					<button
+						hx-confirm="Delete this cached link preview?"
+						hx-include="closest .link-preview"
+						title="Delete"
+						hx-delete="/dashboard/link-previews/url"
+						class="btn-submit text-xs px-2 py-1"
+					>Delete</button>
+				</div>
+			</div>
+		}
+	</div>
 }
 
 func getAuthorizedAttrValue(d db.Domain) string {
