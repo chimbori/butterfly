@@ -1,0 +1,59 @@
+package dashboard
+
+import "chimbori.dev/butterfly/db"
+
+templ QrCodesPageTempl(qrCodes []db.QrCode) {
+	@ContentTempl("QR Codes", NilTemplate()) {
+		<section>
+			@QrCodesListTempl(qrCodes)
+		</section>
+	}
+}
+
+templ QrCodesListTempl(qrCodes []db.QrCode) {
+	<div
+		id="qr-codes-list"
+		hx-target="#qr-codes-list"
+		hx-swap="outerHTML transition:true"
+		class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-8 p-4"
+	>
+		for _, qr := range qrCodes {
+			<div class="qr-code flex flex-col items-center gap-2 max-w-full">
+				<input type="hidden" name="url" value={ qr.Url }/>
+				<a
+					href={ templ.SafeURL("/qrcode/v1?url=" + qr.Url) }
+					target="_blank"
+					title={ qr.Url }
+					class="block"
+				>
+					<img
+						src={ "/qrcode/v1?url=" + qr.Url }
+						alt={ truncateUrl(qr.Url) }
+						class="max-w-full h-auto rounded-lg transition-shadow"
+					/>
+				</a>
+				<div class="text-xs text-center truncate" title={ qr.Url }>
+					{ truncateUrl(qr.Url) }
+				</div>
+				<div class="text-xs text-gray-500 text-center">
+					<div>{ F("%d", *qr.AccessCount) } views</div>
+				</div>
+				<div class="flex gap-1 flex-wrap justify-center">
+					<a
+						href={ templ.SafeURL(qr.Url) }
+						target="_blank"
+						title="Visit URL"
+						class="btn-submit text-xs px-2 py-1"
+					>Visit</a>
+					<button
+						hx-confirm="Delete this cached QR Code?"
+						hx-include="closest .qr-code"
+						title="Delete"
+						hx-delete="/dashboard/qr-codes/url"
+						class="btn-submit text-xs px-2 py-1"
+					>Delete</button>
+				</div>
+			</div>
+		}
+	</div>
+}

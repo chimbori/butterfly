@@ -28,6 +28,9 @@ func SetupHandlers(mux *http.ServeMux) {
 
 	mux.Handle("GET /dashboard/logs", chain.Then(logsHandler))
 	mux.Handle("GET /dashboard/logs/data", chain.Then(logsDataHandler))
+
+	mux.Handle("GET /dashboard/qr-codes", chain.Then(listQrCodesHandler))
+	mux.Handle("DELETE /dashboard/qr-codes/url", chain.Then(deleteQrCodeHandler))
 }
 
 // GET /dashboard

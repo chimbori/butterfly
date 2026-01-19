@@ -21,6 +21,7 @@ import (
 	"chimbori.dev/butterfly/db"
 	"chimbori.dev/butterfly/embedfs"
 	"chimbori.dev/butterfly/linkpreview"
+	"chimbori.dev/butterfly/qrcode"
 	"chimbori.dev/butterfly/slogdb"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/lmittmann/tint"
@@ -76,6 +77,7 @@ func main() {
 	slog.Info("Database error logging enabled")
 
 	linkpreview.InitCache()
+	qrcode.InitCache()
 
 	// Set up a graceful cleanup for when the process is terminated.
 	signalCh := make(chan os.Signal, 1)
@@ -96,6 +98,7 @@ func main() {
 		IndexTempl().Render(req.Context(), w)
 	})
 	linkpreview.SetupHandlers(mux)
+	qrcode.SetupHandlers(mux)
 	dashboard.SetupHandlers(mux)
 
 	addr := net.JoinHostPort(conf.Config.Web.Host, strconv.Itoa(conf.Config.Web.Port))
