@@ -76,6 +76,11 @@ tasks:
     cmds:
       - bunzip2 butterfly.sql.bz2 --stdout | psql "postgresql://chimbori:chimbori@localhost:5432/butterfly"
 
+  psql:
+    desc: Start pSQL to make raw queries to the database
+    cmds:
+      - psql "postgresql://chimbori:chimbori@localhost:5432/butterfly"
+
   templ:
     desc: Regenerate Templ templates
     dir: "src"
@@ -113,7 +118,8 @@ tasks:
       CGO_CFLAGS: "-DHAVE_STRCHRNUL -mmacosx-version-min=15.4"
       MACOSX_DEPLOYMENT_TARGET: "15.4"
     cmds:
-      - brew install tailwindcss
+      - brew install tailwindcss libpq
+      - brew link libpq --force
       - go install github.com/a-h/templ/cmd/templ@latest
       - go install golang.org/x/tools/cmd/goimports@latest
       - go install mvdan.cc/gofumpt@latest
