@@ -21,10 +21,11 @@ INSERT INTO domains (domain, include_subdomains, authorized, updated_at)
 DELETE FROM domains
   WHERE domain = $1;
 
--- name: DeleteStaleDomainsOlderThan :one
+-- name: DeleteUnauthorizedStaleDomains :one
 WITH deleted AS (
   DELETE FROM domains
     WHERE updated_at < NOW() - $1::interval
+    AND authorized IS NULL OR authorized = FALSE
     RETURNING _id
   )
   SELECT COUNT(*) from deleted;

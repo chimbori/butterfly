@@ -20,7 +20,7 @@ func PerformMaintenance() {
 		Microseconds: 24 * 60 * 60 * 1000000, // 24 hours in microseconds
 		Valid:        true,
 	}
-	deletedDomains, err := queries.DeleteStaleDomainsOlderThan(ctx, interval)
+	deletedDomains, err := queries.DeleteUnauthorizedStaleDomains(ctx, interval)
 	if err != nil {
 		slog.Error("failed to delete stale domains", tint.Err(err))
 		return

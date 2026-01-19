@@ -21,17 +21,18 @@ func (q *Queries) DeleteDomain(ctx context.Context, domain string) error {
 	return err
 }
 
-const deleteStaleDomainsOlderThan = `-- name: DeleteStaleDomainsOlderThan :one
+const deleteUnauthorizedStaleDomains = `-- name: DeleteUnauthorizedStaleDomains :one
 WITH deleted AS (
   DELETE FROM domains
     WHERE updated_at < NOW() - $1::interval
+    AND authorized IS NULL OR authorized = FALSE
     RETURNING _id
   )
   SELECT COUNT(*) from deleted
 `
 
-func (q *Queries) DeleteStaleDomainsOlderThan(ctx context.Context, dollar_1 pgtype.Interval) (int64, error) {
-	row := q.db.QueryRow(ctx, deleteStaleDomainsOlderThan, dollar_1)
+func (q *Queries) DeleteUnauthorizedStaleDomains(ctx context.Context, dollar_1 pgtype.Interval) (int64, error) {
+	row := q.db.QueryRow(ctx, deleteUnauthorizedStaleDomains, dollar_1)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
