@@ -95,7 +95,7 @@ func LinkPreviewsListTempl(linkPreviews []db.LinkPreview) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"cached-link-previews\" hx-target=\"#cached-link-previews\" hx-swap=\"innerHTML transition:true\" class=\"grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-8 p-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"cached-link-previews\" hx-target=\"#cached-link-previews\" hx-swap=\"outerHTML transition:true\" class=\"grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-8 p-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

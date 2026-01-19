@@ -38,7 +38,7 @@ templ LinkPreviewsListTempl(linkPreviews []db.LinkPreview) {
 	<div
 		id="cached-link-previews"
 		hx-target="#cached-link-previews"
-		hx-swap="innerHTML transition:true"
+		hx-swap="outerHTML transition:true"
 		class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-8 p-4"
 	>
 		for _, s := range linkPreviews {
