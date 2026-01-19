@@ -1,4 +1,4 @@
-package linkpreviews
+package linkpreview
 
 import (
 	"context"

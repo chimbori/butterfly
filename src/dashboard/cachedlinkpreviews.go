@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"chimbori.dev/butterfly/db"
-	"chimbori.dev/butterfly/linkpreviews"
+	"chimbori.dev/butterfly/linkpreview"
 	"github.com/lmittmann/tint"
 )
 
@@ -37,7 +37,7 @@ var deleteCachedLinkPreviewHandler = http.HandlerFunc(func(w http.ResponseWriter
 	}
 
 	// Delete the cached file from disk
-	if err := linkpreviews.DeleteCached(url); err != nil {
+	if err := linkpreview.DeleteCached(url); err != nil {
 		slog.Warn("failed to delete cached file", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
@@ -98,7 +98,7 @@ var regenerateCachedLinkPreviewHandler = http.HandlerFunc(func(w http.ResponseWr
 	}
 
 	// Delete the cached link preview from disk
-	if err := linkpreviews.DeleteCached(url); err != nil {
+	if err := linkpreview.DeleteCached(url); err != nil {
 		slog.Warn("failed to delete cached file for regeneration", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
