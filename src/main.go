@@ -12,6 +12,7 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 
 	_ "time/tzdata"
 
@@ -75,6 +76,18 @@ func main() {
 	// so that all error-level logs are also written to the database.
 	slog.SetDefault(slog.New(slogdb.NewDBHandler(tintHandler, db.Pool)))
 	slog.Info("Database error logging enabled")
+
+	// Set up cron task for routine maintenance.
+	go func() {
+		// Do a one-off cleanup before scheduling a recurring task.
+		dashboard.PerformMaintenance()
+
+		ticker := time.Tick(2 * time.Hour)
+		for {
+			<-ticker
+			dashboard.PerformMaintenance()
+		}
+	}()
 
 	linkpreview.InitCache()
 	qrcode.InitCache()

@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const deleteDomain = `-- name: DeleteDomain :exec
@@ -17,6 +19,22 @@ DELETE FROM domains
 func (q *Queries) DeleteDomain(ctx context.Context, domain string) error {
 	_, err := q.db.Exec(ctx, deleteDomain, domain)
 	return err
+}
+
+const deleteStaleDomainsOlderThan = `-- name: DeleteStaleDomainsOlderThan :one
+WITH deleted AS (
+  DELETE FROM domains
+    WHERE updated_at < NOW() - $1::interval
+    RETURNING _id
+  )
+  SELECT COUNT(*) from deleted
+`
+
+func (q *Queries) DeleteStaleDomainsOlderThan(ctx context.Context, dollar_1 pgtype.Interval) (int64, error) {
+	row := q.db.QueryRow(ctx, deleteStaleDomainsOlderThan, dollar_1)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
 }
 
 const insertUnauthorizedDomain = `-- name: InsertUnauthorizedDomain :exec
