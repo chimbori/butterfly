@@ -2,73 +2,104 @@ package dashboard
 
 import "chimbori.dev/butterfly/db"
 
-templ AuthorizedDomainsTempl(domains []db.Domain) {
-	<table
-		class="dashboard w-full"
-		id="authorized-domains"
-		hx-target="#authorized-domains"
-		hx-swap="outerHTML transition:true"
-	>
-		<tr>
-			<th>Domain</th>
-			<th class="text-center">Include Subdomains</th>
-			<th>Updated</th>
-			<th>Actions</th>
-		</tr>
-		for _, d := range domains {
+templ DomainsPageTempl(domains []db.Domain) {
+	@ContentTempl("Domains", NilTemplate()) {
+		<section>
+			<form
+				class="flex"
+				hx-target="#authorized-domains"
+				hx-swap="innerHTML transition:true"
+			>
+				<input type="text" name="domain" placeholder="example.com" required class="grow"/>
+				<label class="mx-4">
+					<input type="checkbox" name="include_subdomains"/> Include Subdomains
+				</label>
+				<input type="hidden" name="authorized" value="allow"/>
+				<button
+					class="btn-submit"
+					hx-put="/dashboard/domains/domain"
+					hx-include="closest form"
+					hx-vals='{"authorized":"allow"}'
+				>Add Domain</button>
+			</form>
+		</section>
+		<section>
+			@DomainsTempl(domains)
+		</section>
+	}
+}
+
+templ DomainsTempl(domains []db.Domain) {
+	if len(domains) == 0 {
+		No domains authorized yet
+	} else {
+		<table
+			class="dashboard w-full"
+			id="authorized-domains"
+			hx-target="#authorized-domains"
+			hx-swap="outerHTML transition:true"
+		>
 			<tr>
-				<td>
-					{ d.Domain }
-					<input type="hidden" name="domain" value={ d.Domain }/>
-				</td>
-				<td class="text-center">
-					<label>
-						<input
-							hx-put="/dashboard/link-previews/domain"
-							hx-include="closest tr"
-							type="checkbox"
-							name="include_subdomains"
-							checked?={ *d.IncludeSubdomains }
-						/>
-					</label>
-				</td>
-				<td>{ d.UpdatedAt.Format("2006-01-02 15:04:05") }</td>
-				<td>
-					<input
-						type="hidden"
-						name="authorized"
-						value={ getAuthorizedAttrValue(d) }
-					/>
-					<button
-						if d.Authorized != nil && *d.Authorized {
-							disabled
-						}
-						hx-include="closest tr"
-						hx-put="/dashboard/link-previews/domain"
-						hx-vals='{"authorized":"allow"}'
-						class="btn-submit"
-					>Allow</button>
-					<button
-						if d.Authorized != nil && !*d.Authorized {
-							disabled
-						}
-						hx-include="closest tr"
-						hx-put="/dashboard/link-previews/domain"
-						hx-vals='{"authorized":"block"}'
-						class="btn-delete"
-					>Block</button>
-					<img
-						class="align-middle inline mx-2 cursor-pointer"
-						hx-confirm="Remove from list?"
-						hx-include="closest tr"
-						title="Remove"
-						hx-delete="/dashboard/link-previews/domain"
-						width="24"
-						height="24"
-						src="/static/close.svg"
-					/>
-				</td>
+				<th>Domain</th>
+				<th class="text-center">Include Subdomains</th>
+				<th>Updated</th>
+				<th>Actions</th>
 			</tr>
-		}
-	</table>
+			for _, d := range domains {
+				<tr>
+					<td>
+						{ d.Domain }
+						<input type="hidden" name="domain" value={ d.Domain }/>
+					</td>
+					<td class="text-center">
+						<label>
+							<input
+								hx-put="/dashboard/domains/domain"
+								hx-include="closest tr"
+								type="checkbox"
+								name="include_subdomains"
+								checked?={ *d.IncludeSubdomains }
+							/>
+						</label>
+					</td>
+					<td>{ d.UpdatedAt.Format("2006-01-02 15:04:05") }</td>
+					<td>
+						<input
+							type="hidden"
+							name="authorized"
+							value={ getAuthorizedAttrValue(d) }
+						/>
+						<button
+							if d.Authorized != nil && *d.Authorized {
+								disabled
+							}
+							hx-include="closest tr"
+							hx-put="/dashboard/domains/domain"
+							hx-vals='{"authorized":"allow"}'
+							class="btn-submit"
+						>Allow</button>
+						<button
+							if d.Authorized != nil && !*d.Authorized {
+								disabled
+							}
+							hx-include="closest tr"
+							hx-put="/dashboard/domains/domain"
+							hx-vals='{"authorized":"block"}'
+							class="btn-delete"
+						>Block</button>
+						<img
+							class="align-middle inline mx-2 cursor-pointer"
+							hx-confirm="Remove from list?"
+							hx-include="closest tr"
+							title="Remove"
+							hx-delete="/dashboard/domains/domain"
+							width="24"
+							height="24"
+							src="/static/close.svg"
+						/>
+					</td>
+				</tr>
+			}
+		</table>
+	}
 }

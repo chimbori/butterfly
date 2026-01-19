@@ -9,20 +9,10 @@ import (
 	"github.com/lmittmann/tint"
 )
 
-// GET /dashboard/link-previews - List all domains and cached link previews
+// GET /dashboard/link-previews - List all cached link previews
 var linkPreviewsPageHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	queries := db.New(db.Pool)
-	domains, err := queries.ListDomains(ctx)
-	if err != nil {
-		slog.Error("failed to list domains", tint.Err(err),
-			"method", req.Method,
-			"path", req.URL.Path,
-			"url", req.URL.String(),
-			"status", http.StatusInternalServerError)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 	linkPreviews, err := queries.ListLinkPreviews(ctx)
 	if err != nil {
 		slog.Error("failed to list cached link previews", tint.Err(err),
@@ -33,23 +23,7 @@ var linkPreviewsPageHandler = http.HandlerFunc(func(w http.ResponseWriter, req *
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	LinkPreviewsPageTempl(domains, linkPreviews).Render(ctx, w)
-})
-
-// GET /dashboard/link-previews/list - List all cached link previews
-var linkPreviewsListHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	ctx := req.Context()
-	queries := db.New(db.Pool)
-	linkPreviews, err := queries.ListLinkPreviews(ctx)
-	if err != nil {
-		slog.Error("failed to list cached link previews", tint.Err(err),
-			"method", req.Method,
-			"path", req.URL.Path,
-			"status", http.StatusInternalServerError)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	LinkPreviewsListTempl(linkPreviews).Render(ctx, w)
+	LinkPreviewsPageTempl(linkPreviews).Render(ctx, w)
 })
 
 // DELETE /dashboard/link-previews/url?url=... - Delete a cached link preview

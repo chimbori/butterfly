@@ -18,19 +18,18 @@ func SetupHandlers(mux *http.ServeMux) {
 	mux.Handle("GET /dashboard", chain.Then(homeHandler))
 
 	mux.Handle("GET /dashboard/link-previews", chain.Then(linkPreviewsPageHandler))
-
-	mux.Handle("PUT /dashboard/link-previews/domain", chain.Then(putDomainHandler))
-	mux.Handle("DELETE /dashboard/link-previews/domain", chain.Then(deleteDomainHandler))
-
-	mux.Handle("GET /dashboard/link-previews/list", chain.Then(linkPreviewsListHandler))
 	mux.Handle("POST /dashboard/link-previews/regenerate", chain.Then(regenerateLinkPreviewHandler))
 	mux.Handle("DELETE /dashboard/link-previews/url", chain.Then(deleteLinkPreviewHandler))
 
-	mux.Handle("GET /dashboard/logs", chain.Then(logsHandler))
-	mux.Handle("GET /dashboard/logs/data", chain.Then(logsDataHandler))
-
 	mux.Handle("GET /dashboard/qr-codes", chain.Then(listQrCodesHandler))
 	mux.Handle("DELETE /dashboard/qr-codes/url", chain.Then(deleteQrCodeHandler))
+
+	mux.Handle("GET /dashboard/domains", chain.Then(domainsPageHandler))
+	mux.Handle("PUT /dashboard/domains/domain", chain.Then(putDomainHandler))
+	mux.Handle("DELETE /dashboard/domains/domain", chain.Then(deleteDomainHandler))
+
+	mux.Handle("GET /dashboard/logs", chain.Then(logsHandler))
+	mux.Handle("GET /dashboard/logs/data", chain.Then(logsDataHandler))
 }
 
 // GET /dashboard
