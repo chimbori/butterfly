@@ -1,10 +1,12 @@
 package linkpreview
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"strconv"
@@ -58,7 +60,7 @@ func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err 
 
 	if err := chromedp.Run(ctx,
 		chromedp.WaitVisible(selector, chromedp.ByQuery),
-		chromedp.ScreenshotScale(selector, 2.0, &buf, chromedp.NodeVisible),
+		chromedp.ScreenshotScale(selector, 2.0, &buf),
 	); err != nil {
 		return nil, err
 	}
@@ -77,30 +79,36 @@ func takeScreenshotWithTemplate(ctx context.Context, url, templateContent, title
 	}
 	defer cancel()
 
-	dataUrl := "data:text/html;base64," + base64.StdEncoding.EncodeToString([]byte(templateContent))
-	selector := "#link-preview"
+	tmpl, err := template.New("linkpreview").Parse(templateContent)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse template: %w", err)
+	}
 
-	js := fmt.Sprintf(`
-		document.getElementById('title').innerText = %s;
-		document.getElementById('description').innerText = %s;
-		var el = document.querySelector('%s');
-		if (el) {
-			el.style.visibility = '';
-			el.style.display = 'block';
-		}
-	`, strconv.Quote(title), strconv.Quote(description), selector)
+	var tmplBuf bytes.Buffer
+	if err := tmpl.Execute(&tmplBuf, struct {
+		Title       string
+		Description string
+		Url         string
+	}{
+		Title:       title,
+		Description: description,
+		Url:         url,
+	}); err != nil {
+		return nil, fmt.Errorf("failed to execute template: %w", err)
+	}
 
-	var buf []byte
+	println(tmplBuf.String())
+
+	var screenshotBuf []byte
 	if err := chromedp.Run(ctx,
-		chromedp.Navigate(dataUrl),
-		chromedp.Evaluate(js, nil),
-		chromedp.WaitVisible(selector, chromedp.ByQuery),
-		chromedp.ScreenshotScale(selector, 2.0, &buf, chromedp.NodeVisible),
+		chromedp.EmulateViewport(960, 960),
+		chromedp.Navigate("data:text/html;base64,"+base64.StdEncoding.EncodeToString(tmplBuf.Bytes())),
+		chromedp.ScreenshotScale(".card", 2.0, &screenshotBuf),
 	); err != nil {
 		return nil, err
 	}
 
-	return buf, nil
+	return screenshotBuf, nil
 }
 
 // fetchTitleAndDescription retrieves the title and description from a web page.
