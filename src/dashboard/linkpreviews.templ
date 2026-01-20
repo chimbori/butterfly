@@ -21,43 +21,25 @@ templ LinkPreviewsListTempl(linkPreviews []db.LinkPreview) {
 			id="cached-link-previews"
 			hx-target="#cached-link-previews"
 			hx-swap="outerHTML transition:true"
-			class="image-grid"
+			class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-8 p-4"
 		>
 			for _, s := range linkPreviews {
-				<div class="link-preview flex flex-col items-center gap-2 max-w-full overflow-hidden">
+				<div class="link-preview flex flex-col gap-2 max-w-full overflow-hidden">
 					<input type="hidden" name="url" value={ s.Url }/>
-					<a
-						href={ templ.SafeURL("/link-preview/v1?url=" + s.Url) }
-						target="_blank"
-						title={ s.Url }
-						class="block"
-					>
-						<img
-							src={ "/link-preview/v1?url=" + s.Url }
-							alt={ s.Url }
-							class="max-w-full h-auto rounded-lg transition-shadow"
-						/>
+					<a href={ s.Url } target="_blank" title={ s.Url }>
+						<img src={ "/link-preview/v1?url=" + s.Url } alt={ s.Url } class="max-w-full h-auto rounded-2xl"/>
 					</a>
-					<div class="text-xs text-center text-wrap" title={ s.Url }>
-						@templ.Raw(strings.ReplaceAll(s.Url, "/", "<wbr>/"))
-					</div>
-					<div class="text-xs text-gray-500 text-center">
-						<div>{ F("%d", *s.AccessCount) } views</div>
-					</div>
-					<div class="flex gap-1 flex-wrap justify-center">
-						<a
-							href={ templ.SafeURL(s.Url) }
-							target="_blank"
-							title="Visit URL"
-							class="btn-submit text-xs px-2 py-1"
-						>Visit</a>
+					<div class="flex flex-row">
+						<div class="h-8 px-2 grow text-xs line-clamp-2" title={ s.Url }>
+							@templ.Raw(strings.ReplaceAll(s.Url, "/", "<wbr>/"))
+						</div>
 						<button
 							hx-confirm="Delete this cached link preview?"
 							hx-include="closest .link-preview"
-							title="Delete"
 							hx-delete="/dashboard/link-previews/url"
-							class="btn-submit text-xs px-2 py-1"
-						>Delete</button>
+							title="Delete"
+							class="btn-submit size-8 p-2 flex-shrink-0 flex items-center justify-center"
+						><img src="/static/delete.svg" class="size-16"/></button>
 					</div>
 				</div>
 			}

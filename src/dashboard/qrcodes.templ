@@ -21,43 +21,25 @@ templ QrCodesListTempl(qrCodes []db.QrCode) {
 			id="qr-codes-list"
 			hx-target="#qr-codes-list"
 			hx-swap="outerHTML transition:true"
-			class="image-grid"
+			class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-8 p-4"
 		>
 			for _, qr := range qrCodes {
-				<div class="qr-code flex flex-col items-center gap-2 max-w-full overflow-hidden">
+				<div class="qr-code flex flex-col gap-2 max-w-full overflow-hidden">
 					<input type="hidden" name="url" value={ qr.Url }/>
-					<a
-						href={ templ.SafeURL("/qrcode/v1?url=" + qr.Url) }
-						target="_blank"
-						title={ qr.Url }
-						class="block"
-					>
-						<img
-							src={ "/qrcode/v1?url=" + qr.Url }
-							alt={ qr.Url }
-							class="max-w-full h-auto rounded-lg transition-shadow"
-						/>
+					<a href={ qr.Url } target="_blank" title={ qr.Url } class="block">
+						<img src={ "/qrcode/v1?url=" + qr.Url } alt={ qr.Url } class="max-w-full h-auto rounded-xl"/>
 					</a>
-					<div class="text-xs text-center truncate" title={ qr.Url }>
-						@templ.Raw(strings.ReplaceAll(qr.Url, "/", "<wbr>/"))
-					</div>
-					<div class="text-xs text-gray-500 text-center">
-						<div>{ F("%d", *qr.AccessCount) } views</div>
-					</div>
-					<div class="flex gap-1 flex-wrap justify-center">
-						<a
-							href={ templ.SafeURL(qr.Url) }
-							target="_blank"
-							title="Visit URL"
-							class="btn-submit text-xs px-2 py-1"
-						>Visit</a>
+					<div class="flex flex-row">
+						<div class="h-8 px-2 grow text-xs line-clamp-2" title={ qr.Url }>
+							@templ.Raw(strings.ReplaceAll(qr.Url, "/", "<wbr>/"))
+						</div>
 						<button
 							hx-confirm="Delete this cached QR Code?"
 							hx-include="closest .qr-code"
-							title="Delete"
 							hx-delete="/dashboard/qr-codes/url"
-							class="btn-submit text-xs px-2 py-1"
-						>Delete</button>
+							title="Delete"
+							class="btn-submit size-8 p-2 flex-shrink-0 flex items-center justify-center"
+						><img src="/static/delete.svg" class="size-16"/></button>
 					</div>
 				</div>
 			}

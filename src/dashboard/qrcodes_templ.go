@@ -95,12 +95,12 @@ func QrCodesListTempl(qrCodes []db.QrCode) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"qr-codes-list\" hx-target=\"#qr-codes-list\" hx-swap=\"outerHTML transition:true\" class=\"image-grid\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"qr-codes-list\" hx-target=\"#qr-codes-list\" hx-swap=\"outerHTML transition:true\" class=\"grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-8 p-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, qr := range qrCodes {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"qr-code flex flex-col items-center gap-2 max-w-full overflow-hidden\"><input type=\"hidden\" name=\"url\" value=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"qr-code flex flex-col gap-2 max-w-full overflow-hidden\"><input type=\"hidden\" name=\"url\" value=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -118,9 +118,9 @@ func QrCodesListTempl(qrCodes []db.QrCode) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 templ.SafeURL
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/qrcode/v1?url=" + qr.Url))
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(qr.Url)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/qrcodes.templ`, Line: 30, Col: 54}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/qrcodes.templ`, Line: 29, Col: 21}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -133,7 +133,7 @@ func QrCodesListTempl(qrCodes []db.QrCode) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(qr.Url)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/qrcodes.templ`, Line: 32, Col: 20}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/qrcodes.templ`, Line: 29, Col: 54}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -146,7 +146,7 @@ func QrCodesListTempl(qrCodes []db.QrCode) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("/qrcode/v1?url=" + qr.Url)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/qrcodes.templ`, Line: 36, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/qrcodes.templ`, Line: 30, Col: 43}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -159,20 +159,20 @@ func QrCodesListTempl(qrCodes []db.QrCode) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(qr.Url)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/qrcodes.templ`, Line: 37, Col: 19}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/qrcodes.templ`, Line: 30, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"max-w-full h-auto rounded-lg transition-shadow\"></a><div class=\"text-xs text-center truncate\" title=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"max-w-full h-auto rounded-xl\"></a><div class=\"flex flex-row\"><div class=\"h-8 px-2 grow text-xs line-clamp-2\" title=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(qr.Url)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/qrcodes.templ`, Line: 41, Col: 61}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/qrcodes.templ`, Line: 33, Col: 68}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -186,38 +186,12 @@ func QrCodesListTempl(qrCodes []db.QrCode) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div><div class=\"text-xs text-gray-500 text-center\"><div>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(F("%d", *qr.AccessCount))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/qrcodes.templ`, Line: 45, Col: 37}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " views</div></div><div class=\"flex gap-1 flex-wrap justify-center\"><a href=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var11 templ.SafeURL
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(qr.Url))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/qrcodes.templ`, Line: 49, Col: 35}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" target=\"_blank\" title=\"Visit URL\" class=\"btn-submit text-xs px-2 py-1\">Visit</a> <button hx-confirm=\"Delete this cached QR Code?\" hx-include=\"closest .qr-code\" title=\"Delete\" hx-delete=\"/dashboard/qr-codes/url\" class=\"btn-submit text-xs px-2 py-1\">Delete</button></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div><button hx-confirm=\"Delete this cached QR Code?\" hx-include=\"closest .qr-code\" hx-delete=\"/dashboard/qr-codes/url\" title=\"Delete\" class=\"btn-submit size-8 p-2 flex-shrink-0 flex items-center justify-center\"><img src=\"/static/delete.svg\" class=\"size-16\"></button></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
