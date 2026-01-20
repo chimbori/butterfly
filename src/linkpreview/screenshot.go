@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"chimbori.dev/butterfly/conf"
 	"github.com/chromedp/chromedp"
@@ -103,6 +104,8 @@ func takeScreenshotWithTemplate(ctx context.Context, url, templateContent, title
 	if err := chromedp.Run(ctx,
 		chromedp.EmulateViewport(960, 960),
 		chromedp.Navigate("data:text/html;base64,"+base64.StdEncoding.EncodeToString(tmplBuf.Bytes())),
+		chromedp.WaitVisible(".card", chromedp.ByQuery),
+		chromedp.Sleep(time.Second), // Allow fonts to finish downloading.
 		chromedp.ScreenshotScale(".card", 2.0, &screenshotBuf),
 	); err != nil {
 		return nil, err

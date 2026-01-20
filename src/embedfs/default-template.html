@@ -1,6 +1,8 @@
 <html>
 
 <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
   <style>
     * {
@@ -16,26 +18,35 @@
       background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
       padding: 48px;
       color: #fff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    main {
+      padding: 48px;
+      min-height: 540px;
     }
 
     h1 {
       font-size: 72px;
       font-weight: 600;
-      margin-bottom: 36px;
+      margin-bottom: 42px;
+      line-clamp: 2;
     }
 
     h2 {
-      font-size: 60px;
+      font-size: 48px;
+      line-height: 1.5em;
       font-weight: 400;
+      line-clamp: 2;
     }
   </style>
 </head>
 
 <body>
-  <div class="card" style="padding:48px;">
+  <main class="card">
     <h1>{{.Title}}</h1>
     <h2>{{.Description}}</h2>
-  </div>
+  </main>
 </body>
 
 </html>
