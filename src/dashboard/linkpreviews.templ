@@ -1,6 +1,9 @@
 package dashboard
 
-import "chimbori.dev/butterfly/db"
+import (
+	"chimbori.dev/butterfly/db"
+	"strings"
+)
 
 templ LinkPreviewsPageTempl(linkPreviews []db.LinkPreview) {
 	@ContentTempl("Link Previews", NilTemplate()) {
@@ -18,10 +21,10 @@ templ LinkPreviewsListTempl(linkPreviews []db.LinkPreview) {
 			id="cached-link-previews"
 			hx-target="#cached-link-previews"
 			hx-swap="outerHTML transition:true"
-			class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-8 p-4"
+			class="image-grid"
 		>
 			for _, s := range linkPreviews {
-				<div class="link-preview flex flex-col items-center gap-2 max-w-full">
+				<div class="link-preview flex flex-col items-center gap-2 max-w-full overflow-hidden">
 					<input type="hidden" name="url" value={ s.Url }/>
 					<a
 						href={ templ.SafeURL("/link-preview/v1?url=" + s.Url) }
@@ -31,12 +34,12 @@ templ LinkPreviewsListTempl(linkPreviews []db.LinkPreview) {
 					>
 						<img
 							src={ "/link-preview/v1?url=" + s.Url }
-							alt={ truncateUrl(s.Url) }
+							alt={ s.Url }
 							class="max-w-full h-auto rounded-lg transition-shadow"
 						/>
 					</a>
-					<div class="text-xs text-center truncate" title={ s.Url }>
-						{ truncateUrl(s.Url) }
+					<div class="text-xs text-center text-wrap" title={ s.Url }>
+						@templ.Raw(strings.ReplaceAll(s.Url, "/", "<wbr>/"))
 					</div>
 					<div class="text-xs text-gray-500 text-center">
 						<div>{ F("%d", *s.AccessCount) } views</div>
@@ -70,11 +73,4 @@ func getAuthorizedAttrValue(d db.Domain) string {
 	} else {
 		return "block"
 	}
-}
-
-func truncateUrl(url string) string {
-	if len(url) > 60 {
-		return url[:57] + "..."
-	}
-	return url
 }

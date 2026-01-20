@@ -151,6 +151,9 @@
       border-slate-200 dark:border-slate-900
       text-slate-900 dark:text-slate-100;
   }
+  .image-grid {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-8 p-4;
+  }
   .btn-neutral {
     @apply btn-common text-slate-800 border-theme-dark;
   }

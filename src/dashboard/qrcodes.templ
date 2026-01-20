@@ -1,6 +1,9 @@
 package dashboard
 
-import "chimbori.dev/butterfly/db"
+import (
+	"chimbori.dev/butterfly/db"
+	"strings"
+)
 
 templ QrCodesPageTempl(qrCodes []db.QrCode) {
 	@ContentTempl("QR Codes", NilTemplate()) {
@@ -18,10 +21,10 @@ templ QrCodesListTempl(qrCodes []db.QrCode) {
 			id="qr-codes-list"
 			hx-target="#qr-codes-list"
 			hx-swap="outerHTML transition:true"
-			class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-8 p-4"
+			class="image-grid"
 		>
 			for _, qr := range qrCodes {
-				<div class="qr-code flex flex-col items-center gap-2 max-w-full">
+				<div class="qr-code flex flex-col items-center gap-2 max-w-full overflow-hidden">
 					<input type="hidden" name="url" value={ qr.Url }/>
 					<a
 						href={ templ.SafeURL("/qrcode/v1?url=" + qr.Url) }
@@ -31,12 +34,12 @@ templ QrCodesListTempl(qrCodes []db.QrCode) {
 					>
 						<img
 							src={ "/qrcode/v1?url=" + qr.Url }
-							alt={ truncateUrl(qr.Url) }
+							alt={ qr.Url }
 							class="max-w-full h-auto rounded-lg transition-shadow"
 						/>
 					</a>
 					<div class="text-xs text-center truncate" title={ qr.Url }>
-						{ truncateUrl(qr.Url) }
+						@templ.Raw(strings.ReplaceAll(qr.Url, "/", "<wbr>/"))
 					</div>
 					<div class="text-xs text-gray-500 text-center">
 						<div>{ F("%d", *qr.AccessCount) } views</div>
