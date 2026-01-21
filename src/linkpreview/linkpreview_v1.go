@@ -105,7 +105,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			if fetchErr != nil {
 				err = fmt.Errorf("fetchTitleAndDescription failed: %w", fetchErr)
 			} else {
-				screenshot, err = takeScreenshotWithTemplate(ctx, url, embedfs.DefaultTemplate, title, description)
+				screenshot, err = takeScreenshotWithTemplate(ctx, embedfs.DefaultTemplate, url, title, description)
 			}
 			if err != nil {
 				err = fmt.Errorf("url: %s, %w", url, err)

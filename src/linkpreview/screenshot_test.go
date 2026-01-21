@@ -210,13 +210,13 @@ func TestTakeScreenshotWithTemplate(t *testing.T) {
 	template := `
 	<html><body>
 	<div id="link-preview" style="width:100px; height:100px; background:red;">
-		<div id="title"></div>
-		<div id="description"></div>
+		<div id="title">{{.Title}}</div>
+		<div id="description">{{.Description}}</div>
 	</div>
 	</body></html>
 	`
 
-	png, err := takeScreenshotWithTemplate(allocCtx, "http://example.com", template, "My Title", "My Desc")
+	png, err := takeScreenshotWithTemplate(allocCtx, template, "https://example.com", "My Title", "My Desc")
 	if err != nil {
 		t.Fatalf("takeScreenshotWithTemplate failed: %v", err)
 	}

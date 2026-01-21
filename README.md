@@ -10,7 +10,7 @@ Butterfly Social is a quick way to auto-generate link preview images (OpenGraph 
    E.g. here’s a [simple example](assets/example.html):
 
     ```html
-    <div id="link-preview" class="hidden w-[960px] card">
+    <div id="link-preview" class="hidden w-[960px]">
       <h1>Butterfly Social</h1>
       <p>Automate social link preview images, sourced directly from your Web pages.</p>
     </div>
