@@ -1,7 +1,7 @@
 services:
   butterfly-db:
     container_name: butterfly-db
-    image: postgres:17
+    image: postgres:18-alpine
     environment:
       POSTGRES_DB: butterfly
       POSTGRES_USER: chimbori
