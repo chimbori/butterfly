@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"chimbori.dev/butterfly/conf"
 	"chimbori.dev/butterfly/core"
@@ -11,6 +12,10 @@ import (
 	"github.com/lmittmann/tint"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var sessionStore = core.NewInMemorySessionStore(24 * time.Hour)
+
+const sessionCookieName = "butterfly_session"
 
 func SetupHandlers(mux *http.ServeMux) {
 	chain := alice.New(authHandler)
@@ -40,6 +45,13 @@ var homeHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request
 // Checks whether the user is authorized, and either returns an error, or executes the passed [http.Handler].
 func authHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if cookie, err := req.Cookie(sessionCookieName); err == nil {
+			if sessionStore.IsValid(cookie.Value) {
+				next.ServeHTTP(w, req)
+				return
+			}
+		}
+
 		reqUsername, reqPassword, ok := req.BasicAuth()
 		if !ok || reqUsername != conf.Config.Dashboard.Username {
 			slog.Warn("no credentials provided", tint.Err(fmt.Errorf("no credentials (from: %s)", core.ReadUserIP(req))),
@@ -61,6 +73,20 @@ func authHandler(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusUnauthorized)
 			ContentTempl("Unauthorized", ErrorTempl("Please provide valid credentials to access this section.")).Render(req.Context(), w)
 			return
+		}
+
+		sessionID, err := sessionStore.Create()
+		if err == nil {
+			http.SetCookie(w, &http.Cookie{
+				Name:     sessionCookieName,
+				Value:    sessionID,
+				Path:     "/",
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
+				MaxAge:   int((24 * time.Hour).Seconds()),
+			})
+		} else {
+			slog.Error("failed to create session", tint.Err(err))
 		}
 
 		next.ServeHTTP(w, req)
