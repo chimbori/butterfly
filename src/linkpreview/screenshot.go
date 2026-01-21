@@ -26,7 +26,7 @@ var ErrMissingSelector = errors.New("selector not found")
 func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err error) {
 	var cancel context.CancelFunc
 	if conf.Config.Debug {
-		ctx, cancel = chromedp.NewContext(ctx, chromedp.WithDebugf(log.Printf))
+		ctx, cancel = chromedp.NewContext(ctx, chromedp.WithErrorf(log.Printf))
 	} else {
 		ctx, cancel = chromedp.NewContext(ctx)
 	}
@@ -75,7 +75,7 @@ func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err 
 func takeScreenshotWithTemplate(ctx context.Context, templateContent, url, title, description string) ([]byte, error) {
 	var cancel context.CancelFunc
 	if conf.Config.Debug {
-		ctx, cancel = chromedp.NewContext(ctx, chromedp.WithDebugf(log.Printf))
+		ctx, cancel = chromedp.NewContext(ctx, chromedp.WithErrorf(log.Printf))
 	} else {
 		ctx, cancel = chromedp.NewContext(ctx)
 	}
