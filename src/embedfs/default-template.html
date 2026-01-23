@@ -27,26 +27,32 @@
       min-height: 540px;
     }
 
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      overflow: hidden;
+    }
+
     h1 {
       font-size: 72px;
       font-weight: 600;
       margin-bottom: 42px;
-      line-clamp: 2;
     }
 
     h2 {
       font-size: 48px;
       line-height: 1.5em;
       font-weight: 400;
-      line-clamp: 2;
     }
   </style>
 </head>
 
 <body>
   <main id="link-preview">
-    <h1>{{.Title}}</h1>
-    <h2>{{.Description}}</h2>
+    <h1 class="line-clamp-3">{{.Title}}</h1>
+    <h2 class="line-clamp-3">{{.Description}}</h2>
   </main>
 </body>
 
