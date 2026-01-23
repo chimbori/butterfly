@@ -1,7 +1,6 @@
 # butterfly.yml
 
 web:
-  host: "localhost" # Set `host` to `localhost` (instead of ``) to prevent the macOS firewall dialog.
   port: 9999
 
 database:

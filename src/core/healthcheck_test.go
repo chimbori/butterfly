@@ -111,7 +111,7 @@ func TestVerifyHealthCheck(t *testing.T) {
 		}
 
 		// Verify healthcheck
-		exitCode := VerifyHealthCheck("localhost", port)
+		exitCode := VerifyHealthCheck(port)
 		if exitCode != 0 {
 			t.Errorf("Expected exit code 0, got %d", exitCode)
 		}
@@ -120,7 +120,7 @@ func TestVerifyHealthCheck(t *testing.T) {
 	t.Run("server not running", func(t *testing.T) {
 		port := 59999 // Use a port that’s unlikely to be in use
 
-		exitCode := VerifyHealthCheck("localhost", port)
+		exitCode := VerifyHealthCheck(port)
 		if exitCode != 1 {
 			t.Errorf("Expected exit code 1 when server is not running, got %d", exitCode)
 		}
@@ -146,7 +146,7 @@ func TestVerifyHealthCheck(t *testing.T) {
 			t.Fatalf("Failed to parse port: %v", err)
 		}
 
-		exitCode := VerifyHealthCheck("localhost", port)
+		exitCode := VerifyHealthCheck(port)
 		if exitCode != 1 {
 			t.Errorf("Expected exit code 1 when server returns error, got %d", exitCode)
 		}
@@ -174,7 +174,7 @@ func TestVerifyHealthCheck(t *testing.T) {
 		}
 
 		// This should timeout and return exit code 1
-		exitCode := VerifyHealthCheck("localhost", port)
+		exitCode := VerifyHealthCheck(port)
 		if exitCode != 1 {
 			t.Errorf("Expected exit code 1 when server times out, got %d", exitCode)
 		}
@@ -199,7 +199,7 @@ func TestVerifyHealthCheck(t *testing.T) {
 		}
 
 		// Verify healthcheck works
-		exitCode := VerifyHealthCheck("localhost", port)
+		exitCode := VerifyHealthCheck(port)
 		if exitCode != 0 {
 			t.Errorf("Expected exit code 0, got %d", exitCode)
 		}

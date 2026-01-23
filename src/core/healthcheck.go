@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -16,8 +15,8 @@ func SetupHealthCheck(mux *http.ServeMux) {
 	})
 }
 
-func VerifyHealthCheck(host string, port int) int {
-	url := "http://" + net.JoinHostPort(host, strconv.Itoa(port)) + "/healthcheck"
+func VerifyHealthCheck(port int) int {
+	url := "http://" + net.JoinHostPort("localhost", fmt.Sprintf("%d", port)) + "/healthcheck"
 	client := http.Client{
 		Timeout: 5 * time.Second,
 	}

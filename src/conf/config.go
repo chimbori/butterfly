@@ -11,7 +11,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"chimbori.dev/butterfly/core"
 	"gopkg.in/yaml.v3"
 )
 
@@ -27,8 +26,7 @@ type AppConfig struct {
 		Url string `yaml:"url"`
 	} `yaml:"database"`
 	Web struct {
-		Host string `yaml:"host"`
-		Port int    `yaml:"port"`
+		Port int `yaml:"port"`
 	} `yaml:"web"`
 	Dashboard struct {
 		Username string `yaml:"username"`
@@ -83,10 +81,6 @@ func ReadConfig(configYmlFile string) (AppConfig, error) {
 
 func setDefaultsAndPrint(c *AppConfig) {
 	c.DataDir = filepath.Dir(configYmlPath)
-	if c.Web.Host == "" {
-		// Don’t replace this by string(…); the net.IP --> string conversion will fail.
-		c.Web.Host = fmt.Sprintf("%s", core.GetOutboundIP())
-	}
 	if c.Web.Port == 0 {
 		c.Web.Port = 9999
 	}

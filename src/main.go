@@ -45,7 +45,7 @@ func main() {
 	}
 
 	if *healthCheckFlag {
-		os.Exit(core.VerifyHealthCheck(conf.Config.Web.Host, conf.Config.Web.Port))
+		os.Exit(core.VerifyHealthCheck(conf.Config.Web.Port))
 	}
 
 	// If debug mode was turned on in the config file, print logs at DEBUG or above.
@@ -114,7 +114,7 @@ func main() {
 	qrcode.SetupHandlers(mux)
 	dashboard.SetupHandlers(mux)
 
-	addr := net.JoinHostPort(conf.Config.Web.Host, strconv.Itoa(conf.Config.Web.Port))
-	slog.Info("Listening", "url", "http://"+addr)
+	addr := net.JoinHostPort("", strconv.Itoa(conf.Config.Web.Port))
+	slog.Info("Listening", "url", "http://localhost"+addr) // Not "https://", since this app does not terminate SSL.
 	log.Fatal(http.ListenAndServe(addr, mux))
 }
