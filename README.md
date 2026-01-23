@@ -100,7 +100,7 @@ services:
       POSTGRES_USER: chimbori
       POSTGRES_PASSWORD: chimbori
     volumes:
-      - $PWD/butterfly-db-data:/var/lib/postgresql/data
+      - $PWD/butterfly-db-data:/var/lib/postgresql
     restart: unless-stopped
 
 volumes:
