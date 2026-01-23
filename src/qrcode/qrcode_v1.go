@@ -16,10 +16,10 @@ import (
 	"github.com/yeqown/go-qrcode/writer/standard"
 )
 
-var cache *core.Cache
+var cache *core.DiskCache
 
 func InitCache() {
-	cache = core.NewCache(filepath.Join(conf.Config.DataDir, "cache", "qr-codes"))
+	cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "qr-codes"))
 }
 
 func SetupHandlers(mux *http.ServeMux) {

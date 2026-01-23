@@ -6,18 +6,18 @@ import (
 	"testing"
 )
 
-func TestNewCache(t *testing.T) {
+func TestNewDiskCache(t *testing.T) {
 	root := t.TempDir()
-	cache := NewCache(root)
+	cache := NewDiskCache(root)
 
 	if cache.Root != root {
 		t.Errorf("Expected root %s, got %s", root, cache.Root)
 	}
 }
 
-func TestCacheWrite(t *testing.T) {
+func TestDiskCacheWrite(t *testing.T) {
 	root := t.TempDir()
-	cache := NewCache(root)
+	cache := NewDiskCache(root)
 	key := "test-key"
 	data := []byte("test data")
 
@@ -34,9 +34,9 @@ func TestCacheWrite(t *testing.T) {
 	}
 }
 
-func TestCacheFind_Hit(t *testing.T) {
+func TestDiskCacheFind_Hit(t *testing.T) {
 	root := t.TempDir()
-	cache := NewCache(root)
+	cache := NewDiskCache(root)
 	key := "test-key"
 	data := []byte("test data")
 
@@ -52,9 +52,9 @@ func TestCacheFind_Hit(t *testing.T) {
 	}
 }
 
-func TestCacheFind_Miss(t *testing.T) {
+func TestDiskCacheFind_Miss(t *testing.T) {
 	root := t.TempDir()
-	cache := NewCache(root)
+	cache := NewDiskCache(root)
 	key := "nonexistent-key"
 
 	found, err := cache.Find(key)
@@ -67,9 +67,9 @@ func TestCacheFind_Miss(t *testing.T) {
 	}
 }
 
-func TestCacheDelete(t *testing.T) {
+func TestDiskCacheDelete(t *testing.T) {
 	root := t.TempDir()
-	cache := NewCache(root)
+	cache := NewDiskCache(root)
 	key := "test-key"
 	data := []byte("test data")
 
@@ -91,9 +91,9 @@ func TestCacheDelete(t *testing.T) {
 	}
 }
 
-func TestCacheBuildPath_Sharding(t *testing.T) {
+func TestDiskCacheBuildPath_Sharding(t *testing.T) {
 	root := t.TempDir()
-	cache := NewCache(root)
+	cache := NewDiskCache(root)
 	key := "test-key"
 
 	path := cache.buildPath(key)
@@ -106,9 +106,9 @@ func TestCacheBuildPath_Sharding(t *testing.T) {
 	}
 }
 
-func TestCacheMultipleKeys(t *testing.T) {
+func TestDiskCacheMultipleKeys(t *testing.T) {
 	root := t.TempDir()
-	cache := NewCache(root)
+	cache := NewDiskCache(root)
 
 	keys := []string{"key1", "key2", "key3"}
 	dataMap := make(map[string][]byte)
@@ -134,9 +134,9 @@ func TestCacheMultipleKeys(t *testing.T) {
 	}
 }
 
-func TestCacheWriteEmptyData(t *testing.T) {
+func TestDiskCacheWriteEmptyData(t *testing.T) {
 	root := t.TempDir()
-	cache := NewCache(root)
+	cache := NewDiskCache(root)
 	key := "empty-key"
 	data := []byte{}
 
@@ -155,9 +155,9 @@ func TestCacheWriteEmptyData(t *testing.T) {
 	}
 }
 
-func TestCacheWriteLargeData(t *testing.T) {
+func TestDiskCacheWriteLargeData(t *testing.T) {
 	root := t.TempDir()
-	cache := NewCache(root)
+	cache := NewDiskCache(root)
 	key := "large-key"
 	data := make([]byte, 1024*1024) // 1MB
 	for i := range data {
@@ -179,9 +179,9 @@ func TestCacheWriteLargeData(t *testing.T) {
 	}
 }
 
-func TestCacheDeleteNonexistent(t *testing.T) {
+func TestDiskCacheDeleteNonexistent(t *testing.T) {
 	root := t.TempDir()
-	cache := NewCache(root)
+	cache := NewDiskCache(root)
 	key := "nonexistent-key"
 
 	err := cache.Delete(key)
@@ -190,9 +190,9 @@ func TestCacheDeleteNonexistent(t *testing.T) {
 	}
 }
 
-func TestCacheOverwrite(t *testing.T) {
+func TestDiskCacheOverwrite(t *testing.T) {
 	root := t.TempDir()
-	cache := NewCache(root)
+	cache := NewDiskCache(root)
 	key := "test-key"
 	data1 := []byte("original data")
 	data2 := []byte("new data")

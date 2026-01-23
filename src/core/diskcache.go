@@ -6,19 +6,19 @@ import (
 	"path/filepath"
 )
 
-// Cache provides file-based caching with MD5-based sharding.
-type Cache struct {
+// DiskCache provides file-based caching with MD5-based sharding.
+type DiskCache struct {
 	Root string
 }
 
-// NewCache creates a new Cache instance with the specified root directory.
-func NewCache(root string) *Cache {
-	return &Cache{Root: root}
+// NewDiskCache creates a new DiskCache instance with the specified root directory.
+func NewDiskCache(root string) *DiskCache {
+	return &DiskCache{Root: root}
 }
 
 // Find attempts to retrieve a cached file for the given key.
 // Returns nil, nil for a cache miss (not an error).
-func (c *Cache) Find(key string) ([]byte, error) {
+func (c *DiskCache) Find(key string) ([]byte, error) {
 	cachePath := c.buildPath(key)
 	absPath, err := filepath.Abs(cachePath)
 	if err != nil {
@@ -44,7 +44,7 @@ func (c *Cache) Find(key string) ([]byte, error) {
 }
 
 // Write stores data in the cache for the given key (URL).
-func (c *Cache) Write(key string, data []byte) error {
+func (c *DiskCache) Write(key string, data []byte) error {
 	cachePath := c.buildPath(key)
 	absPath, err := filepath.Abs(cachePath)
 	if err != nil {
@@ -65,7 +65,7 @@ func (c *Cache) Write(key string, data []byte) error {
 }
 
 // Delete removes a cached file for the given key (URL).
-func (c *Cache) Delete(key string) error {
+func (c *DiskCache) Delete(key string) error {
 	cachePath := c.buildPath(key)
 	absPath, err := filepath.Abs(cachePath)
 	if err != nil {
@@ -76,7 +76,7 @@ func (c *Cache) Delete(key string) error {
 
 // buildPath shards files using the first two characters of the MD5
 // to prevent too many files in one directory.
-func (c *Cache) buildPath(key string) string {
+func (c *DiskCache) buildPath(key string) string {
 	md5 := MD5(key)
 	return filepath.Join(c.Root, md5[:2], md5)
 }
