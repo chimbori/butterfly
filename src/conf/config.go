@@ -5,7 +5,6 @@ package conf
 // causing a circular dependency.
 
 import (
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
@@ -23,7 +22,7 @@ var BuildTimestamp string
 var Config AppConfig
 
 type AppConfig struct {
-	DataDir  string // The directory containing `butterfly.yml` is where all data will be stored.
+	DataDir  string `yaml:"-"` // The directory containing `butterfly.yml` is where all data will be stored.
 	Database struct {
 		Url string `yaml:"url"`
 	} `yaml:"database"`
@@ -108,8 +107,8 @@ func setDefaultsAndPrint(c *AppConfig) {
 	}
 
 	// Print warnings for unsafe settings, just as FYI.
-	json, _ := json.MarshalIndent(*c, "", "\t")
-	fmt.Println(string(json))
+	yaml, _ := yaml.Marshal(*c)
+	fmt.Println(string(yaml))
 	if c.Debug {
 		slog.Warn("Debug mode is enabled")
 	}
