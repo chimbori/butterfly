@@ -131,7 +131,7 @@ func fetchTitleAndDescription(ctx context.Context, url string) (title, descripti
 		if err != nil {
 			return "", "", err
 		}
-		req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; Butterfly/1.0; +https://butterfly.chimbori.com/)")
+		req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; Butterfly/1.0; +https://chimbori.dev/butterfly)")
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
