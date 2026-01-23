@@ -3,6 +3,7 @@ package qrcode
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"path/filepath"
@@ -32,7 +33,7 @@ func handleQrCode(w http.ResponseWriter, req *http.Request) {
 	reqUrl := req.URL.Query().Get("url")
 	queries := db.New(db.Pool)
 
-	validatedUrl, hostname, err := validation.ValidateUrl(req.Context(), queries, reqUrl)
+	url, hostname, err := validation.ValidateUrl(req.Context(), queries, reqUrl)
 	if err != nil {
 		slog.Error("URL validation failed", tint.Err(err),
 			"method", req.Method,
@@ -48,12 +49,12 @@ func handleQrCode(w http.ResponseWriter, req *http.Request) {
 
 	// Only check cache if enabled
 	if *conf.Config.QrCode.Cache.Enabled {
-		cached, err = cache.Find(validatedUrl)
+		cached, err = cache.Find(url)
 		if err != nil {
 			slog.Error("error during cache lookup", tint.Err(err),
 				"method", req.Method,
 				"path", req.URL.Path,
-				"url", validatedUrl,
+				"url", url,
 				"hostname", hostname,
 				"status", http.StatusInternalServerError)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -65,49 +66,62 @@ func handleQrCode(w http.ResponseWriter, req *http.Request) {
 		slog.Info("cached QR Code served",
 			"method", req.Method,
 			"path", req.URL.Path,
-			"url", validatedUrl,
+			"url", url,
 			"hostname", hostname,
 			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
 		w.Write(cached)
-		recordQrCodeAccessed(validatedUrl)
+		recordQrCodeAccessed(url)
 		return
 	}
 
 	// Generate new QR Code
-	png, err := generateQrCode(validatedUrl)
+	png, err := generateQrCode(url)
 	if err != nil {
 		slog.Error("error generating QR Code", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
-			"url", validatedUrl,
+			"url", url,
 			"hostname", hostname,
 			"status", http.StatusInternalServerError)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Write to cache if enabled
-	if *conf.Config.QrCode.Cache.Enabled {
-		if err := cache.Write(validatedUrl, png); err != nil {
-			slog.Error("error writing to cache", tint.Err(err),
-				"method", req.Method,
-				"path", req.URL.Path,
-				"url", validatedUrl,
-				"hostname", hostname)
-			// Continue serving even if caching failed
-		}
-	}
-
+	// Serve the QR Code immediately after generation, without waiting for compression.
 	slog.Info("new QR Code generated",
 		"method", req.Method,
 		"path", req.URL.Path,
-		"url", validatedUrl,
+		"url", url,
 		"hostname", hostname,
 		"status", http.StatusOK)
 	w.Header().Set("Content-Type", "image/png")
 	w.Write(png)
-	recordQrCodeCreated(validatedUrl)
+	recordQrCodeCreated(url)
+
+	// If cache is enabled, compress the generated QR Code and cache it, but without holding up the HTTP request
+	go func() {
+		if *conf.Config.QrCode.Cache.Enabled {
+			dataToWrite := png
+			compressed, err := core.CompressPNG(png)
+			if err == nil {
+				dataToWrite = compressed
+				slog.Info("PNG compressed", "from", len(png), "to", len(compressed), "%", (len(compressed) * 100 / len(png)))
+			} else {
+				slog.Error("PNG compression failed", tint.Err(err), "url", url)
+			}
+
+			if err := cache.Write(url, dataToWrite); err != nil {
+				err = fmt.Errorf("error writing to cache: %s, %w", url, err)
+				slog.Error("error writing to cache", tint.Err(err),
+					"method", req.Method,
+					"path", req.URL.Path,
+					"url", url,
+					"hostname", hostname,
+					"status", http.StatusInternalServerError)
+			}
+		}
+	}()
 }
 
 // writeCloser wraps an io.Writer and adds a no-op Close method

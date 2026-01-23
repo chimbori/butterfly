@@ -31,6 +31,7 @@ func SetupHandlers(mux *http.ServeMux) {
 func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 	reqUrl := req.URL.Query().Get("url")
 	queries := db.New(db.Pool)
+
 	url, hostname, err := validation.ValidateUrl(req.Context(), queries, reqUrl)
 	if err != nil {
 		slog.Error("URL validation failed", tint.Err(err),
@@ -120,21 +121,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 
-		// Only write to cache if enabled
-		if *conf.Config.LinkPreview.Cache.Enabled {
-			err = cache.Write(url, screenshot)
-			if err != nil {
-				err = fmt.Errorf("error writing to cache: %s, %w", url, err)
-				slog.Error("error writing to cache", tint.Err(err),
-					"method", req.Method,
-					"path", req.URL.Path,
-					"url", url,
-					"hostname", hostname,
-					"status", http.StatusInternalServerError)
-				// Still continue serving the image to clients even if caching failed.
-			}
-		}
-
+		// Serve the screenshot immediately after generation, without waiting for compression.
 		slog.Info("new screenshot generated",
 			"method", req.Method,
 			"path", req.URL.Path,
@@ -144,6 +131,30 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
 		w.Write(screenshot)
 		recordLinkPreviewCreated(url)
+
+		// If cache is enabled, compress the generated screenshot and cache it, but without holding up the HTTP request
+		go func() {
+			if *conf.Config.LinkPreview.Cache.Enabled {
+				dataToWrite := screenshot
+				compressed, err := core.CompressPNG(screenshot)
+				if err == nil {
+					dataToWrite = compressed
+					slog.Info("PNG compressed", "from", len(screenshot), "to", len(compressed), "%", (len(compressed) * 100 / len(screenshot)))
+				} else {
+					slog.Error("PNG compression failed", tint.Err(err), "url", url)
+				}
+
+				if err := cache.Write(url, dataToWrite); err != nil {
+					err = fmt.Errorf("error writing to cache: %s, %w", url, err)
+					slog.Error("error writing to cache", tint.Err(err),
+						"method", req.Method,
+						"path", req.URL.Path,
+						"url", url,
+						"hostname", hostname,
+						"status", http.StatusInternalServerError)
+				}
+			}
+		}()
 	}
 }
 
