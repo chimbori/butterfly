@@ -1,6 +1,6 @@
 # Build Go binary
 
-FROM golang:1.25.4 AS builder
+FROM golang:1.25.6 AS builder
 RUN go version
 
 ARG CGO_ENABLED=0
