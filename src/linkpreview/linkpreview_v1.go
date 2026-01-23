@@ -76,6 +76,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			"hostname", hostname,
 			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
+		w.Header().Set("Cache-Control", "max-age=31536000, immutable") // 1 year
 		w.Write(cached)
 		recordLinkPreviewAccessed(url)
 
@@ -129,6 +130,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			"hostname", hostname,
 			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
+		w.Header().Set("Cache-Control", "max-age=31536000, immutable") // 1 year
 		w.Write(screenshot)
 		recordLinkPreviewCreated(url)
 

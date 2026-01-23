@@ -70,6 +70,7 @@ func handleQrCode(w http.ResponseWriter, req *http.Request) {
 			"hostname", hostname,
 			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
+		w.Header().Set("Cache-Control", "max-age=31536000, immutable") // 1 year
 		w.Write(cached)
 		recordQrCodeAccessed(url)
 		return
@@ -96,6 +97,7 @@ func handleQrCode(w http.ResponseWriter, req *http.Request) {
 		"hostname", hostname,
 		"status", http.StatusOK)
 	w.Header().Set("Content-Type", "image/png")
+	w.Header().Set("Cache-Control", "max-age=31536000, immutable") // 1 year
 	w.Write(png)
 	recordQrCodeCreated(url)
 
