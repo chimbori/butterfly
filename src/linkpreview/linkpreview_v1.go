@@ -77,7 +77,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
 		w.Write(cached)
-		recordLinkPreviewCreated(url)
+		recordLinkPreviewAccessed(url)
 
 	} else {
 		ctx, cancel := context.WithTimeout(req.Context(), conf.Config.LinkPreview.Screenshot.Timeout)
