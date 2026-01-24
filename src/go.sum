@@ -1,3 +1,5 @@
+github.com/HugoSmits86/nativewebp v1.2.1 h1:dJbfulw6WRf6rTcth6TwgEVwlBeP3vdZIJUIoySmeHQ=
+github.com/HugoSmits86/nativewebp v1.2.1/go.mod h1:YNQuWenlVmSUUASVNhTDwf4d7FwYQGbGhklC8p72Vr8=
 github.com/a-h/templ v0.3.977 h1:kiKAPXTZE2Iaf8JbtM21r54A8bCNsncrfnokZZSrSDg=
 github.com/a-h/templ v0.3.977/go.mod h1:oCZcnKRf5jjsGpf2yELzQfodLphd2mwecwG4Crk5HBo=
 github.com/chromedp/cdproto v0.0.0-20250803210736-d308e07a266d h1:ZtA1sedVbEW7EW80Iz2GR3Ye6PwbJAJXjv7D74xG6HU=

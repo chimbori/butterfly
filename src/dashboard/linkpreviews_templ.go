@@ -144,9 +144,9 @@ func LinkPreviewsListTempl(linkPreviews []db.LinkPreview) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("/link-preview/v1?url=" + s.Url)
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("/dashboard/link-previews/image?url=" + s.Url)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/linkpreviews.templ`, Line: 30, Col: 48}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/linkpreviews.templ`, Line: 30, Col: 62}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -159,7 +159,7 @@ func LinkPreviewsListTempl(linkPreviews []db.LinkPreview) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(s.Url)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/linkpreviews.templ`, Line: 30, Col: 62}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/linkpreviews.templ`, Line: 30, Col: 76}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {

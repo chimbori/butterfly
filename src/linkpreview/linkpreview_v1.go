@@ -22,6 +22,10 @@ func InitCache() {
 	cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "link-previews"))
 }
 
+func GetCache() *core.DiskCache {
+	return cache
+}
+
 func SetupHandlers(mux *http.ServeMux) {
 	mux.HandleFunc("GET /link-preview/v1", handleLinkPreview)
 }

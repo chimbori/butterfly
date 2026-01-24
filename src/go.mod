@@ -3,6 +3,7 @@ module chimbori.dev/butterfly
 go 1.25.6
 
 require (
+	github.com/HugoSmits86/nativewebp v1.2.1
 	github.com/a-h/templ v0.3.977
 	github.com/chromedp/chromedp v0.14.2
 	github.com/jackc/pgx/v5 v5.8.0
@@ -12,6 +13,7 @@ require (
 	github.com/yeqown/go-qrcode/v2 v2.2.5
 	github.com/yeqown/go-qrcode/writer/standard v1.3.0
 	golang.org/x/crypto v0.47.0
+	golang.org/x/image v0.35.0
 	golang.org/x/net v0.49.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -34,7 +36,6 @@ require (
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	github.com/yeqown/reedsolomon v1.0.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/image v0.35.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.40.0 // indirect
 	golang.org/x/text v0.33.0 // indirect
