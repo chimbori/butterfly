@@ -156,6 +156,12 @@ var serveLinkPreviewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *
 	dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 	draw.CatmullRom.Scale(dst, dst.Bounds(), img, origBounds, draw.Over, nil)
 
+	slog.Debug("image scaled successfully",
+		"method", req.Method,
+		"path", req.URL.Path,
+		"url", url,
+		"hostname", u.Hostname())
+
 	// Encode as WebP.
 	w.Header().Set("Content-Type", "image/webp")
 	w.Header().Set("Cache-Control", "public, max-age=31536000") // 1 year cache
@@ -168,4 +174,10 @@ var serveLinkPreviewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *
 			"status", http.StatusInternalServerError)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+
+	slog.Debug("image converted to WebP & served successfully",
+		"method", req.Method,
+		"path", req.URL.Path,
+		"url", url,
+		"hostname", u.Hostname())
 })
