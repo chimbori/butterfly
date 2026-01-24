@@ -12,8 +12,8 @@ import (
 	"chimbori.dev/butterfly/linkpreview"
 	"chimbori.dev/butterfly/validation"
 	nativewebp "github.com/HugoSmits86/nativewebp"
+	"github.com/disintegration/imaging"
 	"github.com/lmittmann/tint"
-	"golang.org/x/image/draw"
 )
 
 // GET /dashboard/link-previews - List all cached link previews
@@ -148,13 +148,9 @@ var serveLinkPreviewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	origBounds := img.Bounds()
-	newWidth := 600
-	ratio := float64(newWidth) / float64(origBounds.Dx())
-	newHeight := int(float64(origBounds.Dy()) * ratio)
 
-	dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
-	draw.CatmullRom.Scale(dst, dst.Bounds(), img, origBounds, draw.Over, nil)
+	// Use NearestNeighbor for simplicity & speed, since we’re only scaling down, never up.
+	dst := imaging.Resize(img, 600, 0, imaging.NearestNeighbor)
 
 	slog.Debug("image scaled successfully",
 		"method", req.Method,
