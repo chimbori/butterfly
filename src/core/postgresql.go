@@ -14,7 +14,7 @@ import (
 // Migrations are run using the stdlib [database/sql] driver using the pgx compatibility wrapper,
 // not [pgx] directly because Goose does not support [pgx.Conn] or [pgxpool.Pool] natively.
 func RunMigrations(dbUrl string, migrationsDir embed.FS) error {
-	slog.Info("Running migrations ...", "database", dbUrl)
+	slog.Info("Running migrations...", "database", dbUrl)
 	goose.SetBaseFS(migrationsDir)
 
 	if err := goose.SetDialect("pgx"); err != nil {

@@ -23,7 +23,6 @@ func SetupHandlers(mux *http.ServeMux) {
 	mux.Handle("GET /dashboard", chain.Then(homeHandler))
 
 	mux.Handle("GET /dashboard/link-previews", chain.Then(linkPreviewsPageHandler))
-	mux.Handle("POST /dashboard/link-previews/regenerate", chain.Then(regenerateLinkPreviewHandler))
 	mux.Handle("GET /dashboard/link-previews/image", chain.Then(serveLinkPreviewHandler))
 	mux.Handle("DELETE /dashboard/link-previews/url", chain.Then(deleteLinkPreviewHandler))
 
