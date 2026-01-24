@@ -10,7 +10,7 @@ import (
 
 func SetupHealthCheck(mux *http.ServeMux) {
 	mux.HandleFunc("GET /healthcheck", func(w http.ResponseWriter, req *http.Request) {
-		slog.Info("/healthcheck: ok", "from", ReadUserIP(req))
+		slog.Debug("/healthcheck: ok", "from", ReadUserIP(req))
 		w.Write([]byte("ok"))
 	})
 }
