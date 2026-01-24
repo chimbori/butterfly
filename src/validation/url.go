@@ -9,30 +9,35 @@ import (
 	"chimbori.dev/butterfly/db"
 )
 
-// ValidateUrl validates a URL provided by the user, and returns a formatted URL as a string.
-func ValidateUrl(ctx context.Context, q *db.Queries, userUrl string) (validatedUrl string, hostname string, err error) {
+// Canonicalize parses a user-provided URL string and returns a *url.URL.
+// It tries to fix missing schemes by defaulting to https://.
+func Canonicalize(userUrl string) (*url.URL, error) {
 	if userUrl == "" {
-		return "", "", errors.New("missing url")
+		return nil, errors.New("missing URL")
 	}
-
 	if !strings.HasPrefix(userUrl, "https://") && !strings.HasPrefix(userUrl, "http://") && !strings.Contains(userUrl, "://") {
 		userUrl = "https://" + userUrl
 	}
-
 	u, err := url.Parse(userUrl)
 	if err != nil {
-		return "", "", errors.New("invalid url")
+		return nil, errors.New("invalid URL")
 	}
+	return u, nil
+}
 
+// ValidateUrl validates a URL provided by the user, and returns a formatted URL as a string.
+func ValidateUrl(ctx context.Context, q *db.Queries, userUrl string) (validatedUrl, hostname string, err error) {
+	u, err := Canonicalize(userUrl)
+	if err != nil {
+		return "", "", errors.New("invalid URL")
+	}
 	authorized, err := IsAuthorized(ctx, q, u)
 	if err != nil {
 		return "", u.Hostname(), err
 	}
-
 	if !authorized {
 		return "", u.Hostname(), errors.New("domain " + u.Hostname() + " not authorized")
 	}
-
 	return u.String(), u.Hostname(), nil
 }
 

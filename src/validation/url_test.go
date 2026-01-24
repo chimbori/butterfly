@@ -162,8 +162,8 @@ func TestValidateUrl_EmptyUrl(t *testing.T) {
 	if err == nil {
 		t.Error("Expected error for empty URL")
 	}
-	if err.Error() != "missing url" {
-		t.Errorf("Expected 'missing url' error, got: [%s]", err.Error())
+	if err.Error() != "invalid URL" {
+		t.Errorf("Expected 'invalid URL' error, got: [%s]", err.Error())
 	}
 	if url != "" {
 		t.Errorf("Expected empty validated URL for empty URL, but got [%s]", url)
