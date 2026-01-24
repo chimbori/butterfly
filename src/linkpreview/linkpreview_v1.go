@@ -33,6 +33,8 @@ func SetupHandlers(mux *http.ServeMux) {
 // GET /link-preview/v1?url={url}&sel={selector}
 // Validates the URL, checks if it’s cached, generates screenshots, and serves them.
 func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
+	slog.Debug("handleLinkPreview", "url", req.Method+" "+req.URL.Path)
+
 	reqUrl := req.URL.Query().Get("url")
 	queries := db.New(db.Pool)
 
