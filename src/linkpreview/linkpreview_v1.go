@@ -19,7 +19,9 @@ import (
 var cache *core.DiskCache
 
 func InitCache() {
-	cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "link-previews"))
+	if *conf.Config.LinkPreview.Cache.Enabled {
+		cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "link-previews"))
+	} // else cache will be nil
 }
 
 func GetCache() *core.DiskCache {

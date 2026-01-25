@@ -113,6 +113,18 @@ var serveLinkPreviewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *
 	}
 
 	url := u.String()
+	if linkpreview.GetCache() == nil {
+		err := fmt.Errorf("preview unavailable for %s", url)
+		slog.Error("cache disabled", tint.Err(err),
+			"method", req.Method,
+			"path", req.URL.Path,
+			"url", url,
+			"hostname", u.Hostname(),
+			"status", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	png, err := linkpreview.GetCache().Find(url)
 	if err != nil {
 		err = fmt.Errorf("url: %s, %w", url, err)

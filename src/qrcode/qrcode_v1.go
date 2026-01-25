@@ -20,7 +20,9 @@ import (
 var cache *core.DiskCache
 
 func InitCache() {
-	cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "qr-codes"))
+	if *conf.Config.QrCode.Cache.Enabled {
+		cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "qr-codes"))
+	} // else cache will be nil
 }
 
 func SetupHandlers(mux *http.ServeMux) {
