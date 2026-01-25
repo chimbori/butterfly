@@ -14,10 +14,10 @@ func PerformMaintenance() {
 	ctx := context.Background()
 	queries := db.New(db.Pool)
 
-	// Delete domains that haven’t been updated in 24 hours; they are blocked by default,
+	// Delete domains that haven’t been triaged in a while; they are blocked by default,
 	// and do not need to be included on the dashboard.
 	interval := pgtype.Interval{
-		Microseconds: 24 * 60 * 60 * 1000000, // 24 hours in microseconds
+		Microseconds: 7 * 24 * 60 * 60 * 1000000, // 7 days
 		Valid:        true,
 	}
 	deletedDomains, err := queries.DeleteUnauthorizedStaleDomains(ctx, interval)
