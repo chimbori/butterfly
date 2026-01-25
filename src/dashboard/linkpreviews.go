@@ -138,6 +138,7 @@ var serveLinkPreviewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *
 		return
 	}
 	if png == nil {
+		err := fmt.Errorf("cached link preview not found")
 		slog.Error("cached link preview not found", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
