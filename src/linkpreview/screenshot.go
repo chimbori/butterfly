@@ -22,7 +22,7 @@ var ErrMissingSelector = errors.New("selector not found")
 
 // takeScreenshot captures a high-resolution PNG screenshot of a specific element on a web page.
 // It navigates to the provided URL, ensures the element specified by the CSS selector is visible,
-// and takes a screenshot at 2x scale.
+// and takes a screenshot.
 func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err error) {
 	var cancel context.CancelFunc
 	if conf.Config.Debug {
@@ -61,7 +61,7 @@ func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err 
 
 	if err := chromedp.Run(ctx,
 		chromedp.WaitVisible(selector, chromedp.ByQuery),
-		chromedp.ScreenshotScale(selector, 2.0, &buf),
+		chromedp.Screenshot(selector, &buf),
 	); err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func takeScreenshotWithTemplate(ctx context.Context, templateContent, url, title
 		chromedp.Navigate("data:text/html;base64,"+base64.StdEncoding.EncodeToString(tmplBuf.Bytes())),
 		chromedp.WaitVisible("#link-preview", chromedp.ByQuery),
 		chromedp.Sleep(time.Second), // Allow fonts to finish downloading.
-		chromedp.ScreenshotScale("#link-preview", 2.0, &screenshotBuf),
+		chromedp.Screenshot("#link-preview", &screenshotBuf),
 	); err != nil {
 		return nil, err
 	}
