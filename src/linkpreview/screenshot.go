@@ -101,7 +101,7 @@ func takeScreenshotWithTemplate(ctx context.Context, templateContent, url, title
 
 	var screenshotBuf []byte
 	if err := chromedp.Run(ctx,
-		chromedp.EmulateViewport(960, 960),
+		chromedp.EmulateViewport(1200, 630),
 		chromedp.Navigate("data:text/html;base64,"+base64.StdEncoding.EncodeToString(tmplBuf.Bytes())),
 		chromedp.WaitVisible("#link-preview", chromedp.ByQuery),
 		chromedp.Sleep(time.Second), // Allow fonts to finish downloading.
