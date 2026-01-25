@@ -21,6 +21,7 @@ import (
 	"chimbori.dev/butterfly/dashboard"
 	"chimbori.dev/butterfly/db"
 	"chimbori.dev/butterfly/embedfs"
+	"chimbori.dev/butterfly/github"
 	"chimbori.dev/butterfly/linkpreview"
 	"chimbori.dev/butterfly/qrcode"
 	"chimbori.dev/butterfly/slogdb"
@@ -92,6 +93,7 @@ func main() {
 
 	linkpreview.InitCache()
 	qrcode.InitCache()
+	github.InitCache()
 
 	// Set up a graceful cleanup for when the process is terminated.
 	signalCh := make(chan os.Signal, 1)
@@ -113,6 +115,7 @@ func main() {
 	})
 	linkpreview.SetupHandlers(mux)
 	qrcode.SetupHandlers(mux)
+	github.SetupHandlers(mux)
 	dashboard.SetupHandlers(mux)
 
 	addr := net.JoinHostPort("", strconv.Itoa(conf.Config.Web.Port))
