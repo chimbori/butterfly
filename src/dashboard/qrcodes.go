@@ -10,7 +10,7 @@ import (
 )
 
 // GET /dashboard/qr-codes - List all QR Codes
-var listQrCodesHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+func listQrCodesHandler(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	queries := db.New(db.Pool)
 	qrCodes, err := queries.ListQrCodes(ctx)
@@ -23,10 +23,10 @@ var listQrCodesHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.
 		return
 	}
 	QrCodesPageTempl(qrCodes).Render(ctx, w)
-})
+}
 
 // DELETE /dashboard/qr-codes/url?url={url} - Delete a cached QR Code
-var deleteQrCodeHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+func deleteQrCodeHandler(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	queries := db.New(db.Pool)
 
@@ -67,4 +67,4 @@ var deleteQrCodeHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http
 		return
 	}
 	QrCodesListTempl(qrCodes).Render(ctx, w)
-})
+}

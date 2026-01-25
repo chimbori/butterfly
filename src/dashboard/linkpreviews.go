@@ -17,7 +17,7 @@ import (
 )
 
 // GET /dashboard/link-previews - List all cached link previews
-var linkPreviewsPageHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+func linkPreviewsPageHandler(w http.ResponseWriter, req *http.Request) {
 	slog.Debug("linkPreviewsPageHandler", "url", req.Method+" "+req.URL.String())
 
 	ctx := req.Context()
@@ -33,10 +33,10 @@ var linkPreviewsPageHandler = http.HandlerFunc(func(w http.ResponseWriter, req *
 		return
 	}
 	LinkPreviewsPageTempl(linkPreviews).Render(ctx, w)
-})
+}
 
 // DELETE /dashboard/link-previews/url?url=... - Delete a cached link preview
-var deleteLinkPreviewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+func deleteLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 	slog.Debug("deleteLinkPreviewHandler", "url", req.Method+" "+req.URL.String())
 
 	ctx := req.Context()
@@ -82,11 +82,11 @@ var deleteLinkPreviewHandler = http.HandlerFunc(func(w http.ResponseWriter, req 
 		return
 	}
 	LinkPreviewsListTempl(linkPreviews).Render(ctx, w)
-})
+}
 
 // GET /dashboard/link-previews/image?url={url}
 // Serves a resized and compressed version of the cached link preview image.
-var serveLinkPreviewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 	slog.Debug("serveLinkPreviewHandler", "url", req.Method+" "+req.URL.String())
 
 	reqUrl := req.URL.Query().Get("url")
@@ -189,4 +189,4 @@ var serveLinkPreviewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *
 		"path", req.URL.Path,
 		"url", url,
 		"hostname", u.Hostname())
-})
+}

@@ -12,7 +12,7 @@ import (
 )
 
 // GET /dashboard/domains - List all domains
-var domainsPageHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+func domainsPageHandler(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	queries := db.New(db.Pool)
 	domains, err := queries.ListDomains(ctx)
@@ -26,10 +26,10 @@ var domainsPageHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.
 		return
 	}
 	DomainsPageTempl(domains).Render(ctx, w)
-})
+}
 
 // PUT /dashboard/domains/domain - Add a new domain, or update existing one if present.
-var putDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+func putDomainHandler(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	queries := db.New(db.Pool)
 
@@ -85,10 +85,10 @@ var putDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Re
 		return
 	}
 	DomainsTempl(domains).Render(ctx, w)
-})
+}
 
 // DELETE /dashboard/link-previews/domain?domain=example.com - Delete a domain
-var deleteDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+func deleteDomainHandler(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	queries := db.New(db.Pool)
 
@@ -116,7 +116,7 @@ var deleteDomainHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http
 		return
 	}
 	DomainsTempl(domains).Render(ctx, w)
-})
+}
 
 func isAuthorized(authorizeAction string) *bool {
 	switch strings.TrimSpace(authorizeAction) {

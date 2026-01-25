@@ -20,27 +20,27 @@ const sessionCookieName = "butterfly_session"
 func SetupHandlers(mux *http.ServeMux) {
 	chain := alice.New(authHandler)
 
-	mux.Handle("GET /dashboard", chain.Then(homeHandler))
+	mux.Handle("GET /dashboard", chain.ThenFunc(homeHandler))
 
-	mux.Handle("GET /dashboard/link-previews", chain.Then(linkPreviewsPageHandler))
-	mux.Handle("GET /dashboard/link-previews/image", chain.Then(serveLinkPreviewHandler))
-	mux.Handle("DELETE /dashboard/link-previews/url", chain.Then(deleteLinkPreviewHandler))
+	mux.Handle("GET /dashboard/link-previews", chain.ThenFunc(linkPreviewsPageHandler))
+	mux.Handle("GET /dashboard/link-previews/image", chain.ThenFunc(serveLinkPreviewHandler))
+	mux.Handle("DELETE /dashboard/link-previews/url", chain.ThenFunc(deleteLinkPreviewHandler))
 
-	mux.Handle("GET /dashboard/qr-codes", chain.Then(listQrCodesHandler))
-	mux.Handle("DELETE /dashboard/qr-codes/url", chain.Then(deleteQrCodeHandler))
+	mux.Handle("GET /dashboard/qr-codes", chain.ThenFunc(listQrCodesHandler))
+	mux.Handle("DELETE /dashboard/qr-codes/url", chain.ThenFunc(deleteQrCodeHandler))
 
-	mux.Handle("GET /dashboard/domains", chain.Then(domainsPageHandler))
-	mux.Handle("PUT /dashboard/domains/domain", chain.Then(putDomainHandler))
-	mux.Handle("DELETE /dashboard/domains/domain", chain.Then(deleteDomainHandler))
+	mux.Handle("GET /dashboard/domains", chain.ThenFunc(domainsPageHandler))
+	mux.Handle("PUT /dashboard/domains/domain", chain.ThenFunc(putDomainHandler))
+	mux.Handle("DELETE /dashboard/domains/domain", chain.ThenFunc(deleteDomainHandler))
 
-	mux.Handle("GET /dashboard/logs", chain.Then(logsHandler))
-	mux.Handle("GET /dashboard/logs/data", chain.Then(logsDataHandler))
+	mux.Handle("GET /dashboard/logs", chain.ThenFunc(logsHandler))
+	mux.Handle("GET /dashboard/logs/data", chain.ThenFunc(logsDataHandler))
 }
 
 // GET /dashboard
-var homeHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+func homeHandler(w http.ResponseWriter, req *http.Request) {
 	HomeTempl(conf.AppName).Render(req.Context(), w)
-})
+}
 
 // Checks whether the user is authorized, and either returns an error, or executes the passed [http.Handler].
 func authHandler(next http.Handler) http.Handler {

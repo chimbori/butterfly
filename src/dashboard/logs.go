@@ -10,12 +10,12 @@ import (
 )
 
 // GET /dashboard/logs
-var logsHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+func logsHandler(w http.ResponseWriter, req *http.Request) {
 	LogsTempl(conf.AppName).Render(req.Context(), w)
-})
+}
 
 // GET /dashboard/logs/data
-var logsDataHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+func logsDataHandler(w http.ResponseWriter, req *http.Request) {
 	queries := db.New(db.Pool)
 	logs, err := queries.GetRecentLogs(req.Context(), 1000)
 	if err != nil {
@@ -24,4 +24,4 @@ var logsDataHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Req
 		return
 	}
 	LogsTableTempl(logs).Render(req.Context(), w)
-})
+}
