@@ -27,7 +27,7 @@ templ QrCodesListTempl(qrCodes []db.QrCode) {
 				<div class="qr-code flex flex-col gap-2 max-w-full overflow-hidden">
 					<input type="hidden" name="url" value={ qr.Url }/>
 					<a href={ qr.Url } target="_blank" title={ qr.Url } class="block">
-						<img src={ "/qrcode/v1?url=" + qr.Url } alt={ qr.Url } class="max-w-full h-auto rounded-xl"/>
+						<img src={ "/qrcode/v1?url=" + qr.Url } alt={ qr.Url } class="w-full h-auto min-h-24 bg-gray-300 rounded-xl shadow-lg"/>
 					</a>
 					<div class="flex flex-row">
 						<div class="h-8 px-2 grow text-xs line-clamp-2" title={ qr.Url }>

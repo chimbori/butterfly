@@ -27,7 +27,7 @@ templ LinkPreviewsListTempl(linkPreviews []db.LinkPreview) {
 				<div class="link-preview flex flex-col gap-2 max-w-full overflow-hidden">
 					<input type="hidden" name="url" value={ s.Url }/>
 					<a href={ s.Url } target="_blank" title={ s.Url }>
-						<img src={ "/dashboard/link-previews/image?url=" + s.Url } alt={ s.Url } class="max-w-full h-auto rounded-2xl"/>
+						<img src={ "/dashboard/link-previews/image?url=" + s.Url } alt={ s.Url } class="w-full h-auto min-h-24 bg-gray-300 rounded-2xl shadow-lg"/>
 					</a>
 					<div class="flex flex-row">
 						<div class="h-8 px-2 grow text-xs line-clamp-2" title={ s.Url }>

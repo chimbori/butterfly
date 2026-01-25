@@ -165,7 +165,7 @@ func QrCodesListTempl(qrCodes []db.QrCode) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"max-w-full h-auto rounded-xl\"></a><div class=\"flex flex-row\"><div class=\"h-8 px-2 grow text-xs line-clamp-2\" title=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"w-full h-auto min-h-24 bg-gray-300 rounded-xl shadow-lg\"></a><div class=\"flex flex-row\"><div class=\"h-8 px-2 grow text-xs line-clamp-2\" title=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
