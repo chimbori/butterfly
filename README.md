@@ -1,27 +1,36 @@
-# Butterfly
+# Butterfly Social
 
-Automate social link preview images, sourced directly from your Web pages.
+Self-hosted OpenGraph / social link preview image generation tool. Fully customizable, yet works out of the box with minimal configuration.
 
-Butterfly Social is a quick way to auto-generate link preview images (OpenGraph images) in bulk for all your Web pages, without the use of a separate template editor or API integration. The source of truth for the image data & design remains your primary website, so you can use tools you are already familiar with & assets that are already well-integrated into your workflow.
+Butterfly Social is a quick way to auto-generate OpenGraph link preview images in bulk for all your sites, without the use of a separate template editor or API integration at no cost. The source of truth for the image data & design remains within your primary website, so you can use tools you are already familiar with & assets that are already well-integrated into your workflow.
 
-## How to use
+## How to use Butterfly Social
+
+### Use the Default Template
+
+Just one step: Paste the Butterfly `<meta>` tag into the original page, and you’re done!
+```html
+<meta property="og:image" content="https://butterfly.your-server.com/link-preview/v1?url=your-site.com/some/page">
+```
+
+### Use your Own Templates
 
 1. Create a new hidden element inside your existing Web page, using whatever framework or template engine you use today.
    E.g. here’s a [simple example](assets/example.html):
 
     ```html
-    <div id="link-preview" class="hidden w-[960px]">
+    <div id="link-preview" style="display: none; width: 1200px;">
       <h1>Butterfly Social</h1>
-      <p>Automate social link preview images, sourced directly from your Web pages.</p>
+      <p>Self-hosted OpenGraph / social link preview image generation tool. Fully customizable, yet works out of the box with zero configuration.</p>
     </div>
     ```
 
-2. Use Butterfly to craft a URL, and paste it into the original page.
+2. Use Butterfly to craft a URL, and paste the `<meta>` tag into the original page.
     ```html
     <meta property="og:image" content="https://butterfly.your-server.com/link-preview/v1?url=your-site.com/some/page">
     ```
 
-    If the default selector (`#link-preview`) does not work for your use case, provide an alternate one using the `&sel=` parameter.
+    If you can’t use the default selector (`#link-preview`) for any reason, you can provide an alternate one using the `&sel=` parameter.
 
 3. There is no step 3.
 
@@ -39,13 +48,11 @@ Test your Butterfly installation by posting your original page URL to any social
 2. runs JavaScript to un-hide the hidden element;
 3. takes a screenshot of it;
 4. and serves it
-5. (while also caching it).
+5. (while also caching & compressing it).
 
 That’s it.
 
 Butterfly works well with static sites (using any static site generator) as well as dynamically-generated sites (using any CMS or platform).
-
-Butterfly captures screenshots at a page scale factor of 2.0 (so you get higher-resolution images, like those on a high-DPI display). Remember to set the width and height of your element to be 0.5 × whatever you want the output to be.
 
 ### Can I use…
 
@@ -137,9 +144,9 @@ butterfly.your-server.com {
 
 ## Dashboard UI
 
-To prevent abuse and to conserve resources, Butterfly only allows explicitly-allow-listed domains to be used.
+To prevent abuse and to conserve resources, Butterfly blocks all domains by default, until you explicitly authorize each domain you care about.
 
-You can configure this list using the Dashboard UI at `https://butterfly.your-server.com/dashboard`. The Dashboard is available as an installable PWA (Progressive Web Application) that can be “installed” locally using any modern browser.
+You can configure the Authorized Domains list using the Dashboard UI at `https://butterfly.your-server.com/dashboard`. The Dashboard is available as an installable PWA (Progressive Web Application) that can be “installed” locally using any modern browser.
 
 <img src="assets/screenshot-pwa.png">
 
