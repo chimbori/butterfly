@@ -4,7 +4,7 @@ import "chimbori.dev/butterfly/db"
 
 templ DomainsPageTempl(domains []db.Domain) {
 	@ContentTempl("Domains", NilTemplate()) {
-		<section>
+		<section class="max-w-6xl">
 			<form
 				class="flex"
 				hx-target="#authorized-domains"
@@ -20,10 +20,10 @@ templ DomainsPageTempl(domains []db.Domain) {
 					hx-put="/dashboard/domains/domain"
 					hx-include="closest form"
 					hx-vals='{"authorized":"allow"}'
-				>Add Domain</button>
+				>Add Authorized Domain</button>
 			</form>
 		</section>
-		<section>
+		<section class="max-w-6xl">
 			@DomainsTempl(domains)
 		</section>
 	}
@@ -43,7 +43,8 @@ templ DomainsTempl(domains []db.Domain) {
 				<th>Domain</th>
 				<th class="text-center">Include Subdomains</th>
 				<th>Updated</th>
-				<th>Actions</th>
+				<th class="text-center">Allow</th>
+				<th class="text-center">Block</th>
 			</tr>
 			for _, d := range domains {
 				<tr>
@@ -52,23 +53,18 @@ templ DomainsTempl(domains []db.Domain) {
 						<input type="hidden" name="domain" value={ d.Domain }/>
 					</td>
 					<td class="text-center">
-						<label>
-							<input
-								hx-put="/dashboard/domains/domain"
-								hx-include="closest tr"
-								type="checkbox"
-								name="include_subdomains"
-								checked?={ *d.IncludeSubdomains }
-							/>
-						</label>
+						<input
+							hx-put="/dashboard/domains/domain"
+							hx-include="closest tr"
+							hx-vals='{"authorized":"allow"}'
+							type="checkbox"
+							name="include_subdomains"
+							checked?={ *d.IncludeSubdomains }
+						/>
 					</td>
 					<td>{ d.UpdatedAt.Format("2006-01-02 15:04:05") }</td>
-					<td>
-						<input
-							type="hidden"
-							name="authorized"
-							value={ getAuthorizedAttrValue(d) }
-						/>
+					<td class="text-center">
+						<input type="hidden" name="authorized" value={ getAuthorizedAttrValue(d) }/>
 						<button
 							if d.Authorized != nil && *d.Authorized {
 								disabled
@@ -78,21 +74,14 @@ templ DomainsTempl(domains []db.Domain) {
 							hx-vals='{"authorized":"allow"}'
 							class="btn-submit"
 						>Allow</button>
-						<button
-							if d.Authorized != nil && !*d.Authorized {
-								disabled
-							}
-							hx-include="closest tr"
-							hx-put="/dashboard/domains/domain"
-							hx-vals='{"authorized":"block"}'
-							class="btn-delete"
-						>Block</button>
+					</td>
+					<td class="text-center">
 						<img
 							class="align-middle inline mx-2 cursor-pointer"
 							hx-confirm="Remove from list?"
 							hx-include="closest tr"
-							title="Remove"
 							hx-delete="/dashboard/domains/domain"
+							title="Remove"
 							width="24"
 							height="24"
 							src="/static/close.svg"

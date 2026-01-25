@@ -1,6 +1,7 @@
 -- name: ListDomains :many
 SELECT * FROM domains
-  ORDER BY domain;
+  ORDER BY authorized ASC, domain
+  LIMIT 10000;
 
 -- name: UpsertDomain :one
 INSERT INTO domains (domain, include_subdomains, authorized, updated_at)

@@ -44,7 +44,7 @@ func DomainsPageTempl(domains []db.Domain) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section><form class=\"flex\" hx-target=\"#authorized-domains\" hx-swap=\"innerHTML transition:true\"><input type=\"text\" name=\"domain\" placeholder=\"example.com\" required class=\"grow\"> <label class=\"mx-4\"><input type=\"checkbox\" name=\"include_subdomains\"> Include Subdomains</label> <input type=\"hidden\" name=\"authorized\" value=\"allow\"> <button class=\"btn-submit\" hx-put=\"/dashboard/domains/domain\" hx-include=\"closest form\" hx-vals='{\"authorized\":\"allow\"}'>Add Domain</button></form></section><section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"max-w-6xl\"><form class=\"flex\" hx-target=\"#authorized-domains\" hx-swap=\"innerHTML transition:true\"><input type=\"text\" name=\"domain\" placeholder=\"example.com\" required class=\"grow\"> <label class=\"mx-4\"><input type=\"checkbox\" name=\"include_subdomains\"> Include Subdomains</label> <input type=\"hidden\" name=\"authorized\" value=\"allow\"> <button class=\"btn-submit\" hx-put=\"/dashboard/domains/domain\" hx-include=\"closest form\" hx-vals='{\"authorized\":\"allow\"}'>Add Authorized Domain</button></form></section><section class=\"max-w-6xl\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -93,7 +93,7 @@ func DomainsTempl(domains []db.Domain) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<table class=\"dashboard w-full\" id=\"authorized-domains\" hx-target=\"#authorized-domains\" hx-swap=\"outerHTML transition:true\"><tr><th>Domain</th><th class=\"text-center\">Include Subdomains</th><th>Updated</th><th>Actions</th></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<table class=\"dashboard w-full\" id=\"authorized-domains\" hx-target=\"#authorized-domains\" hx-swap=\"outerHTML transition:true\"><tr><th>Domain</th><th class=\"text-center\">Include Subdomains</th><th>Updated</th><th class=\"text-center\">Allow</th><th class=\"text-center\">Block</th></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -105,7 +105,7 @@ func DomainsTempl(domains []db.Domain) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(d.Domain)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/domains.templ`, Line: 51, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/domains.templ`, Line: 52, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -118,13 +118,13 @@ func DomainsTempl(domains []db.Domain) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(d.Domain)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/domains.templ`, Line: 52, Col: 57}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/domains.templ`, Line: 53, Col: 57}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"></td><td class=\"text-center\"><label><input hx-put=\"/dashboard/domains/domain\" hx-include=\"closest tr\" type=\"checkbox\" name=\"include_subdomains\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"></td><td class=\"text-center\"><input hx-put=\"/dashboard/domains/domain\" hx-include=\"closest tr\" hx-vals='{\"authorized\":\"allow\"}' type=\"checkbox\" name=\"include_subdomains\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -134,7 +134,7 @@ func DomainsTempl(domains []db.Domain) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "></label></td><td>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "></td><td>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -147,14 +147,14 @@ func DomainsTempl(domains []db.Domain) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</td><td><input type=\"hidden\" name=\"authorized\" value=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</td><td class=\"text-center\"><input type=\"hidden\" name=\"authorized\" value=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(getAuthorizedAttrValue(d))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/domains.templ`, Line: 70, Col: 40}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dashboard/domains.templ`, Line: 67, Col: 78}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -170,22 +170,12 @@ func DomainsTempl(domains []db.Domain) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " hx-include=\"closest tr\" hx-put=\"/dashboard/domains/domain\" hx-vals='{\"authorized\":\"allow\"}' class=\"btn-submit\">Allow</button> <button")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				if d.Authorized != nil && !*d.Authorized {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " disabled")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " hx-include=\"closest tr\" hx-put=\"/dashboard/domains/domain\" hx-vals='{\"authorized\":\"block\"}' class=\"btn-delete\">Block</button> <img class=\"align-middle inline mx-2 cursor-pointer\" hx-confirm=\"Remove from list?\" hx-include=\"closest tr\" title=\"Remove\" hx-delete=\"/dashboard/domains/domain\" width=\"24\" height=\"24\" src=\"/static/close.svg\"></td></tr>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " hx-include=\"closest tr\" hx-put=\"/dashboard/domains/domain\" hx-vals='{\"authorized\":\"allow\"}' class=\"btn-submit\">Allow</button></td><td class=\"text-center\"><img class=\"align-middle inline mx-2 cursor-pointer\" hx-confirm=\"Remove from list?\" hx-include=\"closest tr\" hx-delete=\"/dashboard/domains/domain\" title=\"Remove\" width=\"24\" height=\"24\" src=\"/static/close.svg\"></td></tr>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</table>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</table>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

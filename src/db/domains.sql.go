@@ -66,7 +66,8 @@ func (q *Queries) IsAuthorized(ctx context.Context, domain string) (bool, error)
 
 const listDomains = `-- name: ListDomains :many
 SELECT _id, updated_at, domain, include_subdomains, authorized FROM domains
-  ORDER BY domain
+  ORDER BY authorized ASC, domain
+  LIMIT 10000
 `
 
 func (q *Queries) ListDomains(ctx context.Context) ([]Domain, error) {
