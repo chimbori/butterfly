@@ -11,8 +11,8 @@ import (
 
 const getRecentLogs = `-- name: GetRecentLogs :many
 SELECT _id, logged_at, request_method, request_path, http_status, url, hostname, message, err FROM logs
-ORDER BY logged_at DESC
-LIMIT $1
+  ORDER BY logged_at DESC
+  LIMIT $1
 `
 
 func (q *Queries) GetRecentLogs(ctx context.Context, limit int32) ([]Log, error) {

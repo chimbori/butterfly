@@ -7,5 +7,5 @@ INSERT INTO logs (
 
 -- name: GetRecentLogs :many
 SELECT * FROM logs
-ORDER BY logged_at DESC
-LIMIT $1;
+  ORDER BY logged_at DESC
+  LIMIT $1;
