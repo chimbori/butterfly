@@ -15,12 +15,26 @@ import (
 
 var Cache *core.DiskCache
 
+// setCORSHeaders configures permissive CORS headers so this endpoint can be called from any origin.
+func setCORSHeaders(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+}
+
 func Init(mux *http.ServeMux) {
 	Cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "github"))
 	mux.HandleFunc("GET /github/v1/{user}/{repo}/{type}", handleGithubV1)
+	mux.HandleFunc("OPTIONS /github/v1/{user}/{repo}/{type}", handleGithubV1)
 }
 
 func handleGithubV1(w http.ResponseWriter, req *http.Request) {
+	setCORSHeaders(w)
+	if req.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
 	user := req.PathValue("user")
 	repo := req.PathValue("repo")
 	reqType := req.PathValue("type")
