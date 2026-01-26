@@ -80,7 +80,15 @@ templ ErrorTempl(msg string) {
 }
 
 templ FooterTempl() {
-	<footer class="mt-16">
-		<p class="text-xs">{ conf.AppName + " " + conf.BuildTimestamp }</p>
+	<footer class="mt-16 mb-8">
+		<a
+			target="_blank"
+			href="https://chimbori.dev/butterfly"
+			class="no-underline rounded-lg mr-2 px-3 py-2 text-xs font-bold text-black bg-linear-to-b from-zinc-50 to-zinc-100 hover:from-zinc-100 hover:to-zinc-200"
+		>
+			<img src="/static/github.svg" class="size-4 inline mr-1" alt="GitHub"/>
+			<span hx-get="/github/v1/chimbori/butterfly/stars" hx-trigger="load"></span> stars
+		</a>
+		<span class="text-xs">{ conf.AppName + " " + conf.BuildTimestamp }</span>
 	</footer>
 }
