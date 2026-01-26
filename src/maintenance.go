@@ -1,4 +1,4 @@
-package dashboard
+package main
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/lmittmann/tint"
 )
 
-func PerformMaintenance() {
+func performMaintenance() {
 	ctx := context.Background()
 	queries := db.New(db.Pool)
 

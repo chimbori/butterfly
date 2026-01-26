@@ -82,12 +82,11 @@ func main() {
 	// Set up cron task for routine maintenance.
 	go func() {
 		// Do a one-off cleanup before scheduling a recurring task.
-		dashboard.PerformMaintenance()
-
+		performMaintenance()
 		ticker := time.Tick(2 * time.Hour)
 		for {
 			<-ticker
-			dashboard.PerformMaintenance()
+			performMaintenance()
 		}
 	}()
 
