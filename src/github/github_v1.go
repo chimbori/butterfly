@@ -13,13 +13,10 @@ import (
 	"github.com/lmittmann/tint"
 )
 
-var cache *core.DiskCache
+var Cache *core.DiskCache
 
-func InitCache() {
-	cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "github"))
-}
-
-func SetupHandlers(mux *http.ServeMux) {
+func Init(mux *http.ServeMux) {
+	Cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "github"))
 	mux.HandleFunc("GET /github/v1/{user}/{repo}/{type}", handleGithubV1)
 }
 
@@ -42,8 +39,8 @@ func handleGithubV1(w http.ResponseWriter, req *http.Request) {
 	var data []byte
 	var err error
 
-	if cache != nil {
-		data, err = cache.Find(key)
+	if Cache != nil {
+		data, err = Cache.Find(key)
 		if err != nil {
 			slog.Error("Error checking GitHub cache", tint.Err(err),
 				"method", req.Method,
@@ -86,8 +83,8 @@ func handleGithubV1(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		if cache != nil {
-			if err := cache.Write(key, data); err != nil {
+		if Cache != nil {
+			if err := Cache.Write(key, data); err != nil {
 				slog.Error("Error writing to GitHub cache", tint.Err(err),
 					"method", req.Method,
 					"path", req.URL.Path,

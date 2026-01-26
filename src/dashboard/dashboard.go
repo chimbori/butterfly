@@ -17,7 +17,7 @@ var sessionStore = core.NewInMemorySessionStore(24 * time.Hour)
 
 const sessionCookieName = "butterfly_session"
 
-func SetupHandlers(mux *http.ServeMux) {
+func Init(mux *http.ServeMux) {
 	chain := alice.New(authHandler)
 
 	mux.Handle("GET /dashboard", chain.ThenFunc(homeHandler))

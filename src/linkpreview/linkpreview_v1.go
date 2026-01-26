@@ -16,19 +16,13 @@ import (
 	"github.com/lmittmann/tint"
 )
 
-var cache *core.DiskCache
+var Cache *core.DiskCache
 
-func InitCache() {
+func Init(mux *http.ServeMux) {
 	if *conf.Config.LinkPreview.Cache.Enabled {
-		cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "link-previews"))
+		Cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "link-previews"))
 	} // else cache will be nil
-}
 
-func GetCache() *core.DiskCache {
-	return cache
-}
-
-func SetupHandlers(mux *http.ServeMux) {
 	mux.HandleFunc("GET /link-preview/v1", handleLinkPreview)
 }
 
@@ -62,7 +56,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 	// Only check cache if enabled
 	if *conf.Config.LinkPreview.Cache.Enabled {
 		var err error
-		cached, err = cache.Find(url)
+		cached, err = Cache.Find(url)
 		if err != nil {
 			err = fmt.Errorf("url: %s, %w", url, err)
 			slog.Error("error during cache lookup", tint.Err(err),
@@ -154,7 +148,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 					slog.Error("PNG compression failed", tint.Err(err), "url", url)
 				}
 
-				if err := cache.Write(url, dataToWrite); err != nil {
+				if err := Cache.Write(url, dataToWrite); err != nil {
 					err = fmt.Errorf("error writing to cache: %s, %w", url, err)
 					slog.Error("error writing to cache", tint.Err(err),
 						"method", req.Method,
@@ -190,5 +184,5 @@ func recordLinkPreviewAccessed(url string) {
 
 // DeleteCached removes a cached screenshot file from disk.
 func DeleteCached(url string) error {
-	return cache.Delete(url)
+	return Cache.Delete(url)
 }

@@ -17,15 +17,13 @@ import (
 	"github.com/yeqown/go-qrcode/writer/standard"
 )
 
-var cache *core.DiskCache
+var Cache *core.DiskCache
 
-func InitCache() {
+func Init(mux *http.ServeMux) {
 	if *conf.Config.QrCode.Cache.Enabled {
-		cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "qr-codes"))
+		Cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "qr-codes"))
 	} // else cache will be nil
-}
 
-func SetupHandlers(mux *http.ServeMux) {
 	mux.HandleFunc("GET /qrcode/v1", handleQrCode)
 }
 
@@ -51,7 +49,7 @@ func handleQrCode(w http.ResponseWriter, req *http.Request) {
 
 	// Only check cache if enabled
 	if *conf.Config.QrCode.Cache.Enabled {
-		cached, err = cache.Find(url)
+		cached, err = Cache.Find(url)
 		if err != nil {
 			slog.Error("error during cache lookup", tint.Err(err),
 				"method", req.Method,
@@ -115,7 +113,7 @@ func handleQrCode(w http.ResponseWriter, req *http.Request) {
 				slog.Error("PNG compression failed", tint.Err(err), "url", url)
 			}
 
-			if err := cache.Write(url, dataToWrite); err != nil {
+			if err := Cache.Write(url, dataToWrite); err != nil {
 				err = fmt.Errorf("error writing to cache: %s, %w", url, err)
 				slog.Error("error writing to cache", tint.Err(err),
 					"method", req.Method,
@@ -175,5 +173,5 @@ func recordQrCodeAccessed(url string) {
 
 // DeleteCached removes a cached QR Code file from disk.
 func DeleteCached(url string) error {
-	return cache.Delete(url)
+	return Cache.Delete(url)
 }

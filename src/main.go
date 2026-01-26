@@ -91,10 +91,6 @@ func main() {
 		}
 	}()
 
-	linkpreview.InitCache()
-	qrcode.InitCache()
-	github.InitCache()
-
 	// Set up a graceful cleanup for when the process is terminated.
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
@@ -113,10 +109,10 @@ func main() {
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, req *http.Request) {
 		IndexTempl().Render(req.Context(), w)
 	})
-	linkpreview.SetupHandlers(mux)
-	qrcode.SetupHandlers(mux)
-	github.SetupHandlers(mux)
-	dashboard.SetupHandlers(mux)
+	linkpreview.Init(mux)
+	qrcode.Init(mux)
+	github.Init(mux)
+	dashboard.Init(mux)
 
 	addr := net.JoinHostPort("", strconv.Itoa(conf.Config.Web.Port))
 	slog.Info("Listening", "url", "http://localhost"+addr) // Not "https://", since this app does not terminate SSL.

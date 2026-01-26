@@ -113,7 +113,7 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	url := u.String()
-	if linkpreview.GetCache() == nil {
+	if linkpreview.Cache == nil {
 		err := fmt.Errorf("preview unavailable for %s", url)
 		slog.Error("cache disabled", tint.Err(err),
 			"method", req.Method,
@@ -125,7 +125,7 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	png, err := linkpreview.GetCache().Find(url)
+	png, err := linkpreview.Cache.Find(url)
 	if err != nil {
 		err = fmt.Errorf("url: %s, %w", url, err)
 		slog.Error("error during cache lookup", tint.Err(err),
