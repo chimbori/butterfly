@@ -57,7 +57,7 @@ func main() {
 	var err error
 	if conf.Config, err = conf.ReadConfig(*configYmlFlag); err != nil {
 		slog.Error("Failed to parse config", tint.Err(err))
-		// Proceed with defaults.
+		os.Exit(1)
 	}
 
 	if *healthCheckFlag {
