@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"chimbori.dev/butterfly/conf"
 	"chimbori.dev/butterfly/core"
@@ -23,7 +24,10 @@ func setCORSHeaders(w http.ResponseWriter) {
 }
 
 func Init(mux *http.ServeMux) {
-	Cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "github"))
+	Cache = core.NewDiskCache(
+		filepath.Join(conf.Config.DataDir, "cache", "github"),
+		core.WithTTL(time.Hour), // 1 hour
+	)
 	mux.HandleFunc("GET /github/v1/{user}/{repo}/{type}", handleGithubV1)
 	mux.HandleFunc("OPTIONS /github/v1/{user}/{repo}/{type}", handleGithubV1)
 }
