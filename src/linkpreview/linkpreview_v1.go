@@ -20,7 +20,11 @@ var Cache *core.DiskCache
 
 func Init(mux *http.ServeMux) {
 	if *conf.Config.LinkPreview.Cache.Enabled {
-		Cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "link-previews"))
+		Cache = core.NewDiskCache(
+			filepath.Join(conf.Config.DataDir, "cache", "link-previews"),
+			core.WithTTL(conf.Config.LinkPreview.Cache.TTL),
+			core.WithMaxSize(conf.Config.LinkPreview.Cache.MaxSizeBytes),
+		)
 	} // else cache will be nil
 
 	mux.HandleFunc("GET /link-preview/v1", handleLinkPreview)

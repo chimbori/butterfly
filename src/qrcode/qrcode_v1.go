@@ -21,7 +21,11 @@ var Cache *core.DiskCache
 
 func Init(mux *http.ServeMux) {
 	if *conf.Config.QrCode.Cache.Enabled {
-		Cache = core.NewDiskCache(filepath.Join(conf.Config.DataDir, "cache", "qr-codes"))
+		Cache = core.NewDiskCache(
+			filepath.Join(conf.Config.DataDir, "cache", "qr-codes"),
+			core.WithTTL(conf.Config.QrCode.Cache.TTL),
+			core.WithMaxSize(conf.Config.QrCode.Cache.MaxSizeBytes),
+		)
 	} // else cache will be nil
 
 	mux.HandleFunc("GET /qrcode/v1", handleQrCode)

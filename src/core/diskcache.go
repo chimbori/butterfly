@@ -3,10 +3,13 @@ package core
 import (
 	"fmt"
 	"io/fs"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"sort"
 	"time"
+
+	"github.com/dustin/go-humanize"
 )
 
 // DiskCache provides file-based caching with MD5-based sharding.
@@ -159,6 +162,10 @@ func (c *DiskCache) Prune() error {
 	}
 
 	if totalSize <= c.MaxSize {
+		slog.Info("no need to prune",
+			"root", filepath.Base(c.Root),
+			"size", humanize.Bytes(uint64(totalSize)),
+			"limit", humanize.Bytes(uint64(c.MaxSize)))
 		return nil
 	}
 

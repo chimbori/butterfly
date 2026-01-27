@@ -37,12 +37,16 @@ type AppConfig struct {
 			Timeout time.Duration `yaml:"timeout"`
 		} `yaml:"screenshot"`
 		Cache struct {
-			Enabled *bool `yaml:"enabled"`
+			Enabled      *bool         `yaml:"enabled"`
+			TTL          time.Duration `yaml:"ttl"`
+			MaxSizeBytes int64         `yaml:"max_size_bytes"`
 		} `yaml:"cache"`
 	} `yaml:"link-preview"`
 	QrCode struct {
 		Cache struct {
-			Enabled *bool `yaml:"enabled"`
+			Enabled      *bool         `yaml:"enabled"`
+			TTL          time.Duration `yaml:"ttl"`
+			MaxSizeBytes int64         `yaml:"max_size_bytes"`
 		} `yaml:"cache"`
 	} `yaml:"qr-code"`
 	Debug bool `yaml:"debug"`
@@ -90,6 +94,9 @@ func setDefaultsAndPrint(c *AppConfig) {
 		enabled := true
 		c.LinkPreview.Cache.Enabled = &enabled
 	}
+	if c.LinkPreview.Cache.MaxSizeBytes == 0 {
+		c.LinkPreview.Cache.MaxSizeBytes = 1 * 1024 * 1024 * 1024 // 1GB
+	}
 	if c.LinkPreview.Screenshot.Timeout == 0 {
 		c.LinkPreview.Screenshot.Timeout = 20 * time.Second
 	}
@@ -98,6 +105,9 @@ func setDefaultsAndPrint(c *AppConfig) {
 	if c.QrCode.Cache.Enabled == nil {
 		enabled := true
 		c.QrCode.Cache.Enabled = &enabled
+	}
+	if c.QrCode.Cache.MaxSizeBytes == 0 {
+		c.QrCode.Cache.MaxSizeBytes = 1 * 1024 * 1024 * 1024 // 1GB
 	}
 
 	// Print warnings for unsafe settings, just as FYI.

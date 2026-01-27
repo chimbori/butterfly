@@ -6,6 +6,9 @@ import (
 	"log/slog"
 
 	"chimbori.dev/butterfly/db"
+	"chimbori.dev/butterfly/github"
+	"chimbori.dev/butterfly/linkpreview"
+	"chimbori.dev/butterfly/qrcode"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/lmittmann/tint"
 )
@@ -23,8 +26,25 @@ func performMaintenance() {
 	deletedDomains, err := queries.DeleteUnauthorizedStaleDomains(ctx, interval)
 	if err != nil {
 		slog.Error("failed to delete stale domains", tint.Err(err))
-		return
+	} else {
+		slog.Info(fmt.Sprintf("%d domains deleted", deletedDomains))
 	}
 
-	slog.Info(fmt.Sprintf("Maintenance completed successfully; %d domains deleted", deletedDomains))
+	// Prune caches
+	if linkpreview.Cache != nil {
+		if err := linkpreview.Cache.Prune(); err != nil {
+			slog.Error("failed to prune linkpreview cache", tint.Err(err))
+		}
+	}
+	if qrcode.Cache != nil {
+		if err := qrcode.Cache.Prune(); err != nil {
+			slog.Error("failed to prune qrcode cache", tint.Err(err))
+		}
+	}
+	if github.Cache != nil {
+		if err := github.Cache.Prune(); err != nil {
+			slog.Error("failed to prune github cache", tint.Err(err))
+		}
+	}
+	slog.Info("Maintenance completed successfully")
 }
