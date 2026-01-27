@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func TestNewDiskCache(t *testing.T) {
@@ -207,5 +208,87 @@ func TestDiskCacheOverwrite(t *testing.T) {
 
 	if string(found) != string(data2) {
 		t.Errorf("Expected %s, got %s", string(data2), string(found))
+	}
+}
+
+func TestDiskCacheTTL(t *testing.T) {
+	root := t.TempDir()
+	ttl := 200 * time.Millisecond
+	cache := NewDiskCache(root, WithTTL(ttl))
+
+	key := "ttl-key"
+	data := []byte("content")
+
+	if err := cache.Write(key, data); err != nil {
+		t.Fatalf("Write failed: %v", err)
+	}
+
+	// Immediate check
+	found, err := cache.Find(key)
+	if err != nil {
+		t.Fatalf("Find failed immediate: %v", err)
+	}
+	if found == nil {
+		t.Error("Expected cache hit immediately")
+	}
+
+	// Wait for expiration
+	time.Sleep(300 * time.Millisecond)
+
+	found, err = cache.Find(key)
+	if err != nil {
+		t.Fatalf("Find failed after wait: %v", err)
+	}
+	if found != nil {
+		t.Error("Expected cache miss after TTL")
+	}
+
+	// Verify file deleted
+	path := cache.buildPath(key)
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		t.Error("File should be deleted after TTL expired read")
+	}
+}
+
+func TestDiskCachePrune(t *testing.T) {
+	root := t.TempDir()
+	// Allow only enough for 1 file roughly (15 bytes)
+	cache := NewDiskCache(root, WithMaxSize(15))
+
+	// Write 3 files, 10 bytes each
+	// File 1
+	cache.Write("key1", []byte("0123456789"))
+	time.Sleep(100 * time.Millisecond) // Ensure diff modification times
+
+	// File 2
+	cache.Write("key2", []byte("0123456789"))
+	time.Sleep(100 * time.Millisecond)
+
+	// File 3
+	cache.Write("key3", []byte("0123456789"))
+
+	// Total size = 30 bytes
+	// MaxSize = 15
+	// Should remove oldest (key1 then key2) until size <= 15.
+	// Removing key1 (10 bytes) -> 20 bytes leftover. Still > 15.
+	// Removing key2 (10 bytes) -> 10 bytes leftover. <= 15.
+	// So key1 and key2 should be gone. key3 should remain.
+
+	if err := cache.Prune(); err != nil {
+		t.Fatalf("Prune failed: %v", err)
+	}
+
+	// Check key1
+	found, _ := cache.Find("key1")
+	if found != nil {
+		t.Error("key1 should have been pruned")
+	}
+	found, _ = cache.Find("key2")
+	if found != nil {
+		t.Error("key2 should have been pruned")
+	}
+	found, _ = cache.Find("key3")
+	if found == nil {
+		t.Error("key3 should be present")
 	}
 }
