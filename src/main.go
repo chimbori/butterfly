@@ -27,6 +27,7 @@ import (
 	"chimbori.dev/butterfly/slogdb"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/lmittmann/tint"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
@@ -34,9 +35,23 @@ func main() {
 	slog.SetDefault(slog.New(tintHandler))
 	slog.Info(conf.AppName, "build-timestamp", conf.BuildTimestamp)
 
+	bcryptFlag := flag.Bool("bcrypt", false, "print bcrypt hash for given password & exit")
 	healthCheckFlag := flag.Bool("healthcheck", false, "verify health of running service & exit")
 	configYmlFlag := flag.String("config", "butterfly.yml", "path to butterfly.yml")
 	flag.Parse()
+
+	// If run with “--bcrypt”, read a password via the terminal, output a bcrypt hash, and exit.
+	if *bcryptFlag {
+		password := core.ReadPassword()
+		bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			slog.Error("Failed to generate password hash", tint.Err(err))
+			os.Exit(1)
+		}
+		fmt.Println(password)
+		fmt.Println(string(bytes))
+		os.Exit(0)
+	}
 
 	// Read config before any routine maintenance is performed.
 	var err error
