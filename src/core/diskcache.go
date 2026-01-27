@@ -165,7 +165,9 @@ func (c *DiskCache) Prune() error {
 		slog.Info("no need to prune",
 			"root", filepath.Base(c.Root),
 			"size", humanize.Bytes(uint64(totalSize)),
-			"limit", humanize.Bytes(uint64(c.MaxSize)))
+			"limit", humanize.Bytes(uint64(c.MaxSize)),
+			"ttl", c.TTL,
+		)
 		return nil
 	}
 
