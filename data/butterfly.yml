@@ -1,5 +1,7 @@
 # butterfly.yml
 
+# debug: false
+
 web:
   port: 9999
 
@@ -10,14 +12,16 @@ dashboard:
   username: chimbori
   password: "$2a$10$a8LnUkK1UiB.9yQrUp3wyuGsH1AAHhlHVy1cjIaaIUVAwCtGvaX7q" # "test"
 
-# debug: false
-
 link-preview:
   screenshot:
     # timeout: 20s
   cache:
     # enabled: false
+    ttl: "720h" # 30 days
+    max_size_bytes: 1073741824
 
 qr-code:
   cache:
     # enabled: true
+    ttl: "720h" # 30 days
+    max_size_bytes: 1073741824
