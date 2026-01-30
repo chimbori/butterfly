@@ -19,8 +19,8 @@ var Cache *core.DiskCache
 // setCORSHeaders configures permissive CORS headers so this endpoint can be called from any origin.
 func setCORSHeaders(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
 
 func Init(mux *http.ServeMux) {
