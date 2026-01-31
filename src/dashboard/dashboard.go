@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"path/filepath"
 	"time"
 
 	"chimbori.dev/butterfly/conf"
@@ -18,6 +19,14 @@ var sessionStore = core.NewInMemorySessionStore(24 * time.Hour)
 const sessionCookieName = "butterfly_session"
 
 func Init(mux *http.ServeMux) {
+	if *conf.Config.LinkPreview.Cache.Enabled {
+		thumbnailCache = core.NewDiskCache(
+			filepath.Join(conf.Config.DataDir, "cache", "link-preview-thumbnails"),
+			core.WithTTL(conf.Config.LinkPreview.Cache.TTL),
+			core.WithMaxSize(conf.Config.LinkPreview.Cache.MaxSizeBytes),
+		)
+	}
+
 	chain := alice.New(authHandler)
 
 	mux.Handle("GET /dashboard", chain.ThenFunc(homeHandler))

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"runtime"
 
+	"chimbori.dev/butterfly/core"
 	"chimbori.dev/butterfly/db"
 	"chimbori.dev/butterfly/linkpreview"
 	"chimbori.dev/butterfly/validation"
@@ -17,7 +18,10 @@ import (
 	"github.com/lmittmann/tint"
 )
 
-var compressionSem chan struct{}
+var (
+	compressionSem chan struct{}
+	thumbnailCache *core.DiskCache
+)
 
 func init() {
 	compressionSem = make(chan struct{}, runtime.NumCPU()*4)
@@ -120,6 +124,17 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	url := u.String()
+
+	if thumbnailCache != nil {
+		if webp, err := thumbnailCache.Find(url); err == nil && webp != nil {
+			slog.Debug("serving from thumbnail cache", "url", url)
+			w.Header().Set("Content-Type", "image/webp")
+			w.Header().Set("Cache-Control", "public, max-age=31536000") // 1 year cache
+			w.Write(webp)
+			return
+		}
+	}
+
 	if linkpreview.Cache == nil {
 		err := fmt.Errorf("preview unavailable for %s", url)
 		slog.Error("cache disabled", tint.Err(err),
@@ -173,7 +188,7 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Use NearestNeighbor for simplicity & speed, since we’re only scaling down, never up.
-	dst := imaging.Resize(img, 600, 0, imaging.NearestNeighbor)
+	resized := imaging.Resize(img, 600, 0, imaging.NearestNeighbor)
 
 	slog.Debug("image scaled successfully",
 		"method", req.Method,
@@ -182,9 +197,8 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 		"hostname", u.Hostname())
 
 	// Encode as WebP.
-	w.Header().Set("Content-Type", "image/webp")
-	w.Header().Set("Cache-Control", "public, max-age=31536000") // 1 year cache
-	if err := nativewebp.Encode(w, dst, &nativewebp.Options{}); err != nil {
+	var webpBuf bytes.Buffer
+	if err := nativewebp.Encode(&webpBuf, resized, &nativewebp.Options{}); err != nil {
 		slog.Error("failed to encode WebP", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
@@ -192,7 +206,17 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 			"hostname", u.Hostname(),
 			"status", http.StatusInternalServerError)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	webpData := webpBuf.Bytes()
+
+	if thumbnailCache != nil {
+		go thumbnailCache.Write(url, webpData)
+	}
+
+	w.Header().Set("Content-Type", "image/webp")
+	w.Header().Set("Cache-Control", "public, max-age=31536000") // 1 year cache
+	w.Write(webpData)
 
 	slog.Debug("image converted to WebP & served successfully",
 		"method", req.Method,
