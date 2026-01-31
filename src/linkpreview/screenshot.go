@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -24,6 +25,8 @@ var ErrMissingSelector = errors.New("selector not found")
 // It navigates to the provided URL, ensures the element specified by the CSS selector is visible,
 // and takes a screenshot.
 func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err error) {
+	slog.Debug("takeScreenshot", "url", url, "selector", selector)
+
 	var cancel context.CancelFunc
 	if conf.Config.Debug {
 		ctx, cancel = chromedp.NewContext(ctx, chromedp.WithErrorf(log.Printf))
@@ -73,6 +76,8 @@ func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err 
 // and then takes a screenshot of the result. The template is parsed as a Golang template, with fields
 // `{{.Title}}`, `{{.Description}}`, and `{{.Url}}`.
 func takeScreenshotWithTemplate(ctx context.Context, templateContent, url, title, description string) ([]byte, error) {
+	slog.Debug("takeScreenshotWithTemplate", "url", url, "title", title, "description", description)
+
 	var cancel context.CancelFunc
 	if conf.Config.Debug {
 		ctx, cancel = chromedp.NewContext(ctx, chromedp.WithErrorf(log.Printf))
