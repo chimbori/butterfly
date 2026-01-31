@@ -7,6 +7,7 @@ import (
 	_ "image/png"
 	"log/slog"
 	"net/http"
+	"runtime"
 
 	"chimbori.dev/butterfly/db"
 	"chimbori.dev/butterfly/linkpreview"
@@ -15,6 +16,12 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/lmittmann/tint"
 )
+
+var compressionSem chan struct{}
+
+func init() {
+	compressionSem = make(chan struct{}, runtime.NumCPU()*4)
+}
 
 // GET /dashboard/link-previews - List all cached link previews
 func linkPreviewsPageHandler(w http.ResponseWriter, req *http.Request) {
@@ -150,6 +157,9 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Decode the PNG image from the cache & compress it to WebP on the fly.
+	compressionSem <- struct{}{}
+	defer func() { <-compressionSem }()
+
 	img, _, err := image.Decode(bytes.NewReader(png))
 	if err != nil {
 		slog.Error("Error decoding link preview image", tint.Err(err),
