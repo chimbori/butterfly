@@ -18,10 +18,10 @@ import (
 	"github.com/lmittmann/tint"
 )
 
-var (
-	compressionSem chan struct{}
-	thumbnailCache *core.DiskCache
-)
+// compressionSem limits the number of concurrent image compression tasks.
+var compressionSem chan struct{}
+
+var ThumbnailCache *core.DiskCache
 
 func init() {
 	compressionSem = make(chan struct{}, runtime.NumCPU()*4)
@@ -125,8 +125,8 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 
 	url := u.String()
 
-	if thumbnailCache != nil {
-		if webp, err := thumbnailCache.Find(url); err == nil && webp != nil {
+	if ThumbnailCache != nil {
+		if webp, err := ThumbnailCache.Find(url); err == nil && webp != nil {
 			slog.Debug("serving from thumbnail cache", "url", url)
 			w.Header().Set("Content-Type", "image/webp")
 			w.Header().Set("Cache-Control", "public, max-age=31536000") // 1 year cache
@@ -210,8 +210,8 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	webpData := webpBuf.Bytes()
 
-	if thumbnailCache != nil {
-		go thumbnailCache.Write(url, webpData)
+	if ThumbnailCache != nil {
+		go ThumbnailCache.Write(url, webpData)
 	}
 
 	w.Header().Set("Content-Type", "image/webp")

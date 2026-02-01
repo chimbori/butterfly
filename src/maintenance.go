@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"chimbori.dev/butterfly/conf"
+	"chimbori.dev/butterfly/dashboard"
 	"chimbori.dev/butterfly/db"
 	"chimbori.dev/butterfly/github"
 	"chimbori.dev/butterfly/linkpreviews"
@@ -47,6 +48,11 @@ func performMaintenance() {
 	if linkpreviews.Cache != nil {
 		if err := linkpreviews.Cache.Prune(); err != nil {
 			slog.Error("failed to prune linkpreviews cache", tint.Err(err))
+		}
+	}
+	if dashboard.ThumbnailCache != nil {
+		if err := dashboard.ThumbnailCache.Prune(); err != nil {
+			slog.Error("failed to prune linkpreview thumbnail cache", tint.Err(err))
 		}
 	}
 	if qrcode.Cache != nil {
