@@ -6,7 +6,7 @@ Butterfly Social is a quick way to auto-generate OpenGraph link preview images i
 
 ## How to use Butterfly Social Link Previews
 
-You can self-host Butterfly Social on a cheap VPS from any provider (here’s $200 in credits with a [DigitalOcean referral code]((https://www.digitalocean.com/?refcode=e76ea0927117)).)
+You can self-host Butterfly Social on a cheap VPS from any provider (here’s $200 in credits with a [DigitalOcean referral code](https://www.digitalocean.com/?refcode=e76ea0927117).)
 
 To prevent abuse and to conserve resources, Butterfly blocks all domains by default, until you explicitly authorize each domain you care about.
 
