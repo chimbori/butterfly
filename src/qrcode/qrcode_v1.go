@@ -20,11 +20,11 @@ import (
 var Cache *core.DiskCache
 
 func Init(mux *http.ServeMux) {
-	if *conf.Config.QrCode.Cache.Enabled {
+	if *conf.Config.QrCodes.Cache.Enabled {
 		Cache = core.NewDiskCache(
 			filepath.Join(conf.Config.DataDir, "cache", "qr-codes"),
-			core.WithTTL(conf.Config.QrCode.Cache.TTL),
-			core.WithMaxSize(conf.Config.QrCode.Cache.MaxSizeBytes),
+			core.WithTTL(conf.Config.QrCodes.Cache.TTL),
+			core.WithMaxSize(conf.Config.QrCodes.Cache.MaxSizeBytes),
 		)
 	} // else cache will be nil
 
@@ -52,7 +52,7 @@ func handleQrCode(w http.ResponseWriter, req *http.Request) {
 	var cached []byte
 
 	// Only check cache if enabled
-	if *conf.Config.QrCode.Cache.Enabled {
+	if *conf.Config.QrCodes.Cache.Enabled {
 		cached, err = Cache.Find(url)
 		if err != nil {
 			slog.Error("error during cache lookup", tint.Err(err),
@@ -107,7 +107,7 @@ func handleQrCode(w http.ResponseWriter, req *http.Request) {
 
 	// If cache is enabled, compress the generated QR Code and cache it, but without holding up the HTTP request
 	go func() {
-		if *conf.Config.QrCode.Cache.Enabled {
+		if *conf.Config.QrCodes.Cache.Enabled {
 			dataToWrite := png
 			compressed, err := core.CompressPNG(png)
 			if err == nil {

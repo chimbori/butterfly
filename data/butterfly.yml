@@ -12,7 +12,7 @@ dashboard:
   username: chimbori
   password: "$2a$10$a8LnUkK1UiB.9yQrUp3wyuGsH1AAHhlHVy1cjIaaIUVAwCtGvaX7q" # "test"
 
-link-preview:
+link-previews:
   screenshot:
     # timeout: 20s
   cache:
@@ -20,7 +20,7 @@ link-preview:
     ttl: "720h" # 30 days
     max_size_bytes: 1073741824
 
-qr-code:
+qr-codes:
   cache:
     # enabled: true
     ttl: "720h" # 30 days

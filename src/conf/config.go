@@ -32,7 +32,7 @@ type AppConfig struct {
 		Username string `yaml:"username"`
 		Password string `yaml:"password"`
 	} `yaml:"dashboard"`
-	LinkPreview struct {
+	LinkPreviews struct {
 		Screenshot struct {
 			Timeout time.Duration `yaml:"timeout"`
 		} `yaml:"screenshot"`
@@ -41,14 +41,14 @@ type AppConfig struct {
 			TTL          time.Duration `yaml:"ttl"`
 			MaxSizeBytes int64         `yaml:"max_size_bytes"`
 		} `yaml:"cache"`
-	} `yaml:"link-preview"`
-	QrCode struct {
+	} `yaml:"link-previews"`
+	QrCodes struct {
 		Cache struct {
 			Enabled      *bool         `yaml:"enabled"`
 			TTL          time.Duration `yaml:"ttl"`
 			MaxSizeBytes int64         `yaml:"max_size_bytes"`
 		} `yaml:"cache"`
-	} `yaml:"qr-code"`
+	} `yaml:"qr-codes"`
 	Debug bool `yaml:"debug"`
 }
 
@@ -90,24 +90,24 @@ func setDefaultsAndPrint(c *AppConfig) {
 	}
 
 	// Cache for Link Previews is enabled by default; only disable it when testing or debugging.
-	if c.LinkPreview.Cache.Enabled == nil {
+	if c.LinkPreviews.Cache.Enabled == nil {
 		enabled := true
-		c.LinkPreview.Cache.Enabled = &enabled
+		c.LinkPreviews.Cache.Enabled = &enabled
 	}
-	if c.LinkPreview.Cache.MaxSizeBytes == 0 {
-		c.LinkPreview.Cache.MaxSizeBytes = 1 * 1024 * 1024 * 1024 // 1GB
+	if c.LinkPreviews.Cache.MaxSizeBytes == 0 {
+		c.LinkPreviews.Cache.MaxSizeBytes = 1 * 1024 * 1024 * 1024 // 1GB
 	}
-	if c.LinkPreview.Screenshot.Timeout == 0 {
-		c.LinkPreview.Screenshot.Timeout = 20 * time.Second
+	if c.LinkPreviews.Screenshot.Timeout == 0 {
+		c.LinkPreviews.Screenshot.Timeout = 20 * time.Second
 	}
 
 	// Cache for QR Codes is enabled by default; only disable it when testing or debugging.
-	if c.QrCode.Cache.Enabled == nil {
+	if c.QrCodes.Cache.Enabled == nil {
 		enabled := true
-		c.QrCode.Cache.Enabled = &enabled
+		c.QrCodes.Cache.Enabled = &enabled
 	}
-	if c.QrCode.Cache.MaxSizeBytes == 0 {
-		c.QrCode.Cache.MaxSizeBytes = 1 * 1024 * 1024 * 1024 // 1GB
+	if c.QrCodes.Cache.MaxSizeBytes == 0 {
+		c.QrCodes.Cache.MaxSizeBytes = 1 * 1024 * 1024 * 1024 // 1GB
 	}
 
 	// Print warnings for unsafe settings, just as FYI.
@@ -117,10 +117,10 @@ func setDefaultsAndPrint(c *AppConfig) {
 		slog.Warn("Debug mode is enabled")
 	}
 
-	if !*c.LinkPreview.Cache.Enabled {
+	if !*c.LinkPreviews.Cache.Enabled {
 		slog.Warn("Screenshot cache disabled for Link Previews; performance will be affected")
 	}
-	if !*c.QrCode.Cache.Enabled {
+	if !*c.QrCodes.Cache.Enabled {
 		slog.Warn("Cache disabled for QR Codes; performance will be affected")
 	}
 }

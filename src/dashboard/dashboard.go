@@ -19,11 +19,11 @@ var sessionStore = core.NewInMemorySessionStore(24 * time.Hour)
 const sessionCookieName = "butterfly_session"
 
 func Init(mux *http.ServeMux) {
-	if *conf.Config.LinkPreview.Cache.Enabled {
+	if *conf.Config.LinkPreviews.Cache.Enabled {
 		thumbnailCache = core.NewDiskCache(
-			filepath.Join(conf.Config.DataDir, "cache", "link-preview-thumbnails"),
-			core.WithTTL(conf.Config.LinkPreview.Cache.TTL),
-			core.WithMaxSize(conf.Config.LinkPreview.Cache.MaxSizeBytes),
+			filepath.Join(conf.Config.DataDir, "cache", "link-previews-thumbnails"),
+			core.WithTTL(conf.Config.LinkPreviews.Cache.TTL),
+			core.WithMaxSize(conf.Config.LinkPreviews.Cache.MaxSizeBytes),
 		)
 	}
 

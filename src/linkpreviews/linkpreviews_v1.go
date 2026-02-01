@@ -19,11 +19,11 @@ import (
 var Cache *core.DiskCache
 
 func Init(mux *http.ServeMux) {
-	if *conf.Config.LinkPreview.Cache.Enabled {
+	if *conf.Config.LinkPreviews.Cache.Enabled {
 		Cache = core.NewDiskCache(
 			filepath.Join(conf.Config.DataDir, "cache", "link-previews"),
-			core.WithTTL(conf.Config.LinkPreview.Cache.TTL),
-			core.WithMaxSize(conf.Config.LinkPreview.Cache.MaxSizeBytes),
+			core.WithTTL(conf.Config.LinkPreviews.Cache.TTL),
+			core.WithMaxSize(conf.Config.LinkPreviews.Cache.MaxSizeBytes),
 		)
 	} // else cache will be nil
 
@@ -58,7 +58,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 	var cached []byte
 
 	// Only check cache if enabled
-	if *conf.Config.LinkPreview.Cache.Enabled {
+	if *conf.Config.LinkPreviews.Cache.Enabled {
 		var err error
 		cached, err = Cache.Find(url)
 		if err != nil {
@@ -87,7 +87,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 		recordLinkPreviewAccessed(url)
 
 	} else {
-		ctx, cancel := context.WithTimeout(req.Context(), conf.Config.LinkPreview.Screenshot.Timeout)
+		ctx, cancel := context.WithTimeout(req.Context(), conf.Config.LinkPreviews.Screenshot.Timeout)
 		defer cancel()
 		screenshot, err := takeScreenshot(ctx, url, selector)
 		if err != nil {
@@ -142,7 +142,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 
 		// If cache is enabled, compress the generated screenshot and cache it, but without holding up the HTTP request
 		go func() {
-			if *conf.Config.LinkPreview.Cache.Enabled {
+			if *conf.Config.LinkPreviews.Cache.Enabled {
 				dataToWrite := screenshot
 				compressed, err := core.CompressPNG(screenshot)
 				if err == nil {
