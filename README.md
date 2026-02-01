@@ -1,10 +1,14 @@
 # Butterfly Social
 
-Self-hosted OpenGraph / social link preview image generation tool. Fully customizable, yet works out of the box with minimal configuration.
+Self-hosted OpenGraph / social link preview image generation tool. Open source, fully customizable, yet works out of the box with minimal configuration.
 
 Butterfly Social is a quick way to auto-generate OpenGraph link preview images in bulk for all your sites, without the use of a separate template editor or API integration at no cost. The source of truth for the image data & design remains within your primary website, so you can use tools you are already familiar with & assets that are already well-integrated into your workflow.
 
 ## How to use Butterfly Social
+
+You can self-host Butterfly Social on a cheap VPS from any provider (here’s $200 in credits with a [DigitalOcean referral code]((https://www.digitalocean.com/?refcode=e76ea0927117)).)
+
+To prevent abuse and to conserve resources, Butterfly blocks all domains by default, until you explicitly authorize each domain you care about.
 
 ### Use the Default Template
 
@@ -36,11 +40,9 @@ Just one step: Paste the Butterfly `<meta>` tag into the original page, and you�
 
 ### How it’s rendered
 
-<img src="assets/example.png" width="800" style="border:1px solid #ccc; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 24px; margin: 24px 0">
+![Example](assets/example.png)
 
 Test your Butterfly installation by posting your original page URL to any social platform.
-
-### If you can put a `<div>` on your page, you can use Butterfly!
 
 ## How it works
 
@@ -84,9 +86,7 @@ We strongly recommend deploying using the official Docker image, which includes 
 - Butterfly is designed to be used behind a TLS reverse proxy for SSL termination (among other things). We recommend [Caddy](https://caddyserver.com/); see sample Caddyfile below.
 - If you expect a lot of traffic, consider using a CDN.
 
-### Sample `compose.yml`
-
-A more advanced example is available in [compose.yml](compose.yml).
+### Sample `compose.yml` (for Docker and Podman)
 
 ```yml
 services:
@@ -118,24 +118,66 @@ volumes:
 ### Sample `butterfly.yml`
 
 Butterfly requires basic configuration to be provided via a config file.
-For a full list of configurable options, [see full example](data/butterfly.yml).
 
-- PostgreSQL Database URL
+- **PostgreSQL Database URL** _(required)_
   ```yml
   database:
     url: postgresql://chimbori:chimbori@butterfly-db:5432/butterfly
   ```
 
-- Dashboard credentials (encrypted via `bcrypt`)
+- **Dashboard credentials** (encrypted via `bcrypt`) _(required)_
   ```yml
   dashboard:
     username: admin
     password: "$2a$10$a8LnUkK1UiB.9yQrUp3wyuGsH1AAHhlHVy1cjIaaIUVAwCtGvaX7q" # "test"
   ```
 
+- Web config _(optional)_
+
+  Assuming there’s a reverse proxy in front of Butterfly Social, there should be no need to change the port here; just configure the reverse proxy to forward requests to port 9999.
+
+  ```yml
+  web:
+    port: 9999
+  ```
+
+- Link Previews config _(optional)_
+
+  Performance will be seriously affected by disabling the cache. This is only to be used during development.
+
+  ```yml
+  link-previews:
+    screenshot:
+      timeout: 20s
+    cache:
+      enabled: true
+      ttl: 720h0m0s
+      max_size_bytes: 1073741824
+  ```
+
+- QR Codes config _(optional)_
+
+  Performance will be seriously affected by disabling the cache. This is only to be used during development.
+
+  ```yml
+  qr-codes:
+    cache:
+      enabled: true
+      ttl: 720h0m0s
+      max_size_bytes: 1073741824
+  ```
+
+- Debug Mode _(optional)_
+
+  Turn on additional logging in Debug Mode.
+  ```yml
+  debug: true
+  ```
+
+
 ### Sample `Caddyfile`
 
-```
+```caddy
 butterfly.your-server.com {
   reverse_proxy butterfly:9999
   encode zstd gzip
@@ -143,8 +185,6 @@ butterfly.your-server.com {
 ```
 
 ## Dashboard UI
-
-To prevent abuse and to conserve resources, Butterfly blocks all domains by default, until you explicitly authorize each domain you care about.
 
 You can configure the Authorized Domains list using the Dashboard UI at `https://butterfly.your-server.com/dashboard`. The Dashboard is available as an installable PWA (Progressive Web Application) that can be “installed” locally using any modern browser.
 
