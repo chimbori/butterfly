@@ -53,6 +53,7 @@ func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err 
 	var foundSelector bool
 	var buf []byte
 	if err := chromedp.Run(ctx,
+		chromedp.EmulateViewport(1200, 630),
 		chromedp.Navigate(url),
 		chromedp.Evaluate(js, &foundSelector),
 	); err != nil {
@@ -64,6 +65,7 @@ func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err 
 
 	if err := chromedp.Run(ctx,
 		chromedp.WaitVisible(selector, chromedp.ByQuery),
+		chromedp.Sleep(time.Second), // Allow fonts to finish downloading.
 		chromedp.Screenshot(selector, &buf),
 	); err != nil {
 		return nil, err
