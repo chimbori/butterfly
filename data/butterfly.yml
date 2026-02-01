@@ -12,6 +12,9 @@ dashboard:
   username: chimbori
   password: "$2a$10$a8LnUkK1UiB.9yQrUp3wyuGsH1AAHhlHVy1cjIaaIUVAwCtGvaX7q" # "test"
 
+logs:
+  retention: "720h" # 30 days
+
 link-previews:
   screenshot:
     # timeout: 20s

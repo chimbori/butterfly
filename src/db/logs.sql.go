@@ -9,6 +9,19 @@ import (
 	"context"
 )
 
+const deleteOldLogs = `-- name: DeleteOldLogs :execrows
+DELETE FROM logs
+  WHERE logged_at < NOW() - $1
+`
+
+func (q *Queries) DeleteOldLogs(ctx context.Context, dollar_1 interface{}) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteOldLogs, dollar_1)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const getRecentLogs = `-- name: GetRecentLogs :many
 SELECT _id, logged_at, request_method, request_path, http_status, url, hostname, message, err, user_agent FROM logs
   ORDER BY logged_at DESC

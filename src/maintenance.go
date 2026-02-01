@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"time"
 
+	"chimbori.dev/butterfly/conf"
 	"chimbori.dev/butterfly/db"
 	"chimbori.dev/butterfly/github"
 	"chimbori.dev/butterfly/linkpreviews"
@@ -28,6 +30,17 @@ func performMaintenance() {
 		slog.Error("failed to delete stale domains", tint.Err(err))
 	} else {
 		slog.Info(fmt.Sprintf("%d domains deleted", deletedDomains))
+	}
+
+	logRetentionInterval := pgtype.Interval{
+		Microseconds: int64(conf.Config.Logs.Retention / time.Microsecond),
+		Valid:        true,
+	}
+	deletedLogs, err := queries.DeleteOldLogs(ctx, logRetentionInterval)
+	if err != nil {
+		slog.Error("failed to delete old logs", tint.Err(err))
+	} else {
+		slog.Info(fmt.Sprintf("%d logs deleted", deletedLogs))
 	}
 
 	// Prune caches

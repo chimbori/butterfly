@@ -32,6 +32,9 @@ type AppConfig struct {
 		Username string `yaml:"username"`
 		Password string `yaml:"password"`
 	} `yaml:"dashboard"`
+	Logs struct {
+		Retention time.Duration `yaml:"retention"`
+	} `yaml:"logs"`
 	LinkPreviews struct {
 		Screenshot struct {
 			Timeout time.Duration `yaml:"timeout"`
@@ -108,6 +111,10 @@ func setDefaultsAndPrint(c *AppConfig) {
 	}
 	if c.QrCodes.Cache.MaxSizeBytes == 0 {
 		c.QrCodes.Cache.MaxSizeBytes = 1 * 1024 * 1024 * 1024 // 1GB
+	}
+
+	if c.Logs.Retention == 0 {
+		c.Logs.Retention = 30 * 24 * time.Hour
 	}
 
 	// Print warnings for unsafe settings, just as FYI.
