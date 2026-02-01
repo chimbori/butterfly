@@ -216,7 +216,7 @@ func TestTakeScreenshotWithTemplate(t *testing.T) {
 	</body></html>
 	`
 
-	png, err := takeScreenshotWithTemplate(allocCtx, template, "https://example.com", "My Title", "My Desc")
+	png, err := takeScreenshotWithTemplate(allocCtx, template, "https://example.com", "#link-preview", "My Title", "My Desc")
 	if err != nil {
 		t.Fatalf("takeScreenshotWithTemplate failed: %v", err)
 	}

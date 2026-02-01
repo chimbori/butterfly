@@ -75,8 +75,12 @@ func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err 
 // takeScreenshotWithTemplate renders a provided HTML template with the given title and description,
 // and then takes a screenshot of the result. The template is parsed as a Golang template, with fields
 // `{{.Title}}`, `{{.Description}}`, and `{{.Url}}`.
-func takeScreenshotWithTemplate(ctx context.Context, templateContent, url, title, description string) ([]byte, error) {
-	slog.Debug("takeScreenshotWithTemplate", "url", url, "title", title, "description", description)
+func takeScreenshotWithTemplate(ctx context.Context, templateContent, url, selector, title, description string) ([]byte, error) {
+	slog.Debug("takeScreenshotWithTemplate",
+		"url", url,
+		"selector", selector,
+		"title", title,
+		"description", description)
 
 	var cancel context.CancelFunc
 	if conf.Config.Debug {
@@ -86,7 +90,7 @@ func takeScreenshotWithTemplate(ctx context.Context, templateContent, url, title
 	}
 	defer cancel()
 
-	tmpl, err := template.New("linkpreview").Parse(templateContent)
+	tmpl, err := template.New("screenshot").Parse(templateContent)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse template: %w", err)
 	}
@@ -108,9 +112,9 @@ func takeScreenshotWithTemplate(ctx context.Context, templateContent, url, title
 	if err := chromedp.Run(ctx,
 		chromedp.EmulateViewport(1200, 630),
 		chromedp.Navigate("data:text/html;base64,"+base64.StdEncoding.EncodeToString(tmplBuf.Bytes())),
-		chromedp.WaitVisible("#link-preview", chromedp.ByQuery),
+		chromedp.WaitVisible(selector, chromedp.ByQuery),
 		chromedp.Sleep(time.Second), // Allow fonts to finish downloading.
-		chromedp.Screenshot("#link-preview", &screenshotBuf),
+		chromedp.Screenshot(selector, &screenshotBuf),
 	); err != nil {
 		return nil, err
 	}
