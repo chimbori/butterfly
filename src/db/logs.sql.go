@@ -7,14 +7,16 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const deleteOldLogs = `-- name: DeleteOldLogs :execrows
 DELETE FROM logs
-  WHERE logged_at < NOW() - $1
+  WHERE logged_at < NOW() - $1::interval
 `
 
-func (q *Queries) DeleteOldLogs(ctx context.Context, dollar_1 interface{}) (int64, error) {
+func (q *Queries) DeleteOldLogs(ctx context.Context, dollar_1 pgtype.Interval) (int64, error) {
 	result, err := q.db.Exec(ctx, deleteOldLogs, dollar_1)
 	if err != nil {
 		return 0, err

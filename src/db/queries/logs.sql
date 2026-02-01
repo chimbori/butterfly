@@ -12,4 +12,4 @@ SELECT * FROM logs
 
 -- name: DeleteOldLogs :execrows
 DELETE FROM logs
-  WHERE logged_at < NOW() - $1;
+  WHERE logged_at < NOW() - $1::interval;
