@@ -4,7 +4,7 @@ Self-hosted OpenGraph / social link preview image generation tool. Open source, 
 
 Butterfly Social is a quick way to auto-generate OpenGraph link preview images in bulk for all your sites, without the use of a separate template editor or API integration at no cost. The source of truth for the image data & design remains within your primary website, so you can use tools you are already familiar with & assets that are already well-integrated into your workflow.
 
-## How to use Butterfly Social
+## How to use Butterfly Social Link Previews
 
 You can self-host Butterfly Social on a cheap VPS from any provider (here’s $200 in credits with a [DigitalOcean referral code]((https://www.digitalocean.com/?refcode=e76ea0927117)).)
 
@@ -78,6 +78,16 @@ Why limit yourself to the customization possible in a random WYSIWYG editor, whe
 
 Anything you can design for the Web, you can use to create a link preview image.
 The infinite is possible at Zombocom. The unattainable is unknown at Zombocom.
+
+## Bonus Features: QR Codes
+
+Butterfly Social can also generate QR Codes for your authorized URLs that you can embed on your site wherever appropriate.
+
+Use this URL format:
+
+```html
+<img src="https://butterfly.your-server.com/qr-codes/v1?url=your-site.com/some/page">
+```
 
 ## How to deploy
 
@@ -184,7 +194,7 @@ butterfly.your-server.com {
 }
 ```
 
-## Dashboard UI
+# Dashboard UI
 
 You can configure the Authorized Domains list using the Dashboard UI at `https://butterfly.your-server.com/dashboard`. The Dashboard is available as an installable PWA (Progressive Web Application) that can be “installed” locally using any modern browser.
 
