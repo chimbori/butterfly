@@ -36,6 +36,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 	slog.Debug("handleLinkPreview", "url", req.Method+" "+req.URL.String())
 
 	reqUrl := req.URL.Query().Get("url")
+	userAgent := req.Header.Get("User-Agent")
 	queries := db.New(db.Pool)
 
 	url, hostname, err := validation.ValidateUrl(req.Context(), queries, reqUrl)
@@ -45,6 +46,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			"path", req.URL.Path,
 			"url", reqUrl,
 			"hostname", hostname,
+			"user-agent", userAgent,
 			"status", http.StatusUnauthorized)
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -68,6 +70,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 				"path", req.URL.Path,
 				"url", url,
 				"hostname", hostname,
+				"user-agent", userAgent,
 				"status", http.StatusInternalServerError)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -80,6 +83,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			"path", req.URL.Path,
 			"url", url,
 			"hostname", hostname,
+			"user-agent", userAgent,
 			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
 		w.Header().Set("Cache-Control", "max-age=31536000, immutable") // 1 year
@@ -98,6 +102,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 					"path", req.URL.Path,
 					"url", url,
 					"hostname", hostname,
+					"user-agent", userAgent,
 					"status", http.StatusInternalServerError)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
@@ -108,6 +113,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 				"path", req.URL.Path,
 				"url", url,
 				"hostname", hostname,
+				"user-agent", userAgent,
 				"status", http.StatusOK)
 			title, description, fetchErr := core.FetchTitleAndDescription(ctx, url)
 			if fetchErr != nil {
@@ -122,6 +128,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 					"path", req.URL.Path,
 					"url", url,
 					"hostname", hostname,
+					"user-agent", userAgent,
 					"status", http.StatusInternalServerError)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
@@ -134,6 +141,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 			"path", req.URL.Path,
 			"url", url,
 			"hostname", hostname,
+			"user-agent", userAgent,
 			"status", http.StatusOK)
 		w.Header().Set("Content-Type", "image/png")
 		w.Header().Set("Cache-Control", "max-age=31536000, immutable") // 1 year
@@ -159,6 +167,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 						"path", req.URL.Path,
 						"url", url,
 						"hostname", hostname,
+						"user-agent", userAgent,
 						"status", http.StatusInternalServerError)
 				}
 			}

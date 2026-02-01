@@ -10,7 +10,7 @@ import (
 )
 
 const getRecentLogs = `-- name: GetRecentLogs :many
-SELECT _id, logged_at, request_method, request_path, http_status, url, hostname, message, err FROM logs
+SELECT _id, logged_at, request_method, request_path, http_status, url, hostname, message, err, user_agent FROM logs
   ORDER BY logged_at DESC
   LIMIT $1
 `
@@ -34,6 +34,7 @@ func (q *Queries) GetRecentLogs(ctx context.Context, limit int32) ([]Log, error)
 			&i.Hostname,
 			&i.Message,
 			&i.Err,
+			&i.UserAgent,
 		); err != nil {
 			return nil, err
 		}
@@ -48,9 +49,9 @@ func (q *Queries) GetRecentLogs(ctx context.Context, limit int32) ([]Log, error)
 const insertLog = `-- name: InsertLog :exec
 INSERT INTO logs (
   request_method, request_path, http_status,
-  url, hostname,
+  url, hostname, user_agent,
   message, err
-) VALUES ($1, $2, $3, $4, $5, $6, $7)
+) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 `
 
 type InsertLogParams struct {
@@ -59,6 +60,7 @@ type InsertLogParams struct {
 	HttpStatus    *int32
 	Url           *string
 	Hostname      *string
+	UserAgent     *string
 	Message       *string
 	Err           *string
 }
@@ -70,6 +72,7 @@ func (q *Queries) InsertLog(ctx context.Context, arg InsertLogParams) error {
 		arg.HttpStatus,
 		arg.Url,
 		arg.Hostname,
+		arg.UserAgent,
 		arg.Message,
 		arg.Err,
 	)

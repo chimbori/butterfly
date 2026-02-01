@@ -1,9 +1,9 @@
 -- name: InsertLog :exec
 INSERT INTO logs (
   request_method, request_path, http_status,
-  url, hostname,
+  url, hostname, user_agent,
   message, err
-) VALUES ($1, $2, $3, $4, $5, $6, $7);
+) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
 
 -- name: GetRecentLogs :many
 SELECT * FROM logs

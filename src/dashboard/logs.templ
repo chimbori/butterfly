@@ -19,6 +19,7 @@ templ LogsTableTempl(logs []db.Log) {
 				<th>Request</th>
 				<th>URL</th>
 				<th>Hostname</th>
+				<th>User Agent</th>
 				<th>Message</th>
 				<th>Error</th>
 			</tr>
@@ -35,6 +36,7 @@ templ LogsTableTempl(logs []db.Log) {
 					<td class="max-w-md truncate whitespace-nowrap">{ N(log.RequestMethod) } { N(log.RequestPath) }</td>
 					<td class="max-w-md truncate">{ N(log.Url) }</td>
 					<td class="max-w-md truncate">{ N(log.Hostname) }</td>
+					<td class="max-w-md truncate">{ N(log.UserAgent) }</td>
 					<td class="max-w-md truncate">{ N(log.Message) }</td>
 					<td class="max-w-md truncate">{ N(log.Err) }</td>
 				</tr>

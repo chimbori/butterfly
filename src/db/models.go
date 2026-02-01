@@ -34,6 +34,7 @@ type Log struct {
 	Hostname      *string
 	Message       *string
 	Err           *string
+	UserAgent     *string
 }
 
 type QrCode struct {
