@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// DBHandler is a slog.Handler that writes error-level logs to the PostgreSQL `errors` table.
+// DBHandler is a slog.Handler that writes logs to the PostgreSQL `logs` table.
 // It wraps another handler to maintain normal console/file logging.
 type DBHandler struct {
 	parent slog.Handler
@@ -18,7 +18,7 @@ type DBHandler struct {
 }
 
 // NewDBHandler creates a new database logging handler that wraps the parent handler.
-// Only ERROR level logs are written to the database; all logs are passed to the parent.
+// [shouldLogToDatabase] determines whether logs are written to the database; all logs are passed to the parent.
 func NewDBHandler(parent slog.Handler, pool *pgxpool.Pool) *DBHandler {
 	return &DBHandler{
 		parent: parent,
@@ -31,14 +31,36 @@ func (h *DBHandler) Enabled(ctx context.Context, level slog.Level) bool {
 	return h.parent.Enabled(ctx, level)
 }
 
-// Handle writes error-level logs to the database, then delegates to the parent handler.
+// Handle writes ERROR logs and INFO logs with a status code to the database, then delegates to the parent handler.
 func (h *DBHandler) Handle(ctx context.Context, r slog.Record) error {
-	// Write to database if this is an error-level log
-	if r.Level >= slog.LevelError {
+	if shouldLogToDatabase(r) {
 		h.writeToDatabase(ctx, r)
 	}
 	// Always pass through to the parent handler for console/file logging
 	return h.parent.Handle(ctx, r)
+}
+
+// shouldLogToDatabase determines whether a log record should be written to the database.
+// Returns true for ERROR level logs and INFO logs with a status code.
+func shouldLogToDatabase(r slog.Record) bool {
+	// Log ERROR level logs
+	if r.Level >= slog.LevelError {
+		return true
+	}
+
+	// Log INFO logs with a status code
+	if r.Level == slog.LevelInfo {
+		hasStatus := false
+		r.Attrs(func(a slog.Attr) bool {
+			if a.Key == "status" && a.Value.Any() != nil {
+				hasStatus = true
+			}
+			return !hasStatus // Stop iteration if we found status
+		})
+		return hasStatus
+	}
+
+	return false
 }
 
 // WithAttrs returns a new handler with the given attributes added.
