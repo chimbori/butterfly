@@ -7,7 +7,7 @@ import (
 
 	"chimbori.dev/butterfly/db"
 	"chimbori.dev/butterfly/github"
-	"chimbori.dev/butterfly/linkpreview"
+	"chimbori.dev/butterfly/linkpreviews"
 	"chimbori.dev/butterfly/qrcode"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/lmittmann/tint"
@@ -31,9 +31,9 @@ func performMaintenance() {
 	}
 
 	// Prune caches
-	if linkpreview.Cache != nil {
-		if err := linkpreview.Cache.Prune(); err != nil {
-			slog.Error("failed to prune linkpreview cache", tint.Err(err))
+	if linkpreviews.Cache != nil {
+		if err := linkpreviews.Cache.Prune(); err != nil {
+			slog.Error("failed to prune linkpreviews cache", tint.Err(err))
 		}
 	}
 	if qrcode.Cache != nil {

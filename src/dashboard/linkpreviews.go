@@ -11,7 +11,7 @@ import (
 
 	"chimbori.dev/butterfly/core"
 	"chimbori.dev/butterfly/db"
-	"chimbori.dev/butterfly/linkpreview"
+	"chimbori.dev/butterfly/linkpreviews"
 	"chimbori.dev/butterfly/validation"
 	nativewebp "github.com/HugoSmits86/nativewebp"
 	"github.com/disintegration/imaging"
@@ -60,7 +60,7 @@ func deleteLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Delete the cached file from disk
-	if err := linkpreview.DeleteCached(url); err != nil {
+	if err := linkpreviews.DeleteCached(url); err != nil {
 		slog.Warn("failed to delete cached file", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
@@ -135,7 +135,7 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	if linkpreview.Cache == nil {
+	if linkpreviews.Cache == nil {
 		err := fmt.Errorf("preview unavailable for %s", url)
 		slog.Error("cache disabled", tint.Err(err),
 			"method", req.Method,
@@ -147,7 +147,7 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	png, err := linkpreview.Cache.Find(url)
+	png, err := linkpreviews.Cache.Find(url)
 	if err != nil {
 		err = fmt.Errorf("url: %s, %w", url, err)
 		slog.Error("error during cache lookup", tint.Err(err),

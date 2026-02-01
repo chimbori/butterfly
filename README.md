@@ -10,7 +10,7 @@ Butterfly Social is a quick way to auto-generate OpenGraph link preview images i
 
 Just one step: Paste the Butterfly `<meta>` tag into the original page, and you’re done!
 ```html
-<meta property="og:image" content="https://butterfly.your-server.com/link-preview/v1?url=your-site.com/some/page">
+<meta property="og:image" content="https://butterfly.your-server.com/link-previews/v1?url=your-site.com/some/page">
 ```
 
 ### Use your Own Templates
@@ -27,7 +27,7 @@ Just one step: Paste the Butterfly `<meta>` tag into the original page, and you�
 
 2. Use Butterfly to craft a URL, and paste the `<meta>` tag into the original page.
     ```html
-    <meta property="og:image" content="https://butterfly.your-server.com/link-preview/v1?url=your-site.com/some/page">
+    <meta property="og:image" content="https://butterfly.your-server.com/link-previews/v1?url=your-site.com/some/page">
     ```
 
     If you can’t use the default selector (`#link-preview`) for any reason, you can provide an alternate one using the `&sel=` parameter.

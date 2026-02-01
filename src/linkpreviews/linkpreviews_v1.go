@@ -1,4 +1,4 @@
-package linkpreview
+package linkpreviews
 
 import (
 	"context"
@@ -27,10 +27,10 @@ func Init(mux *http.ServeMux) {
 		)
 	} // else cache will be nil
 
-	mux.HandleFunc("GET /link-preview/v1", handleLinkPreview)
+	mux.HandleFunc("GET /link-previews/v1", handleLinkPreview)
 }
 
-// GET /link-preview/v1?url={url}&sel={selector}
+// GET /link-previews/v1?url={url}&sel={selector}
 // Validates the URL, checks if it’s cached, generates screenshots, and serves them.
 func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 	slog.Debug("handleLinkPreview", "url", req.Method+" "+req.URL.String())

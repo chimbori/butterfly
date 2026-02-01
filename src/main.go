@@ -22,7 +22,7 @@ import (
 	"chimbori.dev/butterfly/db"
 	"chimbori.dev/butterfly/embedfs"
 	"chimbori.dev/butterfly/github"
-	"chimbori.dev/butterfly/linkpreview"
+	"chimbori.dev/butterfly/linkpreviews"
 	"chimbori.dev/butterfly/qrcode"
 	"chimbori.dev/butterfly/slogdb"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -123,7 +123,7 @@ func main() {
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, req *http.Request) {
 		IndexTempl().Render(req.Context(), w)
 	})
-	linkpreview.Init(mux)
+	linkpreviews.Init(mux)
 	qrcode.Init(mux)
 	github.Init(mux)
 	dashboard.Init(mux)
