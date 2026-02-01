@@ -1,4 +1,4 @@
-package linkpreviews
+package core
 
 import (
 	"bytes"
@@ -21,10 +21,10 @@ import (
 
 var ErrMissingSelector = errors.New("selector not found")
 
-// takeScreenshot captures a high-resolution PNG screenshot of a specific element on a web page.
+// TakeScreenshot captures a high-resolution PNG screenshot of a specific element on a web page.
 // It navigates to the provided URL, ensures the element specified by the CSS selector is visible,
 // and takes a screenshot.
-func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err error) {
+func TakeScreenshot(ctx context.Context, url, selector string) (png []byte, err error) {
 	slog.Debug("takeScreenshot", "url", url, "selector", selector)
 
 	var cancel context.CancelFunc
@@ -74,10 +74,10 @@ func takeScreenshot(ctx context.Context, url, selector string) (png []byte, err 
 	return buf, nil
 }
 
-// takeScreenshotWithTemplate renders a provided HTML template with the given title and description,
+// TakeScreenshotWithTemplate renders a provided HTML template with the given title and description,
 // and then takes a screenshot of the result. The template is parsed as a Golang template, with fields
 // `{{.Title}}`, `{{.Description}}`, and `{{.Url}}`.
-func takeScreenshotWithTemplate(ctx context.Context, templateContent, url, selector, title, description string) ([]byte, error) {
+func TakeScreenshotWithTemplate(ctx context.Context, templateContent, url, selector, title, description string) ([]byte, error) {
 	slog.Debug("takeScreenshotWithTemplate",
 		"url", url,
 		"selector", selector,
@@ -124,9 +124,9 @@ func takeScreenshotWithTemplate(ctx context.Context, templateContent, url, selec
 	return screenshotBuf, nil
 }
 
-// fetchTitleAndDescription retrieves the title and description from a web page.
+// FetchTitleAndDescription retrieves the title and description from a web page.
 // OpenGraph tags are preferred (og:title, og:description), but document title is used as a fallback.
-func fetchTitleAndDescription(ctx context.Context, url string) (title, description string, err error) {
+func FetchTitleAndDescription(ctx context.Context, url string) (title, description string, err error) {
 	var doc *html.Node
 
 	// Handle data URIs directly

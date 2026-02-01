@@ -89,9 +89,9 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 	} else {
 		ctx, cancel := context.WithTimeout(req.Context(), conf.Config.LinkPreviews.Screenshot.Timeout)
 		defer cancel()
-		screenshot, err := takeScreenshot(ctx, url, selector)
+		screenshot, err := core.TakeScreenshot(ctx, url, selector)
 		if err != nil {
-			if !errors.Is(err, ErrMissingSelector) {
+			if !errors.Is(err, core.ErrMissingSelector) {
 				err = fmt.Errorf("url: %s, %w", url, err)
 				slog.Error("error taking screenshot", tint.Err(err),
 					"method", req.Method,
@@ -109,11 +109,11 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 				"url", url,
 				"hostname", hostname,
 				"status", http.StatusOK)
-			title, description, fetchErr := fetchTitleAndDescription(ctx, url)
+			title, description, fetchErr := core.FetchTitleAndDescription(ctx, url)
 			if fetchErr != nil {
 				err = fmt.Errorf("fetchTitleAndDescription failed: %w", fetchErr)
 			} else {
-				screenshot, err = takeScreenshotWithTemplate(ctx, embedfs.DefaultTemplate, url, "#link-preview", title, description)
+				screenshot, err = core.TakeScreenshotWithTemplate(ctx, embedfs.DefaultTemplate, url, "#link-preview", title, description)
 			}
 			if err != nil {
 				err = fmt.Errorf("url: %s, %w", url, err)

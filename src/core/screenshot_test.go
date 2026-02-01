@@ -1,4 +1,4 @@
-package linkpreviews
+package core
 
 import (
 	"context"
@@ -23,7 +23,7 @@ func TestTakeScreenshot_ValidPageVisibleElement(t *testing.T) {
 	url := "data:text/html,<html><body><div id='content' style='width:100px;height:100px;background:red;'>Test Content</div></body></html>"
 	selector := "#content"
 
-	screenshot, err := takeScreenshot(ctx, url, selector)
+	screenshot, err := TakeScreenshot(ctx, url, selector)
 	if err != nil {
 		t.Fatalf("Expected no error for valid page and selector, got: %s", err.Error())
 	}
@@ -49,7 +49,7 @@ func TestTakeScreenshot_ValidPageWithMultipleElements(t *testing.T) {
 	url := "data:text/html,<html><body><div id='header' style='width:200px;height:50px;background:blue;'>Header</div><div id='content' style='width:200px;height:100px;background:green;'>Main Content</div><div id='footer' style='width:200px;height:50px;background:red;'>Footer</div></body></html>"
 	selector := "#content"
 
-	screenshot, err := takeScreenshot(ctx, url, selector)
+	screenshot, err := TakeScreenshot(ctx, url, selector)
 	if err != nil {
 		t.Fatalf("Expected no error for valid page with multiple elements, got: %s", err.Error())
 	}
@@ -76,7 +76,7 @@ func TestTakeScreenshot_HiddenElement(t *testing.T) {
 	url := "data:text/html,<html><body><div id='content' style='width:200px;height:100px;background:purple;display:none;'>Hidden Content</div></body></html>"
 	selector := "#content"
 
-	screenshot, err := takeScreenshot(ctx, url, selector)
+	screenshot, err := TakeScreenshot(ctx, url, selector)
 	if err != nil {
 		t.Fatalf("Expected no error for hidden element (should be made visible), got: %s", err.Error())
 	}
@@ -93,7 +93,7 @@ func TestTakeScreenshot_MissingSelector(t *testing.T) {
 	url := "https://example.com"
 	selector := ""
 
-	_, err := takeScreenshot(ctx, url, selector)
+	_, err := TakeScreenshot(ctx, url, selector)
 	if err == nil {
 		t.Error("Expected error for missing selector")
 	}
@@ -109,7 +109,7 @@ func TestTakeScreenshot_InvalidURL(t *testing.T) {
 	url := "not-a-valid-url"
 	selector := "body"
 
-	_, err := takeScreenshot(ctx, url, selector)
+	_, err := TakeScreenshot(ctx, url, selector)
 	if err == nil {
 		t.Error("Expected error for invalid URL")
 	}
@@ -123,7 +123,7 @@ func TestTakeScreenshot_NonExistentSelector(t *testing.T) {
 	url := "data:text/html,<html><body><div id='content'>Hello</div></body></html>"
 	selector := "#non-existent-element"
 
-	_, err := takeScreenshot(ctx, url, selector)
+	_, err := TakeScreenshot(ctx, url, selector)
 	if err == nil {
 		t.Error("Expected error for non-existent selector")
 	}
@@ -142,7 +142,7 @@ func TestTakeScreenshot_ContextCancellation(t *testing.T) {
 	url := "data:text/html,<html><body><div id='content'>Test</div></body></html>"
 	selector := "#content"
 
-	_, err := takeScreenshot(ctx, url, selector)
+	_, err := TakeScreenshot(ctx, url, selector)
 	if err == nil {
 		t.Error("Expected error when context is cancelled")
 	}
@@ -182,7 +182,7 @@ func TestFetchTitleAndDescription(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	title, description, err := fetchTitleAndDescription(ctx, dataURI)
+	title, description, err := FetchTitleAndDescription(ctx, dataURI)
 	if err != nil {
 		t.Fatalf("fetchTitleAndDescription failed: %v", err)
 	}
@@ -216,9 +216,9 @@ func TestTakeScreenshotWithTemplate(t *testing.T) {
 	</body></html>
 	`
 
-	png, err := takeScreenshotWithTemplate(allocCtx, template, "https://example.com", "#link-preview", "My Title", "My Desc")
+	png, err := TakeScreenshotWithTemplate(allocCtx, template, "https://example.com", "#link-preview", "My Title", "My Desc")
 	if err != nil {
-		t.Fatalf("takeScreenshotWithTemplate failed: %v", err)
+		t.Fatalf("TakeScreenshotWithTemplate failed: %v", err)
 	}
 
 	if len(png) == 0 {
