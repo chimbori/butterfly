@@ -29,8 +29,11 @@ type AppConfig struct {
 		Port int `yaml:"port"`
 	} `yaml:"web"`
 	Dashboard struct {
-		Username string `yaml:"username"`
-		Password string `yaml:"password"`
+		Username   string `yaml:"username"`
+		Password   string `yaml:"password"`
+		Pagination struct {
+			Limit int `yaml:"limit"`
+		} `yaml:"pagination"`
 	} `yaml:"dashboard"`
 	Logs struct {
 		Retention time.Duration `yaml:"retention"`
@@ -90,6 +93,9 @@ func setDefaultsAndPrint(c *AppConfig) {
 	c.DataDir = filepath.Dir(configYmlPath)
 	if c.Web.Port == 0 {
 		c.Web.Port = 9999
+	}
+	if c.Dashboard.Pagination.Limit == 0 {
+		c.Dashboard.Pagination.Limit = 30
 	}
 
 	// Cache for Link Previews is enabled by default; only disable it when testing or debugging.

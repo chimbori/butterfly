@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"strconv"
 
+	"chimbori.dev/butterfly/conf"
 	"chimbori.dev/butterfly/core"
 	"chimbori.dev/butterfly/db"
 	"chimbori.dev/butterfly/linkpreviews"
@@ -23,8 +24,6 @@ import (
 var compressionSem chan struct{}
 
 var ThumbnailCache *core.DiskCache
-
-const itemsPerPage = 60
 
 func init() {
 	compressionSem = make(chan struct{}, runtime.NumCPU()*4)
@@ -63,9 +62,9 @@ func linkPreviewsListHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Fetch paginated items
-	offset := int32((page - 1) * itemsPerPage)
+	offset := int32((page - 1) * conf.Config.Dashboard.Pagination.Limit)
 	linkPreviews, err := queries.ListLinkPreviewsPaginated(ctx, db.ListLinkPreviewsPaginatedParams{
-		Limit:  itemsPerPage,
+		Limit:  int32(conf.Config.Dashboard.Pagination.Limit),
 		Offset: offset,
 	})
 	if err != nil {
@@ -129,7 +128,7 @@ func deleteLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	linkPreviews, err := queries.ListLinkPreviewsPaginated(ctx, db.ListLinkPreviewsPaginatedParams{
-		Limit:  itemsPerPage,
+		Limit:  int32(conf.Config.Dashboard.Pagination.Limit),
 		Offset: 0,
 	})
 	if err != nil {
@@ -277,5 +276,6 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func calculateTotalPages(totalCount int64) int64 {
-	return (totalCount + (itemsPerPage - 1)) / itemsPerPage
+	limit := int64(conf.Config.Dashboard.Pagination.Limit)
+	return (totalCount + (limit - 1)) / limit
 }
