@@ -188,9 +188,12 @@ func recordLinkPreviewCreated(url string) {
 // Record when a link preview is accessed from the cache
 func recordLinkPreviewAccessed(url string) {
 	queries := db.New(db.Pool)
-	err := queries.RecordLinkPreviewAccessed(context.Background(), url)
+	rowsUpdated, err := queries.RecordLinkPreviewAccessed(context.Background(), url)
 	if err != nil {
 		slog.Error("failed to log link preview created", tint.Err(err))
+	}
+	if rowsUpdated == 0 { // If not already in the database, add it now.
+		recordLinkPreviewCreated(url)
 	}
 	// Don’t return an error to the caller; fulfill the request anyway.
 }

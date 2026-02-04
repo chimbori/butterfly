@@ -23,7 +23,7 @@ INSERT INTO link_previews (url, generated_at, last_accessed_at, access_count)
     access_count = link_previews.access_count + 1
   RETURNING *;
 
--- name: RecordLinkPreviewAccessed :exec
+-- name: RecordLinkPreviewAccessed :execrows
 UPDATE link_previews
   SET last_accessed_at = NOW(),
     access_count = access_count + 1
