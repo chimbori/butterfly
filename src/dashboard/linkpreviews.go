@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 	"runtime"
+	"strconv"
 
 	"chimbori.dev/butterfly/core"
 	"chimbori.dev/butterfly/db"
@@ -23,17 +24,50 @@ var compressionSem chan struct{}
 
 var ThumbnailCache *core.DiskCache
 
+const itemsPerPage = 60
+
 func init() {
 	compressionSem = make(chan struct{}, runtime.NumCPU()*4)
 }
 
-// GET /dashboard/link-previews - List all cached link previews
+// GET /dashboard/link-previews - Render the link previews page
 func linkPreviewsPageHandler(w http.ResponseWriter, req *http.Request) {
 	slog.Debug("linkPreviewsPageHandler", "url", req.Method+" "+req.URL.String())
+	LinkPreviewsPageTempl().Render(req.Context(), w)
+}
+
+// GET /dashboard/link-previews/list - Get paginated link previews list
+func linkPreviewsListHandler(w http.ResponseWriter, req *http.Request) {
+	slog.Debug("linkPreviewsListHandler", "url", req.Method+" "+req.URL.String())
 
 	ctx := req.Context()
 	queries := db.New(db.Pool)
-	linkPreviews, err := queries.ListLinkPreviews(ctx)
+
+	page := 1
+	if pageStr := req.URL.Query().Get("page"); pageStr != "" {
+		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+			page = p
+		}
+	}
+
+	// Fetch total count for pagination
+	totalCount, err := queries.CountLinkPreviews(ctx)
+	if err != nil {
+		slog.Error("failed to count link previews", tint.Err(err),
+			"method", req.Method,
+			"path", req.URL.Path,
+			"url", req.URL.String(),
+			"status", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Fetch paginated items
+	offset := int32((page - 1) * itemsPerPage)
+	linkPreviews, err := queries.ListLinkPreviewsPaginated(ctx, db.ListLinkPreviewsPaginatedParams{
+		Limit:  itemsPerPage,
+		Offset: offset,
+	})
 	if err != nil {
 		slog.Error("failed to list cached link previews", tint.Err(err),
 			"method", req.Method,
@@ -43,7 +77,8 @@ func linkPreviewsPageHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	LinkPreviewsPageTempl(linkPreviews).Render(ctx, w)
+
+	LinkPreviewsListTempl(linkPreviews, page, totalCount).Render(ctx, w)
 }
 
 // DELETE /dashboard/link-previews/url?url=... - Delete a cached link preview
@@ -81,8 +116,22 @@ func deleteLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Return the updated list
-	linkPreviews, err := queries.ListLinkPreviews(ctx)
+	// Return the updated list (go back to page 1)
+	totalCount, err := queries.CountLinkPreviews(ctx)
+	if err != nil {
+		slog.Error("failed to count link previews", tint.Err(err),
+			"method", req.Method,
+			"path", req.URL.Path,
+			"url", url,
+			"status", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	linkPreviews, err := queries.ListLinkPreviewsPaginated(ctx, db.ListLinkPreviewsPaginatedParams{
+		Limit:  itemsPerPage,
+		Offset: 0,
+	})
 	if err != nil {
 		slog.Error("failed to list cached link previews", tint.Err(err),
 			"method", req.Method,
@@ -92,7 +141,9 @@ func deleteLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	LinkPreviewsListTempl(linkPreviews).Render(ctx, w)
+
+	// TODO: Don’t go back to the first page.
+	LinkPreviewsListTempl(linkPreviews, 1, totalCount).Render(ctx, w)
 }
 
 // GET /dashboard/link-previews/image?url={url}
@@ -223,4 +274,8 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 		"path", req.URL.Path,
 		"url", url,
 		"hostname", u.Hostname())
+}
+
+func calculateTotalPages(totalCount int64) int64 {
+	return (totalCount + (itemsPerPage - 1)) / itemsPerPage
 }

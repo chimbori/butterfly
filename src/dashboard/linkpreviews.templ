@@ -2,47 +2,86 @@ package dashboard
 
 import (
 	"chimbori.dev/butterfly/db"
+	"fmt"
 	"strings"
 )
 
-templ LinkPreviewsPageTempl(linkPreviews []db.LinkPreview) {
+templ LinkPreviewsPageTempl() {
 	@ContentTempl("Link Previews", NilTemplate()) {
-		<section>
-			@LinkPreviewsListTempl(linkPreviews)
+		<section
+			id="link-previews-section"
+			hx-get="/dashboard/link-previews/list?page=1"
+			hx-trigger="load"
+			hx-swap="innerHTML"
+		>
+			<div class="flex items-center justify-center p-8">
+				<img class="htmx-indicator inline" src="/static/3-dots-move.svg" alt="Loading..."/>
+			</div>
 		</section>
 	}
 }
 
-templ LinkPreviewsListTempl(linkPreviews []db.LinkPreview) {
-	if len(linkPreviews) == 0 {
+templ LinkPreviewsListTempl(linkPreviews []db.LinkPreview, page int, totalCount int64) {
+	if totalCount == 0 {
 		No link previews cached yet
 	} else {
-		<div
-			id="cached-link-previews"
-			hx-target="#cached-link-previews"
-			hx-swap="outerHTML transition:true"
-			class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-8 p-4"
-		>
-			for _, s := range linkPreviews {
-				<div class="link-preview flex flex-col gap-2 max-w-full overflow-hidden">
-					<input type="hidden" name="url" value={ s.Url }/>
-					<a href={ s.Url } target="_blank" title={ s.Url }>
-						<img src={ "/dashboard/link-previews/image?url=" + s.Url } alt={ s.Url } class="w-full h-auto min-h-24 bg-gray-300 rounded-2xl shadow-lg"/>
-					</a>
-					<div class="flex flex-row">
-						<div class="h-8 px-2 grow text-xs line-clamp-2" title={ s.Url }>
-							@templ.Raw(strings.ReplaceAll(s.Url, "/", "<wbr>/"))
+		<div class="flex flex-col gap-4">
+			<div
+				id="cached-link-previews"
+				hx-target="#cached-link-previews"
+				hx-swap="outerHTML transition:true"
+				class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-8 p-4"
+			>
+				for _, s := range linkPreviews {
+					<div class="link-preview flex flex-col gap-2 max-w-full overflow-hidden">
+						<input type="hidden" name="url" value={ s.Url }/>
+						<a href={ s.Url } target="_blank" title={ s.Url }>
+							<img src={ "/dashboard/link-previews/image?url=" + s.Url } alt={ s.Url } class="w-full h-auto min-h-24 bg-gray-300 rounded-2xl shadow-lg"/>
+						</a>
+						<div class="flex flex-row">
+							<div class="h-8 px-2 grow text-xs line-clamp-2" title={ s.Url }>
+								@templ.Raw(strings.ReplaceAll(s.Url, "/", "<wbr>/"))
+							</div>
+							<button
+								hx-confirm="Delete this cached link preview?"
+								hx-include="closest .link-preview"
+								hx-delete="/dashboard/link-previews/url"
+								title="Delete"
+								class="btn-submit size-8 p-2 flex-shrink-0 flex items-center justify-center"
+							><img src="/static/delete.svg" class="size-16"/></button>
 						</div>
-						<button
-							hx-confirm="Delete this cached link preview?"
-							hx-include="closest .link-preview"
-							hx-delete="/dashboard/link-previews/url"
-							title="Delete"
-							class="btn-submit size-8 p-2 flex-shrink-0 flex items-center justify-center"
-						><img src="/static/delete.svg" class="size-16"/></button>
 					</div>
-				</div>
-			}
+				}
+			</div>
+			<div class="flex justify-between items-center p-4 gap-4">
+				<button
+					if page > 1 {
+						hx-get={ "/dashboard/link-previews/list?page=" + fmt.Sprintf("%d", page-1) }
+						hx-target="#link-previews-section"
+						hx-swap="innerHTML transition:true"
+					} else {
+						disabled
+					}
+					class="btn-neutral"
+				>
+					← Back
+				</button>
+				<span class="text-sm">
+					Page { fmt.Sprintf("%d", page) } of { fmt.Sprintf("%d", calculateTotalPages(totalCount)) }
+				</span>
+				<button
+					if int64(page) < calculateTotalPages(totalCount) {
+						hx-get={ "/dashboard/link-previews/list?page=" + fmt.Sprintf("%d", page+1) }
+						hx-target="#link-previews-section"
+						hx-swap="innerHTML transition:true"
+					} else {
+						disabled
+					}
+					class="btn-neutral"
+				>
+					Next →
+				</button>
+			</div>
 		</div>
 	}
 }

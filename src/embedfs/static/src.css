@@ -26,6 +26,7 @@
   @apply px-4 py-1 rounded-3xl
     cursor-pointer disabled:cursor-not-allowed
     text-sm font-semibold transition-colors
+    disabled:border-0
     disabled:bg-linear-to-br disabled:from-gray-100 disabled:to-gray-200 disabled:text-gray-400
     disabled:hover:bg-linear-to-br disabled:hover:from-gray-200 disabled:hover:to-gray-300 disabled:hover:text-gray-400;
 }
@@ -152,7 +153,8 @@
       text-slate-900 dark:text-slate-100;
   }
   .btn-neutral {
-    @apply btn-common text-slate-800 border-theme-dark;
+    @apply btn-common text-slate-800 border-theme-dark
+      border disabled:border-0;
   }
   .btn-submit {
     @apply btn-common text-white

@@ -2,6 +2,14 @@
 SELECT * FROM link_previews
   ORDER BY last_accessed_at DESC;
 
+-- name: ListLinkPreviewsPaginated :many
+SELECT * FROM link_previews
+  ORDER BY last_accessed_at DESC
+  LIMIT $1 OFFSET $2;
+
+-- name: CountLinkPreviews :one
+SELECT COUNT(*) FROM link_previews;
+
 -- name: GetLinkPreview :one
 SELECT * FROM link_previews
   WHERE url = $1;

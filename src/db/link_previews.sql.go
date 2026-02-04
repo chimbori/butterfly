@@ -9,6 +9,17 @@ import (
 	"context"
 )
 
+const countLinkPreviews = `-- name: CountLinkPreviews :one
+SELECT COUNT(*) FROM link_previews
+`
+
+func (q *Queries) CountLinkPreviews(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countLinkPreviews)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const deleteAllLinkPreviews = `-- name: DeleteAllLinkPreviews :exec
 DELETE FROM link_previews
 `
@@ -77,16 +88,56 @@ func (q *Queries) ListLinkPreviews(ctx context.Context) ([]LinkPreview, error) {
 	return items, nil
 }
 
-const recordLinkPreviewAccessed = `-- name: RecordLinkPreviewAccessed :exec
+const listLinkPreviewsPaginated = `-- name: ListLinkPreviewsPaginated :many
+SELECT _id, url, generated_at, last_accessed_at, access_count FROM link_previews
+  ORDER BY last_accessed_at DESC
+  LIMIT $1 OFFSET $2
+`
+
+type ListLinkPreviewsPaginatedParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) ListLinkPreviewsPaginated(ctx context.Context, arg ListLinkPreviewsPaginatedParams) ([]LinkPreview, error) {
+	rows, err := q.db.Query(ctx, listLinkPreviewsPaginated, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []LinkPreview
+	for rows.Next() {
+		var i LinkPreview
+		if err := rows.Scan(
+			&i.ID,
+			&i.Url,
+			&i.GeneratedAt,
+			&i.LastAccessedAt,
+			&i.AccessCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const recordLinkPreviewAccessed = `-- name: RecordLinkPreviewAccessed :execrows
 UPDATE link_previews
   SET last_accessed_at = NOW(),
     access_count = access_count + 1
   WHERE url = $1
 `
 
-func (q *Queries) RecordLinkPreviewAccessed(ctx context.Context, url string) error {
-	_, err := q.db.Exec(ctx, recordLinkPreviewAccessed, url)
-	return err
+func (q *Queries) RecordLinkPreviewAccessed(ctx context.Context, url string) (int64, error) {
+	result, err := q.db.Exec(ctx, recordLinkPreviewAccessed, url)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const recordLinkPreviewCreated = `-- name: RecordLinkPreviewCreated :exec
