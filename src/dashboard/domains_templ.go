@@ -184,4 +184,14 @@ func DomainsTempl(domains []db.Domain) templ.Component {
 	})
 }
 
+func getAuthorizedAttrValue(d db.Domain) string {
+	if d.Authorized == nil {
+		return ""
+	} else if *d.Authorized {
+		return "allow"
+	} else {
+		return "block"
+	}
+}
+
 var _ = templruntime.GeneratedTemplate

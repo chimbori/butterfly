@@ -46,13 +46,3 @@ templ LinkPreviewsListTempl(linkPreviews []db.LinkPreview) {
 		</div>
 	}
 }
-
-func getAuthorizedAttrValue(d db.Domain) string {
-	if d.Authorized == nil {
-		return ""
-	} else if *d.Authorized {
-		return "allow"
-	} else {
-		return "block"
-	}
-}

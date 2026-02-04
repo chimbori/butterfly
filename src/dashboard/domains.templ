@@ -92,3 +92,13 @@ templ DomainsTempl(domains []db.Domain) {
 		</table>
 	}
 }
+
+func getAuthorizedAttrValue(d db.Domain) string {
+	if d.Authorized == nil {
+		return ""
+	} else if *d.Authorized {
+		return "allow"
+	} else {
+		return "block"
+	}
+}
