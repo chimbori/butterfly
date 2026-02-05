@@ -24,11 +24,7 @@ link-previews:
     # timeout: 20s
   cache:
     # enabled: false
-    ttl: "720h" # 30 days
-    max_size_bytes: 1073741824
 
 qr-codes:
   cache:
     # enabled: true
-    ttl: "720h" # 30 days
-    max_size_bytes: 1073741824
