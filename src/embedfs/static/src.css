@@ -28,7 +28,9 @@
     text-sm font-semibold transition-colors
     disabled:border-0
     disabled:bg-linear-to-br disabled:from-gray-100 disabled:to-gray-200 disabled:text-gray-400
-    disabled:hover:bg-linear-to-br disabled:hover:from-gray-200 disabled:hover:to-gray-300 disabled:hover:text-gray-400;
+      disabled:dark:from-gray-800 disabled:dark:to-gray-900 disabled:dark:text-gray-600
+    disabled:hover:bg-linear-to-br disabled:hover:from-gray-200 disabled:hover:to-gray-300 disabled:hover:text-gray-400
+      disabled:dark:hover:from-gray-800 disabled:dark:hover:to-gray-950 disabled:dark:hover:text-gray-700;
 }
 
 @layer base {
@@ -39,7 +41,7 @@
     @apply
       box-border text-sm/8
       bg-slate-100 dark:bg-slate-900
-      text-slate-500  dark:text-slate-400
+      text-slate-500 dark:text-slate-400
       flex flex-col md:flex-row;
   }
   h1, h2, h3, h4, h5, h6 {
@@ -153,8 +155,9 @@
       text-slate-900 dark:text-slate-100;
   }
   .btn-neutral {
-    @apply btn-common text-slate-800 border-theme-dark
-      border disabled:border-0;
+    @apply btn-common text-slate-800 dark:text-slate-400
+      border border-theme-dark disabled:border-0
+      hover:border-theme-lighter hover:dark:border-theme-light;
   }
   .btn-submit {
     @apply btn-common text-white
