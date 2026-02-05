@@ -11,6 +11,17 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countLogs = `-- name: CountLogs :one
+SELECT COUNT(*) FROM logs
+`
+
+func (q *Queries) CountLogs(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countLogs)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const deleteOldLogs = `-- name: DeleteOldLogs :execrows
 DELETE FROM logs
   WHERE logged_at < NOW() - $1::interval
@@ -32,6 +43,48 @@ SELECT _id, logged_at, request_method, request_path, http_status, url, hostname,
 
 func (q *Queries) GetRecentLogs(ctx context.Context, limit int32) ([]Log, error) {
 	rows, err := q.db.Query(ctx, getRecentLogs, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Log
+	for rows.Next() {
+		var i Log
+		if err := rows.Scan(
+			&i.ID,
+			&i.LoggedAt,
+			&i.RequestMethod,
+			&i.RequestPath,
+			&i.HttpStatus,
+			&i.Url,
+			&i.Hostname,
+			&i.Message,
+			&i.Err,
+			&i.UserAgent,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getRecentLogsPaginated = `-- name: GetRecentLogsPaginated :many
+SELECT _id, logged_at, request_method, request_path, http_status, url, hostname, message, err, user_agent FROM logs
+  ORDER BY logged_at DESC
+  LIMIT $1 OFFSET $2
+`
+
+type GetRecentLogsPaginatedParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) GetRecentLogsPaginated(ctx context.Context, arg GetRecentLogsPaginatedParams) ([]Log, error) {
+	rows, err := q.db.Query(ctx, getRecentLogsPaginated, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

@@ -3,6 +3,7 @@ package dashboard
 import (
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"chimbori.dev/butterfly/conf"
 	"chimbori.dev/butterfly/db"
@@ -17,11 +18,39 @@ func logsHandler(w http.ResponseWriter, req *http.Request) {
 // GET /dashboard/logs/data
 func logsDataHandler(w http.ResponseWriter, req *http.Request) {
 	queries := db.New(db.Pool)
-	logs, err := queries.GetRecentLogs(req.Context(), 1000)
+
+	page := 1
+	if pageStr := req.URL.Query().Get("page"); pageStr != "" {
+		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+			page = p
+		}
+	}
+
+	// Fetch total count for pagination
+	totalCount, err := queries.CountLogs(req.Context())
 	if err != nil {
-		slog.Error("failed to fetch logs", tint.Err(err))
-		ErrorTempl("Failed to fetch logs").Render(req.Context(), w)
+		slog.Error("failed to count logs", tint.Err(err),
+			"method", req.Method,
+			"path", req.URL.Path,
+			"status", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	LogsTableTempl(logs).Render(req.Context(), w)
+
+	// Fetch paginated items
+	limit := int32(conf.Config.Logs.Pagination.Limit)
+	offset := int32((page - 1) * int(limit))
+	logs, err := queries.GetRecentLogsPaginated(req.Context(), db.GetRecentLogsPaginatedParams{
+		Limit:  limit,
+		Offset: offset,
+	})
+	if err != nil {
+		slog.Error("failed to fetch logs", tint.Err(err),
+			"method", req.Method,
+			"path", req.URL.Path,
+			"status", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	LogsListTempl(logs, page, totalCount).Render(req.Context(), w)
 }

@@ -1,12 +1,69 @@
 package dashboard
 
-import "chimbori.dev/butterfly/db"
+import (
+	"chimbori.dev/butterfly/conf"
+	"chimbori.dev/butterfly/db"
+	"fmt"
+)
 
 templ LogsTempl(appName string) {
 	@ContentTempl("Logs", NilTemplate()) {
-		<section hx-get="/dashboard/logs/data" hx-trigger="load" hx-swap="innerHTML">
-			<img class="htmx-indicator inline py-1" id="spinner" src="/static/3-dots-move.svg" alt="..."/>
+		<section
+			id="logs-section"
+			hx-get="/dashboard/logs/data?page=1"
+			hx-trigger="load"
+			hx-swap="innerHTML"
+		>
+			<div class="flex items-center justify-center p-8">
+				<img class="htmx-indicator inline" src="/static/3-dots-move.svg" alt="Loading..."/>
+			</div>
 		</section>
+	}
+}
+
+templ LogsListTempl(logs []db.Log, page int, totalCount int64) {
+	if totalCount == 0 {
+		No logs available yet
+	} else {
+		<div class="flex flex-col gap-4">
+			<div
+				id="logs-table"
+				hx-target="#logs-table"
+				hx-swap="outerHTML transition:true"
+				class="overflow-x-auto"
+			>
+				@LogsTableTempl(logs)
+			</div>
+			<div class="flex justify-between items-center p-4 gap-4">
+				<button
+					if page > 1 {
+						hx-get={ "/dashboard/logs/data?page=" + fmt.Sprintf("%d", page-1) }
+						hx-target="#logs-section"
+						hx-swap="innerHTML transition:true"
+					} else {
+						disabled
+					}
+					class="btn-neutral"
+				>
+					← Back
+				</button>
+				<span class="text-sm">
+					Page { fmt.Sprintf("%d", page) } of { fmt.Sprintf("%d", calculateLogsTotalPages(totalCount)) }
+				</span>
+				<button
+					if int64(page) < calculateLogsTotalPages(totalCount) {
+						hx-get={ "/dashboard/logs/data?page=" + fmt.Sprintf("%d", page+1) }
+						hx-target="#logs-section"
+						hx-swap="innerHTML transition:true"
+					} else {
+						disabled
+					}
+					class="btn-neutral"
+				>
+					Next →
+				</button>
+			</div>
+		</div>
 	}
 }
 
@@ -43,6 +100,11 @@ templ LogsTableTempl(logs []db.Log) {
 			}
 		</tbody>
 	</table>
+}
+
+func calculateLogsTotalPages(totalCount int64) int64 {
+	limit := int64(conf.Config.Logs.Pagination.Limit)
+	return (totalCount + (limit - 1)) / limit
 }
 
 func getStatusBadgeClass(statusCode int32) string {

@@ -29,14 +29,13 @@ type AppConfig struct {
 		Port int `yaml:"port"`
 	} `yaml:"web"`
 	Dashboard struct {
-		Username   string `yaml:"username"`
-		Password   string `yaml:"password"`
-		Pagination struct {
-			Limit int `yaml:"limit"`
-		} `yaml:"pagination"`
+		Username   string     `yaml:"username"`
+		Password   string     `yaml:"password"`
+		Pagination pagination `yaml:"pagination"`
 	} `yaml:"dashboard"`
 	Logs struct {
-		Retention time.Duration `yaml:"retention"`
+		Retention  time.Duration `yaml:"retention"`
+		Pagination pagination    `yaml:"pagination"`
 	} `yaml:"logs"`
 	LinkPreviews struct {
 		Screenshot struct {
@@ -56,6 +55,10 @@ type AppConfig struct {
 		} `yaml:"cache"`
 	} `yaml:"qr-codes"`
 	Debug bool `yaml:"debug"`
+}
+
+type pagination struct {
+	Limit int `yaml:"limit"`
 }
 
 var configYmlPath string
@@ -121,6 +124,9 @@ func setDefaultsAndPrint(c *AppConfig) {
 
 	if c.Logs.Retention == 0 {
 		c.Logs.Retention = 30 * 24 * time.Hour
+	}
+	if c.Logs.Pagination.Limit == 0 {
+		c.Logs.Pagination.Limit = 100
 	}
 
 	// Print warnings for unsafe settings, just as FYI.
