@@ -25,6 +25,30 @@ var ErrMissingSelector = errors.New("selector not found")
 // httpClient is a custom HTTP client with timeout limits.
 var httpClient = &http.Client{Timeout: 10 * time.Second}
 
+func newChromedpContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	options := []chromedp.ExecAllocatorOption{
+		chromedp.NoFirstRun,
+		chromedp.NoDefaultBrowserCheck,
+		chromedp.DisableGPU,
+		chromedp.NoSandbox,
+		chromedp.Headless,
+		chromedp.Flag("disable-setuid-sandbox", true),
+	}
+
+	allocCtx, cancelAlloc := chromedp.NewExecAllocator(ctx, options...)
+	var cancelCtx context.CancelFunc
+	if conf.Config.Debug {
+		ctx, cancelCtx = chromedp.NewContext(allocCtx, chromedp.WithErrorf(log.Printf))
+	} else {
+		ctx, cancelCtx = chromedp.NewContext(allocCtx)
+	}
+
+	return ctx, func() {
+		cancelCtx()
+		cancelAlloc()
+	}
+}
+
 // TakeScreenshot captures a high-resolution PNG screenshot of a specific element on a web page.
 // It navigates to the provided URL, ensures the element specified by the CSS selector is visible,
 // and takes a screenshot.
@@ -32,11 +56,7 @@ func TakeScreenshot(ctx context.Context, url, selector string) (png []byte, err 
 	slog.Debug("takeScreenshot", "url", url, "selector", selector)
 
 	var cancel context.CancelFunc
-	if conf.Config.Debug {
-		ctx, cancel = chromedp.NewContext(ctx, chromedp.WithErrorf(log.Printf))
-	} else {
-		ctx, cancel = chromedp.NewContext(ctx)
-	}
+	ctx, cancel = newChromedpContext(ctx)
 	defer cancel()
 
 	if selector == "" {
@@ -89,11 +109,7 @@ func TakeScreenshotWithTemplate(ctx context.Context, templateContent, url, selec
 		"description", description)
 
 	var cancel context.CancelFunc
-	if conf.Config.Debug {
-		ctx, cancel = chromedp.NewContext(ctx, chromedp.WithErrorf(log.Printf))
-	} else {
-		ctx, cancel = chromedp.NewContext(ctx)
-	}
+	ctx, cancel = newChromedpContext(ctx)
 	defer cancel()
 
 	tmpl, err := template.New("screenshot").Parse(templateContent)
