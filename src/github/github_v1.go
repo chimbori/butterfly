@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"path/filepath"
+	"regexp"
 	"time"
 
 	"chimbori.dev/butterfly/conf"
@@ -15,6 +16,17 @@ import (
 )
 
 var Cache *core.DiskCache
+
+var repoPathParamRegex = regexp.MustCompile(`^[a-zA-Z0-9_.-]+$`)
+
+var githubFieldMap = map[string]string{
+	"name":        "name",
+	"description": "description",
+	"stars":       "stargazers_count",
+	"forks":       "forks_count",
+	"issues":      "open_issues_count",
+	"watchers":    "subscribers_count",
+}
 
 // setCORSHeaders configures permissive CORS headers so this endpoint can be called from any origin.
 func setCORSHeaders(w http.ResponseWriter) {
@@ -45,6 +57,27 @@ func handleGithubV1(w http.ResponseWriter, req *http.Request) {
 
 	if user == "" || repo == "" || reqType == "" {
 		err := fmt.Errorf("missing parameters: user, repo, type")
+		slog.Error("Invalid request", tint.Err(err),
+			"method", req.Method,
+			"path", req.URL.Path,
+			"url", req.URL)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if !repoPathParamRegex.MatchString(user) || !repoPathParamRegex.MatchString(repo) {
+		err := fmt.Errorf("invalid user or repo")
+		slog.Error("Invalid request", tint.Err(err),
+			"method", req.Method,
+			"path", req.URL.Path,
+			"url", req.URL)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	field, ok := githubFieldMap[reqType]
+	if !ok {
+		err := fmt.Errorf("unsupported type: %s", reqType)
 		slog.Error("Invalid request", tint.Err(err),
 			"method", req.Method,
 			"path", req.URL.Path,
@@ -119,22 +152,6 @@ func handleGithubV1(w http.ResponseWriter, req *http.Request) {
 			"url", req.URL)
 		http.Error(w, "invalid JSON from GitHub", http.StatusBadGateway)
 		return
-	}
-
-	field := reqType
-	switch reqType {
-	case "name":
-		field = "name"
-	case "description":
-		field = "description"
-	case "stars":
-		field = "stargazers_count"
-	case "forks":
-		field = "forks_count"
-	case "issues":
-		field = "open_issues_count"
-	case "watchers":
-		field = "subscribers_count"
 	}
 
 	val, ok := result[field]
