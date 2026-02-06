@@ -32,7 +32,13 @@ func init() {
 // GET /dashboard/link-previews - Render the link previews page
 func linkPreviewsPageHandler(w http.ResponseWriter, req *http.Request) {
 	slog.Debug("linkPreviewsPageHandler", "url", req.Method+" "+req.URL.String())
-	LinkPreviewsPageTempl().Render(req.Context(), w)
+	page := 1
+	if pageStr := req.URL.Query().Get("page"); pageStr != "" {
+		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+			page = p
+		}
+	}
+	LinkPreviewsPageTempl(page).Render(req.Context(), w)
 }
 
 // GET /dashboard/link-previews/list - Get paginated link previews list

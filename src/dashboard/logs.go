@@ -12,7 +12,13 @@ import (
 
 // GET /dashboard/logs
 func logsHandler(w http.ResponseWriter, req *http.Request) {
-	LogsTempl(conf.AppName).Render(req.Context(), w)
+	page := 1
+	if pageStr := req.URL.Query().Get("page"); pageStr != "" {
+		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+			page = p
+		}
+	}
+	LogsTempl(conf.AppName, page).Render(req.Context(), w)
 }
 
 // GET /dashboard/logs/data

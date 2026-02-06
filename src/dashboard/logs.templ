@@ -6,11 +6,11 @@ import (
 	"fmt"
 )
 
-templ LogsTempl(appName string) {
+templ LogsTempl(appName string, page int) {
 	@ContentTempl("Logs", NilTemplate()) {
 		<section
 			id="logs-section"
-			hx-get="/dashboard/logs/data?page=1"
+			hx-get={ "/dashboard/logs/data?page=" + fmt.Sprintf("%d", page) }
 			hx-trigger="load"
 			hx-swap="innerHTML"
 		>
@@ -40,6 +40,7 @@ templ LogsListTempl(logs []db.Log, page int, totalCount int64) {
 						hx-get={ "/dashboard/logs/data?page=" + fmt.Sprintf("%d", page-1) }
 						hx-target="#logs-section"
 						hx-swap="innerHTML transition:true"
+						hx-push-url={ "/dashboard/logs?page=" + fmt.Sprintf("%d", page-1) }
 					} else {
 						disabled
 					}
@@ -55,6 +56,7 @@ templ LogsListTempl(logs []db.Log, page int, totalCount int64) {
 						hx-get={ "/dashboard/logs/data?page=" + fmt.Sprintf("%d", page+1) }
 						hx-target="#logs-section"
 						hx-swap="innerHTML transition:true"
+						hx-push-url={ "/dashboard/logs?page=" + fmt.Sprintf("%d", page+1) }
 					} else {
 						disabled
 					}

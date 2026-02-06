@@ -6,11 +6,11 @@ import (
 	"fmt"
 )
 
-templ LinkPreviewsPageTempl() {
+templ LinkPreviewsPageTempl(page int) {
 	@ContentTempl("Link Previews", NilTemplate()) {
 		<section
 			id="link-previews-section"
-			hx-get="/dashboard/link-previews/list?page=1"
+			hx-get={ "/dashboard/link-previews/list?page=" + fmt.Sprintf("%d", page) }
 			hx-trigger="load"
 			hx-swap="innerHTML"
 		>
@@ -59,6 +59,7 @@ templ LinkPreviewsListTempl(linkPreviews []db.LinkPreview, page int, totalCount 
 						hx-get={ "/dashboard/link-previews/list?page=" + fmt.Sprintf("%d", page-1) }
 						hx-target="#link-previews-section"
 						hx-swap="innerHTML transition:true"
+						hx-push-url={ "/dashboard/link-previews?page=" + fmt.Sprintf("%d", page-1) }
 					} else {
 						disabled
 					}
@@ -74,6 +75,7 @@ templ LinkPreviewsListTempl(linkPreviews []db.LinkPreview, page int, totalCount 
 						hx-get={ "/dashboard/link-previews/list?page=" + fmt.Sprintf("%d", page+1) }
 						hx-target="#link-previews-section"
 						hx-swap="innerHTML transition:true"
+						hx-push-url={ "/dashboard/link-previews?page=" + fmt.Sprintf("%d", page+1) }
 					} else {
 						disabled
 					}
