@@ -1,8 +1,8 @@
 package dashboard
 
 import (
+	"chimbori.dev/butterfly/core"
 	"chimbori.dev/butterfly/db"
-	"strings"
 )
 
 templ QrCodesPageTempl(qrCodes []db.QrCode) {
@@ -31,7 +31,7 @@ templ QrCodesListTempl(qrCodes []db.QrCode) {
 					</a>
 					<div class="flex flex-row">
 						<div class="h-8 px-2 grow text-xs line-clamp-2" title={ qr.Url }>
-							@templ.Raw(strings.ReplaceAll(qr.Url, "/", "<wbr>/"))
+							@templ.Raw(core.SafeWordBreakUrl(qr.Url))
 						</div>
 						<button
 							hx-confirm="Delete this cached QR Code?"

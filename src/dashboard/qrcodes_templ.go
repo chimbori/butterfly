@@ -6,8 +6,7 @@ package dashboard
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
 import (
-	"strings"
-
+	"chimbori.dev/butterfly/core"
 	"chimbori.dev/butterfly/db"
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
@@ -182,7 +181,7 @@ func QrCodesListTempl(qrCodes []db.QrCode) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.Raw(strings.ReplaceAll(qr.Url, "/", "<wbr>/")).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = templ.Raw(core.SafeWordBreakUrl(qr.Url)).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -7,8 +7,8 @@ package dashboard
 
 import (
 	"fmt"
-	"strings"
 
+	"chimbori.dev/butterfly/core"
 	"chimbori.dev/butterfly/db"
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
@@ -175,7 +175,7 @@ func LinkPreviewsListTempl(linkPreviews []db.LinkPreview, page int, totalCount i
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.Raw(strings.ReplaceAll(s.Url, "/", "<wbr>/")).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = templ.Raw(core.SafeWordBreakUrl(s.Url)).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
