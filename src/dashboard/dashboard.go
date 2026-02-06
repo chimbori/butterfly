@@ -102,3 +102,7 @@ func authHandler(next http.Handler) http.Handler {
 		next.ServeHTTP(w, req)
 	})
 }
+
+func CleanupExpiredSessions() {
+	sessionStore.CleanupExpired()
+}

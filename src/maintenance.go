@@ -20,6 +20,8 @@ func performMaintenance() {
 	ctx := context.Background()
 	queries := db.New(db.Pool)
 
+	dashboard.CleanupExpiredSessions()
+
 	// Delete domains that haven’t been triaged in a while; they are blocked by default,
 	// and do not need to be included on the dashboard.
 	interval := pgtype.Interval{
