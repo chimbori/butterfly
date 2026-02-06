@@ -5,6 +5,7 @@ import (
 	"embed"
 	"fmt"
 	"log/slog"
+	"net/url"
 
 	"github.com/pressly/goose/v3"
 
@@ -14,7 +15,7 @@ import (
 // Migrations are run using the stdlib [database/sql] driver using the pgx compatibility wrapper,
 // not [pgx] directly because Goose does not support [pgx.Conn] or [pgxpool.Pool] natively.
 func RunMigrations(dbUrl string, migrationsDir embed.FS) error {
-	slog.Info("Running migrations...", "database", dbUrl)
+	slog.Info("Running migrations...", "database", redactDbUrl(dbUrl))
 	goose.SetBaseFS(migrationsDir)
 
 	if err := goose.SetDialect("pgx"); err != nil {
@@ -32,4 +33,15 @@ func RunMigrations(dbUrl string, migrationsDir embed.FS) error {
 	}
 
 	return nil
+}
+
+func redactDbUrl(dbURL string) string {
+	parsed, err := url.Parse(dbURL)
+	if err != nil {
+		return "[redacted]"
+	}
+	if parsed.User != nil {
+		parsed.User = url.UserPassword(parsed.User.Username(), "redacted")
+	}
+	return parsed.String()
 }
