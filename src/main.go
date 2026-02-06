@@ -130,5 +130,5 @@ func main() {
 
 	addr := net.JoinHostPort("", strconv.Itoa(conf.Config.Web.Port))
 	slog.Info("Listening", "url", "http://localhost"+addr) // Not "https://", since this app does not terminate SSL.
-	log.Fatal(http.ListenAndServe(addr, mux))
+	log.Fatal(http.ListenAndServe(addr, core.SecurityHeaders(mux)))
 }
