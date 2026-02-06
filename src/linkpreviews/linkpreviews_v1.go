@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"path/filepath"
+	"regexp"
 
 	"chimbori.dev/butterfly/conf"
 	"chimbori.dev/butterfly/core"
@@ -17,6 +18,8 @@ import (
 )
 
 var Cache *core.DiskCache
+
+var selectorRegex = regexp.MustCompile(`^[#.][a-zA-Z0-9_-]+$`)
 
 func Init(mux *http.ServeMux) {
 	if *conf.Config.LinkPreviews.Cache.Enabled {
@@ -55,6 +58,17 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 	selector := req.URL.Query().Get("sel")
 	if selector == "" {
 		selector = "#link-preview"
+	} else if !selectorRegex.MatchString(selector) {
+		err := fmt.Errorf("invalid selector")
+		slog.Error("selector validation failed", tint.Err(err),
+			"method", req.Method,
+			"path", req.URL.Path,
+			"url", reqUrl,
+			"hostname", hostname,
+			"user-agent", userAgent,
+			"status", http.StatusBadRequest)
+		http.Error(w, "invalid selector", http.StatusBadRequest)
+		return
 	}
 
 	var cached []byte
