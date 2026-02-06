@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"log/slog"
 	"net/http"
@@ -20,6 +21,9 @@ import (
 )
 
 var ErrMissingSelector = errors.New("selector not found")
+
+// httpClient is a custom HTTP client with timeout limits.
+var httpClient = &http.Client{Timeout: 10 * time.Second}
 
 // TakeScreenshot captures a high-resolution PNG screenshot of a specific element on a web page.
 // It navigates to the provided URL, ensures the element specified by the CSS selector is visible,
@@ -144,7 +148,7 @@ func FetchTitleAndDescription(ctx context.Context, url string) (title, descripti
 		}
 		req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; Butterfly/1.0; +https://chimbori.dev/butterfly)")
 
-		resp, err := http.DefaultClient.Do(req)
+		resp, err := httpClient.Do(req)
 		if err != nil {
 			return "", "", err
 		}
@@ -154,7 +158,9 @@ func FetchTitleAndDescription(ctx context.Context, url string) (title, descripti
 			return "", "", fmt.Errorf("HTTP %d: %s", resp.StatusCode, resp.Status)
 		}
 
-		doc, err = html.Parse(resp.Body)
+		// Limit response body to 10MB to prevent memory exhaustion
+		limitedReader := io.LimitReader(resp.Body, 10*1024*1024)
+		doc, err = html.Parse(limitedReader)
 		if err != nil {
 			return "", "", err
 		}
