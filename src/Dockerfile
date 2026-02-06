@@ -22,8 +22,12 @@ FROM chromedp/headless-shell:latest
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
 COPY --from=builder /app/butterfly /butterfly
+RUN useradd -r -s /usr/sbin/nologin butterfly && \
+  mkdir -p /data && \
+  chown -R butterfly:butterfly /data /butterfly
 EXPOSE 9999
 
 ENV TZ="America/Los_Angeles"
+USER butterfly
 ENTRYPOINT ["/butterfly"]
 CMD ["--config=/data/butterfly.yml"]
