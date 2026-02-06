@@ -1,14 +1,14 @@
 package core
 
 import (
-	"crypto/md5"
+	"crypto/sha256"
 	"fmt"
 	"html"
 	"strings"
 )
 
-func MD5(s string) string {
-	return fmt.Sprintf("%x", md5.Sum([]byte(s)))
+func SHA256(s string) string {
+	return fmt.Sprintf("%x", sha256.Sum256([]byte(s)))
 }
 
 // SafeWordBreakUrl HTML-escapes a URL first, then inserts <wbr> before each "/".

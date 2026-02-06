@@ -12,7 +12,7 @@ import (
 	"github.com/dustin/go-humanize"
 )
 
-// DiskCache provides file-based caching with MD5-based sharding.
+// DiskCache provides file-based caching with SHA-256-based sharding.
 type DiskCache struct {
 	Root    string
 	TTL     time.Duration
@@ -114,11 +114,11 @@ func (c *DiskCache) Delete(key string) error {
 	return os.Remove(absPath)
 }
 
-// buildPath shards files using the first two characters of the MD5
+// buildPath shards files using the first two characters of the SHA-256
 // to prevent too many files in one directory.
 func (c *DiskCache) buildPath(key string) string {
-	md5 := MD5(key)
-	return filepath.Join(c.Root, md5[:2], md5)
+	sha := SHA256(key)
+	return filepath.Join(c.Root, sha[:2], sha)
 }
 
 // pruningFile represents a file in the cache for pruning purposes.
