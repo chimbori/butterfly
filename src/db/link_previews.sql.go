@@ -40,7 +40,7 @@ func (q *Queries) DeleteLinkPreview(ctx context.Context, url string) error {
 }
 
 const getLinkPreview = `-- name: GetLinkPreview :one
-SELECT _id, url, generated_at, last_accessed_at, access_count FROM link_previews
+SELECT _id, url, generated_at, last_accessed_at, access_count, canonical_user_agent FROM link_previews
   WHERE url = $1
 `
 
@@ -53,6 +53,7 @@ func (q *Queries) GetLinkPreview(ctx context.Context, url string) (LinkPreview, 
 		&i.GeneratedAt,
 		&i.LastAccessedAt,
 		&i.AccessCount,
+		&i.CanonicalUserAgent,
 	)
 	return i, err
 }
@@ -92,7 +93,7 @@ func (q *Queries) GetLinkPreviewsByDomain(ctx context.Context) ([]GetLinkPreview
 }
 
 const listLinkPreviews = `-- name: ListLinkPreviews :many
-SELECT _id, url, generated_at, last_accessed_at, access_count FROM link_previews
+SELECT _id, url, generated_at, last_accessed_at, access_count, canonical_user_agent FROM link_previews
   ORDER BY last_accessed_at DESC
 `
 
@@ -111,6 +112,7 @@ func (q *Queries) ListLinkPreviews(ctx context.Context) ([]LinkPreview, error) {
 			&i.GeneratedAt,
 			&i.LastAccessedAt,
 			&i.AccessCount,
+			&i.CanonicalUserAgent,
 		); err != nil {
 			return nil, err
 		}
@@ -123,7 +125,7 @@ func (q *Queries) ListLinkPreviews(ctx context.Context) ([]LinkPreview, error) {
 }
 
 const listLinkPreviewsPaginated = `-- name: ListLinkPreviewsPaginated :many
-SELECT _id, url, generated_at, last_accessed_at, access_count FROM link_previews
+SELECT _id, url, generated_at, last_accessed_at, access_count, canonical_user_agent FROM link_previews
   ORDER BY last_accessed_at DESC
   LIMIT $1 OFFSET $2
 `
@@ -148,6 +150,7 @@ func (q *Queries) ListLinkPreviewsPaginated(ctx context.Context, arg ListLinkPre
 			&i.GeneratedAt,
 			&i.LastAccessedAt,
 			&i.AccessCount,
+			&i.CanonicalUserAgent,
 		); err != nil {
 			return nil, err
 		}
@@ -162,12 +165,18 @@ func (q *Queries) ListLinkPreviewsPaginated(ctx context.Context, arg ListLinkPre
 const recordLinkPreviewAccessed = `-- name: RecordLinkPreviewAccessed :execrows
 UPDATE link_previews
   SET last_accessed_at = NOW(),
-    access_count = access_count + 1
+    access_count = access_count + 1,
+    canonical_user_agent = $2
   WHERE url = $1
 `
 
-func (q *Queries) RecordLinkPreviewAccessed(ctx context.Context, url string) (int64, error) {
-	result, err := q.db.Exec(ctx, recordLinkPreviewAccessed, url)
+type RecordLinkPreviewAccessedParams struct {
+	Url                string
+	CanonicalUserAgent *string
+}
+
+func (q *Queries) RecordLinkPreviewAccessed(ctx context.Context, arg RecordLinkPreviewAccessedParams) (int64, error) {
+	result, err := q.db.Exec(ctx, recordLinkPreviewAccessed, arg.Url, arg.CanonicalUserAgent)
 	if err != nil {
 		return 0, err
 	}
@@ -175,17 +184,23 @@ func (q *Queries) RecordLinkPreviewAccessed(ctx context.Context, url string) (in
 }
 
 const recordLinkPreviewCreated = `-- name: RecordLinkPreviewCreated :exec
-INSERT INTO link_previews (url, generated_at, last_accessed_at, access_count)
-  VALUES ($1, NOW(), NOW(), 1)
+INSERT INTO link_previews (url, generated_at, last_accessed_at, access_count, canonical_user_agent)
+  VALUES ($1, NOW(), NOW(), 1, $2)
   ON CONFLICT(url)
   DO UPDATE SET
     generated_at = NOW(),
     last_accessed_at = NOW(),
-    access_count = link_previews.access_count + 1
-  RETURNING _id, url, generated_at, last_accessed_at, access_count
+    access_count = link_previews.access_count + 1,
+    canonical_user_agent = $2
+  RETURNING _id, url, generated_at, last_accessed_at, access_count, canonical_user_agent
 `
 
-func (q *Queries) RecordLinkPreviewCreated(ctx context.Context, url string) error {
-	_, err := q.db.Exec(ctx, recordLinkPreviewCreated, url)
+type RecordLinkPreviewCreatedParams struct {
+	Url                string
+	CanonicalUserAgent *string
+}
+
+func (q *Queries) RecordLinkPreviewCreated(ctx context.Context, arg RecordLinkPreviewCreatedParams) error {
+	_, err := q.db.Exec(ctx, recordLinkPreviewCreated, arg.Url, arg.CanonicalUserAgent)
 	return err
 }

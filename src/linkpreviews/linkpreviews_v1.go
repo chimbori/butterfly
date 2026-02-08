@@ -40,6 +40,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 
 	reqUrl := req.URL.Query().Get("url")
 	userAgent := req.Header.Get("User-Agent")
+	canonicalUserAgent := core.GetCanonicalUserAgent(userAgent)
 	queries := db.New(db.Pool)
 
 	url, hostname, err := validation.ValidateUrl(req.Context(), queries, reqUrl)
@@ -102,7 +103,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
 		w.Header().Set("Cache-Control", "max-age=31536000, immutable") // 1 year
 		w.Write(cached)
-		recordLinkPreviewAccessed(url)
+		recordLinkPreviewAccessed(url, canonicalUserAgent)
 
 	} else {
 		ctx, cancel := context.WithTimeout(req.Context(), conf.Config.LinkPreviews.Screenshot.Timeout)
@@ -160,7 +161,7 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
 		w.Header().Set("Cache-Control", "max-age=31536000, immutable") // 1 year
 		w.Write(screenshot)
-		recordLinkPreviewCreated(url)
+		recordLinkPreviewCreated(url, canonicalUserAgent)
 
 		// If cache is enabled, compress the generated screenshot and cache it, but without holding up the HTTP request
 		go func() {
@@ -190,9 +191,12 @@ func handleLinkPreview(w http.ResponseWriter, req *http.Request) {
 }
 
 // Record when a link preview is created (for the first time)
-func recordLinkPreviewCreated(url string) {
+func recordLinkPreviewCreated(url string, canonicalUserAgent string) {
 	queries := db.New(db.Pool)
-	err := queries.RecordLinkPreviewCreated(context.Background(), url)
+	err := queries.RecordLinkPreviewCreated(context.Background(), db.RecordLinkPreviewCreatedParams{
+		Url:                url,
+		CanonicalUserAgent: &canonicalUserAgent,
+	})
 	if err != nil {
 		slog.Error("failed to log link preview created", tint.Err(err))
 	}
@@ -200,14 +204,17 @@ func recordLinkPreviewCreated(url string) {
 }
 
 // Record when a link preview is accessed from the cache
-func recordLinkPreviewAccessed(url string) {
+func recordLinkPreviewAccessed(url string, canonicalUserAgent string) {
 	queries := db.New(db.Pool)
-	rowsUpdated, err := queries.RecordLinkPreviewAccessed(context.Background(), url)
+	rowsUpdated, err := queries.RecordLinkPreviewAccessed(context.Background(), db.RecordLinkPreviewAccessedParams{
+		Url:                url,
+		CanonicalUserAgent: &canonicalUserAgent,
+	})
 	if err != nil {
 		slog.Error("failed to log link preview created", tint.Err(err))
 	}
 	if rowsUpdated == 0 { // If not already in the database, add it now.
-		recordLinkPreviewCreated(url)
+		recordLinkPreviewCreated(url, canonicalUserAgent)
 	}
 	// Don’t return an error to the caller; fulfill the request anyway.
 }
