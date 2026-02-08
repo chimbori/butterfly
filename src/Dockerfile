@@ -13,6 +13,7 @@ RUN set -Eeux && \
 COPY . .
 
 RUN go build \
+  -o butterfly \
   -trimpath \
   -ldflags="-w -s -X 'butterfly.chimbori.dev/conf.BuildTimestamp=$(TZ=":America/Los_Angeles" date +"%Y-%m-%d %H:%M:%S")'"
 
