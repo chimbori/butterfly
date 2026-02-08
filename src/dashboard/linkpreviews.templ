@@ -10,7 +10,9 @@ templ LinkPreviewsPageTempl(page int) {
 	@ContentTempl("Link Previews", NilTemplate()) {
 		<section>
 			<h2>Requests by Domain</h2>
-			<canvas id="linkpreviews-domain-chart" class="max-w-240 max-h-64"></canvas>
+			<div class="flex justify-center">
+				<canvas id="linkpreviews-domain-chart" class="max-w-200 max-h-64"></canvas>
+			</div>
 		</section>
 		<section
 			id="link-previews-section"

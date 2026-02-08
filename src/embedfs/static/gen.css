@@ -333,8 +333,8 @@
   .max-w-6xl {
     max-width: var(--container-6xl);
   }
-  .max-w-240 {
-    max-width: calc(var(--spacing) * 240);
+  .max-w-200 {
+    max-width: calc(var(--spacing) * 200);
   }
   .max-w-full {
     max-width: 100%;
