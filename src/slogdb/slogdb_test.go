@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"chimbori.dev/butterfly/db"
+	"butterfly.chimbori.dev/db"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/lmittmann/tint"
 )

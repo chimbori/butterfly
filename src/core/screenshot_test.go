@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"chimbori.dev/butterfly/conf"
+	"butterfly.chimbori.dev/conf"
 	"github.com/chromedp/chromedp"
 )
 

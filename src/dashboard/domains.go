@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"chimbori.dev/butterfly/core"
-	"chimbori.dev/butterfly/db"
+	"butterfly.chimbori.dev/core"
+	"butterfly.chimbori.dev/db"
 	"github.com/lmittmann/tint"
 )
 

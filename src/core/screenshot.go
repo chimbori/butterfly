@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"chimbori.dev/butterfly/conf"
+	"butterfly.chimbori.dev/conf"
 	"github.com/chromedp/chromedp"
 	"golang.org/x/net/html"
 )
@@ -162,7 +162,7 @@ func FetchTitleAndDescription(ctx context.Context, url string) (title, descripti
 		if err != nil {
 			return "", "", err
 		}
-		req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; Butterfly/1.0; +https://chimbori.dev/butterfly)")
+		req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; Butterfly/1.0; +https://butterfly.chimbori.dev)")
 
 		resp, err := httpClient.Do(req)
 		if err != nil {

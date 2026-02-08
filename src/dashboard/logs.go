@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"chimbori.dev/butterfly/conf"
-	"chimbori.dev/butterfly/db"
+	"butterfly.chimbori.dev/conf"
+	"butterfly.chimbori.dev/db"
 	"github.com/lmittmann/tint"
 )
 

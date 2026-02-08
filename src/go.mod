@@ -1,4 +1,4 @@
-module chimbori.dev/butterfly
+module butterfly.chimbori.dev
 
 go 1.25.7
 

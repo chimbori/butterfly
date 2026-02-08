@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"sync"
 
-	"chimbori.dev/butterfly/db"
+	"butterfly.chimbori.dev/db"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

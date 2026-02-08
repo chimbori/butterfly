@@ -10,8 +10,8 @@ import (
 	"regexp"
 	"time"
 
-	"chimbori.dev/butterfly/conf"
-	"chimbori.dev/butterfly/core"
+	"butterfly.chimbori.dev/conf"
+	"butterfly.chimbori.dev/core"
 	"github.com/lmittmann/tint"
 )
 

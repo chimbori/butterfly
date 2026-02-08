@@ -9,11 +9,11 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"chimbori.dev/butterfly/conf"
-	"chimbori.dev/butterfly/core"
-	"chimbori.dev/butterfly/db"
-	"chimbori.dev/butterfly/embedfs"
-	"chimbori.dev/butterfly/validation"
+	"butterfly.chimbori.dev/conf"
+	"butterfly.chimbori.dev/core"
+	"butterfly.chimbori.dev/db"
+	"butterfly.chimbori.dev/embedfs"
+	"butterfly.chimbori.dev/validation"
 	"github.com/lmittmann/tint"
 )
 

@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"chimbori.dev/butterfly/db"
-	"chimbori.dev/butterfly/qrcode"
+	"butterfly.chimbori.dev/db"
+	"butterfly.chimbori.dev/qrcode"
 	"github.com/lmittmann/tint"
 )
 

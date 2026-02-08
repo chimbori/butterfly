@@ -6,12 +6,12 @@ import (
 	"log/slog"
 	"time"
 
-	"chimbori.dev/butterfly/conf"
-	"chimbori.dev/butterfly/dashboard"
-	"chimbori.dev/butterfly/db"
-	"chimbori.dev/butterfly/github"
-	"chimbori.dev/butterfly/linkpreviews"
-	"chimbori.dev/butterfly/qrcode"
+	"butterfly.chimbori.dev/conf"
+	"butterfly.chimbori.dev/dashboard"
+	"butterfly.chimbori.dev/db"
+	"butterfly.chimbori.dev/github"
+	"butterfly.chimbori.dev/linkpreviews"
+	"butterfly.chimbori.dev/qrcode"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/lmittmann/tint"
 )

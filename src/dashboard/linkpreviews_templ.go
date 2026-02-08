@@ -8,8 +8,8 @@ package dashboard
 import (
 	"fmt"
 
-	"chimbori.dev/butterfly/core"
-	"chimbori.dev/butterfly/db"
+	"butterfly.chimbori.dev/core"
+	"butterfly.chimbori.dev/db"
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
 )
