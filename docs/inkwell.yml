@@ -14,3 +14,4 @@ imports:
 go-import:
   repo: butterfly.chimbori.dev
   git-url: https://github.com/chimbori/butterfly
+  sub-dir: src
