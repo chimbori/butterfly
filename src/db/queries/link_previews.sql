@@ -36,3 +36,11 @@ UPDATE link_previews
   SET last_accessed_at = NOW(),
     access_count = access_count + 1
   WHERE url = $1;
+
+-- name: GetLinkPreviewsByDomain :many
+SELECT
+  COALESCE(SUBSTRING(url FROM 'https?://(?:www\.)?([^/]+)'), url) as domain,
+  COALESCE(SUM(COALESCE(access_count, 0)), 0)::bigint as total_accesses
+FROM link_previews
+GROUP BY domain
+ORDER BY total_accesses DESC;

@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"image"
 	_ "image/png"
@@ -279,6 +280,25 @@ func serveLinkPreviewHandler(w http.ResponseWriter, req *http.Request) {
 		"path", req.URL.Path,
 		"url", url,
 		"hostname", u.Hostname())
+}
+
+// GET /dashboard/link-previews/stats - Get link preview statistics by domain as JSON
+func linkPreviewsStatsHandler(w http.ResponseWriter, req *http.Request) {
+	queries := db.New(db.Pool)
+	stats, err := queries.GetLinkPreviewsByDomain(req.Context())
+	if err != nil {
+		slog.Error("failed to get link preview stats", tint.Err(err),
+			"method", req.Method,
+			"path", req.URL.Path,
+			"url", req.URL.String(),
+			"status", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(stats)
 }
 
 func calculateTotalPages(totalCount int64) int64 {

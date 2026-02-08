@@ -21,6 +21,7 @@ templ ContentTempl(title string, contents templ.Component) {
 			<meta name="viewport" content="width=device-width,initial-scale=1"/>
 			<link rel="manifest" href="/app.webmanifest"/>
 			<script src="/static/htmx.min.js"></script>
+			<script src="/static/chart.min.js"></script>
 			<meta name="htmx-config" content='{"selfRequestsOnly":false}'/>
 			<link rel="stylesheet" href="/static/gen.min.css"/>
 			<link rel="icon" href="/static/favicon.svg"/>
@@ -34,6 +35,7 @@ templ ContentTempl(title string, contents templ.Component) {
 				@FooterTempl()
 			</main>
 		</body>
+		<script src="/static/dashboard.min.js"></script>
 	</html>
 }
 

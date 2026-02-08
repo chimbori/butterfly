@@ -8,6 +8,10 @@ import (
 
 templ LinkPreviewsPageTempl(page int) {
 	@ContentTempl("Link Previews", NilTemplate()) {
+		<section>
+			<h2>Requests by Domain</h2>
+			<canvas id="linkpreviews-domain-chart" class="max-w-240 max-h-64"></canvas>
+		</section>
 		<section
 			id="link-previews-section"
 			hx-get={ "/dashboard/link-previews/list?page=" + fmt.Sprintf("%d", page) }

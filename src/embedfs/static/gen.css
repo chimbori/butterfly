@@ -321,6 +321,9 @@
   .h-auto {
     height: auto;
   }
+  .max-h-64 {
+    max-height: calc(var(--spacing) * 64);
+  }
   .min-h-24 {
     min-height: calc(var(--spacing) * 24);
   }
@@ -329,6 +332,9 @@
   }
   .max-w-6xl {
     max-width: var(--container-6xl);
+  }
+  .max-w-240 {
+    max-width: calc(var(--spacing) * 240);
   }
   .max-w-full {
     max-width: 100%;

@@ -57,6 +57,40 @@ func (q *Queries) GetLinkPreview(ctx context.Context, url string) (LinkPreview, 
 	return i, err
 }
 
+const getLinkPreviewsByDomain = `-- name: GetLinkPreviewsByDomain :many
+SELECT
+  COALESCE(SUBSTRING(url FROM 'https?://(?:www\.)?([^/]+)'), url) as domain,
+  COALESCE(SUM(COALESCE(access_count, 0)), 0)::bigint as total_accesses
+FROM link_previews
+GROUP BY domain
+ORDER BY total_accesses DESC
+`
+
+type GetLinkPreviewsByDomainRow struct {
+	Domain        string
+	TotalAccesses int64
+}
+
+func (q *Queries) GetLinkPreviewsByDomain(ctx context.Context) ([]GetLinkPreviewsByDomainRow, error) {
+	rows, err := q.db.Query(ctx, getLinkPreviewsByDomain)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetLinkPreviewsByDomainRow
+	for rows.Next() {
+		var i GetLinkPreviewsByDomainRow
+		if err := rows.Scan(&i.Domain, &i.TotalAccesses); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listLinkPreviews = `-- name: ListLinkPreviews :many
 SELECT _id, url, generated_at, last_accessed_at, access_count FROM link_previews
   ORDER BY last_accessed_at DESC
