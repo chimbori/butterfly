@@ -41,10 +41,191 @@
 </nav></div>
   </header>
   <article class="my-8 md:my-16 width-limit prose-lite"><h1 id="butterfly-social">Butterfly Social</h1>
-<p>Self-hosted OpenGraph social link preview image generation tool.</p>
-<p>Open source, fully customizable, yet works out of the box with minimal configuration.</p>
 <p>Butterfly Social is a quick way to auto-generate OpenGraph link preview images in bulk for all your sites, without the use of a separate template editor or API integration at no cost.
 The source of truth for the image data &amp; design remains within your primary website, so you can use tools you are already familiar with &amp; assets that are already well-integrated into your workflow.</p>
+<p>Self-hosted OpenGraph / social link preview image generation tool. Open source, fully customizable, yet works out of the box with minimal configuration.</p>
+<h2 id="how-to-use-butterfly-social-link-previews">How to use Butterfly Social Link Previews</h2>
+<p>You can self-host Butterfly Social on a cheap VPS from any provider (here’s $200 in credits with a <a href="https://www.digitalocean.com/?refcode=e76ea0927117">DigitalOcean referral code</a>.)</p>
+<p>To prevent abuse and to conserve resources, Butterfly blocks all domains by default, until you explicitly authorize each domain you care about.</p>
+<h3 id="use-the-default-template">Use the Default Template</h3>
+<p>Just one step: Paste the Butterfly <code>&lt;meta&gt;</code> tag into the original page, and you’re done!</p>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span>&lt;<span style="color:#ff79c6">meta</span> <span style="color:#50fa7b">property</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;og:image&#34;</span> <span style="color:#50fa7b">content</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;https://butterfly.your-server.com/link-previews/v1?url=your-site.com/some/page&#34;</span>&gt;
+</span></span></code></pre><h3 id="use-your-own-templates">Use your Own Templates</h3>
+<ol>
+<li>
+<p>Create a new hidden element inside your existing Web page, using whatever framework or template engine you use today.
+E.g. here’s a simple example:</p>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span>&lt;<span style="color:#ff79c6">div</span> <span style="color:#50fa7b">id</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;link-preview&#34;</span> <span style="color:#50fa7b">style</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;display: none; width: 1200px;&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#ff79c6">h1</span>&gt;Butterfly Social&lt;/<span style="color:#ff79c6">h1</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#ff79c6">p</span>&gt;Self-hosted OpenGraph / social link preview image generation tool. Fully customizable, yet works out of the box with zero configuration.&lt;/<span style="color:#ff79c6">p</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#ff79c6">div</span>&gt;
+</span></span></code></pre></li>
+<li>
+<p>Use Butterfly to craft a URL, and paste the <code>&lt;meta&gt;</code> tag into the original page.</p>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span>&lt;<span style="color:#ff79c6">meta</span> <span style="color:#50fa7b">property</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;og:image&#34;</span> <span style="color:#50fa7b">content</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;https://butterfly.your-server.com/link-previews/v1?url=your-site.com/some/page&#34;</span>&gt;
+</span></span></code></pre><p>If you can’t use the default selector (<code>#link-preview</code>) for any reason, you can provide an alternate one using the <code>&amp;sel=</code> parameter.</p>
+</li>
+<li>
+<p>There is no step 3.</p>
+</li>
+</ol>
+<h3 id="how-its-rendered">How it’s rendered</h3>
+<p><img src="example.png" alt="Example"></p>
+<p>Test your Butterfly installation by posting your original page URL to any social platform.</p>
+<h2 id="how-it-works">How it works</h2>
+<ol>
+<li>Butterfly fetches the URL you provide to it, using a Chrome Headless instance;</li>
+<li>runs JavaScript to un-hide the hidden element;</li>
+<li>takes a screenshot of it;</li>
+<li>and serves it</li>
+<li>(while also caching &amp; compressing it).</li>
+</ol>
+<p>That’s it.</p>
+<p>Butterfly works well with static sites (using any static site generator) as well as dynamically-generated sites (using any CMS or platform).</p>
+<h3 id="can-i-use">Can I use…</h3>
+<ul>
+<li>
+<p>Images?</p>
+<p>Yes.</p>
+</li>
+<li>
+<p>SVG backgrounds?</p>
+<p>Also, yes.</p>
+</li>
+<li>
+<p>Flexbox? Grid?</p>
+<p>Yes, of course.</p>
+</li>
+<li>
+<p>Custom fonts? Proprietary fonts?</p>
+<p>Absolutely.</p>
+</li>
+</ul>
+<p>Why limit yourself to the customization possible in a random WYSIWYG editor, when you have the entire Web platform available to you!</p>
+<p>Anything you can design for the Web, you can use to create a link preview image.
+The infinite is possible at Zombocom. The unattainable is unknown at Zombocom.</p>
+<h2 id="bonus-features-qr-codes">Bonus Features: QR Codes</h2>
+<p>Butterfly Social can also generate QR Codes for your authorized URLs that you can embed on your site wherever appropriate.</p>
+<p>Use this URL format:</p>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span>&lt;<span style="color:#ff79c6">img</span> <span style="color:#50fa7b">src</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;https://butterfly.your-server.com/qr-codes/v1?url=your-site.com/some/page&#34;</span>&gt;
+</span></span></code></pre><h2 id="install--deploy">Install &amp; Deploy</h2>
+<p>We strongly recommend deploying using the official container image, which includes Chrome Headless for convenience. Thanks to the <a href="https://github.com/chromedp/chromedp">chromedp</a> project for making this possible!</p>
+<ul>
+<li>Butterfly is designed to be used behind a TLS reverse proxy for SSL termination (among other things). We recommend <a href="https://caddyserver.com/">Caddy</a>; see sample Caddyfile below.</li>
+<li>If you expect a lot of traffic, consider using a CDN.</li>
+</ul>
+<h3 id="sample-composeyml-for-docker-and-podman">Sample <code>compose.yml</code> (for Docker and Podman)</h3>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span><span style="color:#ff79c6">services</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">butterfly</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">container_name</span>: butterfly
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">image</span>: ghcr.io/chimbori/butterfly:latest
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">volumes</span>:
+</span></span><span style="display:flex;"><span>      - $PWD/butterfly-data:/data
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">restart</span>: unless-stopped
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">depends_on</span>:
+</span></span><span style="display:flex;"><span>      - butterfly-db
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">butterfly-db</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">container_name</span>: butterfly-db
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">image</span>: postgres:18-alpine
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">environment</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#ff79c6">POSTGRES_DB</span>: butterfly
+</span></span><span style="display:flex;"><span>      <span style="color:#ff79c6">POSTGRES_USER</span>: chimbori
+</span></span><span style="display:flex;"><span>      <span style="color:#ff79c6">POSTGRES_PASSWORD</span>: chimbori
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">volumes</span>:
+</span></span><span style="display:flex;"><span>      - $PWD/butterfly-db-data:/var/lib/postgresql
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">restart</span>: unless-stopped
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">volumes</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">butterfly-data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">butterfly-db-data</span>:
+</span></span></code></pre><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span>sudo chmod -R a+rw butterfly-data
+</span></span></code></pre><h4 id="if-you-prefer-to-install-using-the-go-binary-on-raw-metal-use-go-install">If you prefer to install using the Go binary on raw metal, use <code>go install</code></h4>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span>go install butterfly.chimbori.dev@latest
+</span></span></code></pre><h3 id="sample-butterflyyml">Sample <code>butterfly.yml</code></h3>
+<p>Butterfly requires basic configuration to be provided via a config file.</p>
+<ul>
+<li>
+<p><strong>PostgreSQL Database URL</strong> <em>(required)</em></p>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span><span style="color:#ff79c6">database</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">url</span>: postgresql://chimbori:chimbori@butterfly-db:5432/butterfly
+</span></span></code></pre></li>
+<li>
+<p><strong>Dashboard credentials</strong> (encrypted via <code>bcrypt</code>) <em>(required)</em></p>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span><span style="color:#ff79c6">dashboard</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">username</span>: admin
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">password</span>: <span style="color:#f1fa8c">&#34;$2a$10$a8LnUkK1UiB.9yQrUp3wyuGsH1AAHhlHVy1cjIaaIUVAwCtGvaX7q&#34;</span> <span style="color:#6272a4"># &#34;test&#34;</span>
+</span></span></code></pre></li>
+<li>
+<p>Web config <em>(optional)</em></p>
+<p>Assuming there’s a reverse proxy in front of Butterfly Social, there should be no need to change the port here; just configure the reverse proxy to forward requests to port 9999.</p>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span><span style="color:#ff79c6">web</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">port</span>: <span style="color:#bd93f9">9999</span>
+</span></span></code></pre></li>
+<li>
+<p>Link Previews config <em>(optional)</em></p>
+<p>Performance will be seriously affected by disabling the cache. This is only to be used during development.</p>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span><span style="color:#ff79c6">link-previews</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">screenshot</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">timeout</span>: 20s
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">cache</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">enabled</span>: <span style="color:#ff79c6">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">ttl</span>: 720h0m0s
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">max_size_bytes</span>: <span style="color:#bd93f9">1073741824</span>
+</span></span></code></pre></li>
+<li>
+<p>QR Codes config <em>(optional)</em></p>
+<p>Performance will be seriously affected by disabling the cache. This is only to be used during development.</p>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span><span style="color:#ff79c6">qr-codes</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">cache</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">enabled</span>: <span style="color:#ff79c6">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">ttl</span>: 720h0m0s
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">max_size_bytes</span>: <span style="color:#bd93f9">1073741824</span>
+</span></span></code></pre></li>
+<li>
+<p>Debug Mode <em>(optional)</em></p>
+<p>Turn on additional logging in Debug Mode.</p>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span><span style="color:#ff79c6">debug</span>: <span style="color:#ff79c6">true</span>
+</span></span></code></pre></li>
+</ul>
+<h3 id="sample-caddyfile">Sample <code>Caddyfile</code></h3>
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;"><code><span style="display:flex;"><span><span style="font-weight:bold">butterfly.your-server.com</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">reverse_proxy</span> butterfly:<span style="color:#bd93f9">9999</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">encode</span> <span style="color:#f1fa8c">zstd</span> <span style="color:#f1fa8c">gzip</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre><h1 id="dashboard-ui">Dashboard UI</h1>
+<p>You can configure the Authorized Domains list using the Dashboard UI at <code>https://butterfly.your-server.com/dashboard</code>. The Dashboard is available as an installable PWA (Progressive Web Application) that can be “installed” locally using any modern browser.</p>
+<img src="screenshot-pwa.png">
+<h1 id="dual-licensed-agpl--proprietary">Dual Licensed: AGPL &amp; Proprietary</h1>
+<p>This service is dual-licensed as <a href="LICENSE.md">Affero GPL</a> (an OSI-approved open-source license) and a Proprietary License.</p>
+<p>Feel free (as in freedom!) to install it on your own cheap VPS, as long as you commit to sharing improvements back upstream.</p>
+<p>Or, if the AGPL license does not work for your company or organization,
+and/or you’d like to support ongoing development and new features,
+please <a href="mailto:hello+butterfly@chimbori.com">contact us</a> for a Proprietary License.</p>
+<h1 id="comparison-with-alternatives">Comparison with Alternatives</h1>
+<p>There are a lot of paid SaaS tools in this space. Notable among them are:</p>
+<ul>
+<li>BannerBear</li>
+<li>RenderForm</li>
+<li>Templated.io</li>
+<li>Imejis.io</li>
+<li>Pablle</li>
+<li>Orshot</li>
+<li>Abyssale</li>
+</ul>
+<p>They all work roughly the same way: you design a template using their custom tools, then provide them your data (title, description, etc.), and pay them per-request (or per-render) to create &amp; serve those images for you.</p>
+<p>This model works great if you do not have access to the source of the page, or have no influence over the developers who build your website.</p>
+<p>But now,</p>
+<ul>
+<li>You’ve got to learn a whole new tool.</li>
+<li>That tool exposes a certain amount of design expressiveness, but nowhere near what the Web platform offers natively.</li>
+<li>Anytime you need to change the preview image, you have to visit a completely separate website.</li>
+<li>Anytime your own webpage changes, you have to remember to update the templates to match the theme.</li>
+<li>There’s no way to share themes between your website &amp; these third-party tools: colors, gradients, logos must be copy/pasted manually.</li>
+<li>You have to rely on these companies being around long enough, and not disappearing completely after running out of money or being bought over by a VC.</li>
+<li>And you have to pay, based on volume.</li>
+</ul>
+<p>Butterfly is none of those things. All you need is the ability to write some HTML/CSS (no JavaScript necessary!) to design your preview image. And it’s free in perpetuity.</p>
 </article>
 
   <footer>
