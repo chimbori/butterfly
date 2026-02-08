@@ -41,8 +41,18 @@ UPDATE link_previews
 
 -- name: GetLinkPreviewsByDomain :many
 SELECT
-  COALESCE(SUBSTRING(url FROM 'https?://(?:www\.)?([^/]+)'), url) as domain,
-  COALESCE(SUM(COALESCE(access_count, 0)), 0)::bigint as total_accesses
-FROM link_previews
-GROUP BY domain
-ORDER BY total_accesses DESC;
+    COALESCE(SUBSTRING(url FROM 'https?://(?:www\.)?([^/]+)'), url) as domain,
+    COALESCE(SUM(COALESCE(access_count, 0)), 0)::bigint as total_accesses
+  FROM link_previews
+  GROUP BY domain
+  ORDER BY total_accesses DESC;
+
+-- name: GetLinkPreviewUserAgentsByDay :many
+SELECT
+    to_char(date_trunc('day', last_accessed_at), 'YYYY-MM-DD') as day,
+    COALESCE(canonical_user_agent, 'Unknown') as canonical_user_agent,
+    COALESCE(SUM(COALESCE(access_count, 0)), 0)::bigint as total_accesses
+  FROM link_previews
+  WHERE last_accessed_at >= NOW() - ($1 * INTERVAL '1 day')
+  GROUP BY day, canonical_user_agent
+  ORDER BY day ASC, total_accesses DESC;

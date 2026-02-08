@@ -301,6 +301,41 @@ func linkPreviewsStatsHandler(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(stats)
 }
 
+// GET /dashboard/link-previews/user-agents?days=7 - Get canonical user agent distribution by day
+func linkPreviewsUserAgentsHandler(w http.ResponseWriter, req *http.Request) {
+	queries := db.New(db.Pool)
+	days := parseDaysRange(req.URL.Query().Get("days"))
+
+	stats, err := queries.GetLinkPreviewUserAgentsByDay(req.Context(), int32(days))
+	if err != nil {
+		slog.Error("failed to get link preview user agent stats", tint.Err(err),
+			"method", req.Method,
+			"path", req.URL.Path,
+			"url", req.URL.String(),
+			"status", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(stats)
+}
+
+func parseDaysRange(daysParam string) int {
+	switch daysParam {
+	case "1":
+		return 1
+	case "7":
+		return 7
+	case "28":
+		return 28
+	case "60":
+		return 60
+	default:
+		return 7
+	}
+}
+
 func calculateTotalPages(totalCount int64) int64 {
 	limit := int64(conf.Config.Dashboard.Pagination.Limit)
 	return (totalCount + (limit - 1)) / limit

@@ -1,3 +1,3 @@
-import { initLinkPreviewsChart } from './linkpreviews_chart.js';
+import { initLinkPreviewsCharts } from './linkpreviews_chart.js';
 
-initLinkPreviewsChart();
+initLinkPreviewsCharts();

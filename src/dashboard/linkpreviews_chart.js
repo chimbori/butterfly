@@ -1,53 +1,185 @@
 /**
- * @fileoverview Renders a doughnut chart for link preview statistics on the dashboard.
+ * @fileoverview Renders charts for link preview statistics on the dashboard.
  */
-export function initLinkPreviewsChart() {
-  async function loadChart() {
+export function initLinkPreviewsCharts() {
+  function init() {
+    initDomainChart();
+    initUserAgentChart();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+}
+
+async function initDomainChart() {
+  const canvas = document.getElementById('linkpreviews-domain-chart');
+  if (!canvas) {
+    return;
+  }
+
+  try {
+    const response = await fetch('/dashboard/link-previews/stats');
+    if (!response.ok) {
+      console.error('Failed to fetch link preview statistics');
+      return;
+    }
+
+    const stats = await response.json();
+    if (stats.length === 0) {
+      console.log('No link preview data available');
+      return;
+    }
+
+    new Chart(canvas.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: stats.map(d => d.Domain),
+        datasets: [{
+          data: stats.map(d => d.TotalAccesses),
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              font: {
+                size: 14,
+                family: 'Inter'
+              }
+            }
+          }
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error loading link preview chart:', error);
+  }
+}
+
+function initUserAgentChart() {
+  const canvas = document.getElementById('linkpreviews-useragents-chart');
+  if (!canvas) {
+    return;
+  }
+
+  const rangeContainer = document.getElementById('linkpreviews-useragents-range');
+  const rangeButtons = rangeContainer ? rangeContainer.querySelectorAll('button[data-days]') : [];
+
+  let chart = null;
+  let currentDays = 7;
+
+  function setActiveButton(days) {
+    rangeButtons.forEach(button => {
+      const isActive = Number(button.dataset.days) === days;
+      button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+  }
+
+  function buildDatasets(stats) {
+    const labelSet = new Set();
+    const agentSet = new Set();
+    const totalsByAgent = new Map();
+
+    stats.forEach(row => {
+      labelSet.add(row.Day);
+      agentSet.add(row.CanonicalUserAgent);
+      totalsByAgent.set(
+        row.CanonicalUserAgent,
+        (totalsByAgent.get(row.CanonicalUserAgent) || 0) + row.TotalAccesses
+      );
+    });
+
+    const labels = Array.from(labelSet).sort();
+    const agents = Array.from(agentSet).sort((a, b) => (totalsByAgent.get(b) || 0) - (totalsByAgent.get(a) || 0));
+    const matrix = new Map();
+
+    stats.forEach(row => {
+      const key = `${row.Day}::${row.CanonicalUserAgent}`;
+      matrix.set(key, row.TotalAccesses);
+    });
+
+    const datasets = agents.map((agent, index) => {
+      const hue = Math.round((index * 360) / Math.max(agents.length, 1));
+      return {
+        label: agent,
+        data: labels.map(day => matrix.get(`${day}::${agent}`) || 0),
+        backgroundColor: `hsl(${hue}, 65%, 55%)`
+      };
+    });
+
+    return { labels, datasets };
+  }
+
+  async function loadChart(days) {
     try {
-      const response = await fetch('/dashboard/link-previews/stats');
+      const response = await fetch(`/dashboard/link-previews/user-agents?days=${days}`);
       if (!response.ok) {
-        console.error('Failed to fetch link preview statistics');
+        console.error('Failed to fetch link preview user agent statistics');
         return;
       }
 
       const stats = await response.json();
       if (stats.length === 0) {
-        console.log('No link preview data available');
+        console.log('No user agent data available');
         return;
       }
 
-      new Chart(document.getElementById('linkpreviews-domain-chart').getContext('2d'), {
-        type: 'doughnut',
+      const { labels, datasets } = buildDatasets(stats);
+
+      if (chart) {
+        chart.data.labels = labels;
+        chart.data.datasets = datasets;
+        chart.update();
+        return;
+      }
+
+      chart = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
         data: {
-          labels: stats.map(d => d.Domain),
-          datasets: [{
-            data: stats.map(d => d.TotalAccesses),
-            borderWidth: 1
-          }]
+          labels,
+          datasets
         },
         options: {
           responsive: true,
+          scales: {
+            x: {
+              stacked: true
+            },
+            y: {
+              stacked: true,
+              beginAtZero: true
+            }
+          },
           plugins: {
             legend: {
-              position: 'right',
-              labels: {
-                font: {
-                  size: 14,
-                  family: 'Inter'
-                }
-              }
+              position: 'bottom'
             }
           }
         }
       });
     } catch (error) {
-      console.error('Error loading link preview chart:', error);
+      console.error('Error loading user agent chart:', error);
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadChart);
-  } else {
-    loadChart();
+  if (rangeButtons.length > 0) {
+    rangeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const days = Number(button.dataset.days || 7);
+        if (!Number.isNaN(days)) {
+          currentDays = days;
+          setActiveButton(days);
+          loadChart(days);
+        }
+      });
+    });
   }
+
+  setActiveButton(currentDays);
+  loadChart(currentDays);
 }

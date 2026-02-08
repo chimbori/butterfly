@@ -14,6 +14,21 @@ templ LinkPreviewsPageTempl(page int) {
 				<canvas id="linkpreviews-domain-chart" class="max-w-200 max-h-64"></canvas>
 			</div>
 		</section>
+		<section>
+			<h2>Requests by User Agent</h2>
+			<div class="flex flex-wrap items-center gap-2 mb-2">
+				<span class="text-sm">Range:</span>
+				<div id="linkpreviews-useragents-range" class="flex flex-wrap gap-2">
+					<button class="btn-neutral" data-days="1" aria-pressed="false">1 day</button>
+					<button class="btn-neutral" data-days="7" aria-pressed="true">7 days</button>
+					<button class="btn-neutral" data-days="28" aria-pressed="false">28 days</button>
+					<button class="btn-neutral" data-days="60" aria-pressed="false">60 days</button>
+				</div>
+			</div>
+			<div class="flex justify-center">
+				<canvas id="linkpreviews-useragents-chart" class="max-w-200 max-h-64"></canvas>
+			</div>
+		</section>
 		<section
 			id="link-previews-section"
 			hx-get={ "/dashboard/link-previews/list?page=" + fmt.Sprintf("%d", page) }

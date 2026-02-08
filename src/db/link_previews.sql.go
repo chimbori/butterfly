@@ -58,13 +58,50 @@ func (q *Queries) GetLinkPreview(ctx context.Context, url string) (LinkPreview, 
 	return i, err
 }
 
+const getLinkPreviewUserAgentsByDay = `-- name: GetLinkPreviewUserAgentsByDay :many
+SELECT
+    to_char(date_trunc('day', last_accessed_at), 'YYYY-MM-DD') as day,
+    COALESCE(canonical_user_agent, 'Unknown') as canonical_user_agent,
+    COALESCE(SUM(COALESCE(access_count, 0)), 0)::bigint as total_accesses
+  FROM link_previews
+  WHERE last_accessed_at >= NOW() - ($1 * INTERVAL '1 day')
+  GROUP BY day, canonical_user_agent
+  ORDER BY day ASC, total_accesses DESC
+`
+
+type GetLinkPreviewUserAgentsByDayRow struct {
+	Day                string
+	CanonicalUserAgent string
+	TotalAccesses      int64
+}
+
+func (q *Queries) GetLinkPreviewUserAgentsByDay(ctx context.Context, dollar_1 interface{}) ([]GetLinkPreviewUserAgentsByDayRow, error) {
+	rows, err := q.db.Query(ctx, getLinkPreviewUserAgentsByDay, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetLinkPreviewUserAgentsByDayRow
+	for rows.Next() {
+		var i GetLinkPreviewUserAgentsByDayRow
+		if err := rows.Scan(&i.Day, &i.CanonicalUserAgent, &i.TotalAccesses); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getLinkPreviewsByDomain = `-- name: GetLinkPreviewsByDomain :many
 SELECT
-  COALESCE(SUBSTRING(url FROM 'https?://(?:www\.)?([^/]+)'), url) as domain,
-  COALESCE(SUM(COALESCE(access_count, 0)), 0)::bigint as total_accesses
-FROM link_previews
-GROUP BY domain
-ORDER BY total_accesses DESC
+    COALESCE(SUBSTRING(url FROM 'https?://(?:www\.)?([^/]+)'), url) as domain,
+    COALESCE(SUM(COALESCE(access_count, 0)), 0)::bigint as total_accesses
+  FROM link_previews
+  GROUP BY domain
+  ORDER BY total_accesses DESC
 `
 
 type GetLinkPreviewsByDomainRow struct {
@@ -184,8 +221,8 @@ func (q *Queries) RecordLinkPreviewAccessed(ctx context.Context, arg RecordLinkP
 }
 
 const recordLinkPreviewCreated = `-- name: RecordLinkPreviewCreated :exec
-INSERT INTO link_previews (url, generated_at, last_accessed_at, access_count, canonical_user_agent)
-  VALUES ($1, NOW(), NOW(), 1, $2)
+INSERT INTO link_previews (url, canonical_user_agent, generated_at, last_accessed_at, access_count)
+  VALUES ($1, $2, NOW(), NOW(), 1)
   ON CONFLICT(url)
   DO UPDATE SET
     generated_at = NOW(),
