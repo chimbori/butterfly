@@ -98,7 +98,7 @@ func TestDiskCacheBuildPath_Sharding(t *testing.T) {
 	key := "test-key"
 
 	path := cache.buildPath(key)
-	md5 := MD5(key)
+	md5 := SHA256(key)
 
 	// Verify sharding structure
 	expected := filepath.Join(root, md5[:2], md5)
