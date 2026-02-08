@@ -1,0 +1,27 @@
+{{- define "nav-top" -}}
+<nav class="print:hidden">
+  <ul>
+    {{- template "nav-common" . -}}
+    <li>
+      <form class="print:hidden inline white-placeholder" target="_blank" action="https://www.google.com/search" hx-boost="false" enterkeyhint="search">
+        <input type="search" name="q" size="14" placeholder="🔍 &nbsp; Search" class="px-3 btn-white">
+        <input type="hidden" name="sitesearch" value="chimbori.com">
+      </form>
+    </li>
+  </ul>
+</nav>
+{{- end -}}
+
+{{- define "nav-bottom" -}}
+<nav class="print:hidden">
+  <ul>
+    {{ template "nav-common" . }}
+  </ul>
+</nav>
+{{- end -}}
+
+{{- define "nav-common" -}}
+{{ range .Page.Nav }}
+<li><a href="{{ .Url }}">{{- .Title -}}</a></li>
+{{- end -}}
+{{- end -}}

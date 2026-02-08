@@ -1,0 +1,5 @@
+{{- define "go-import" -}}
+{{- if and .Site.GoImport.Repo .Site.GoImport.GitUrl -}}
+<meta name="go-import" content="{{ .Site.GoImport.Repo }} git {{ .Site.GoImport.GitUrl }}">
+{{- end -}}
+{{- end -}}

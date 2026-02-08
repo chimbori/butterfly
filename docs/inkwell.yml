@@ -1,0 +1,16 @@
+debug: true
+title: Butterfly Social
+description: "Self-hosted OpenGraph social link preview image generation tool. Open source, fully customizable, & free."
+urls:
+  root: https://butterfly.chimbori.dev
+  css: //chimbori.com/css/gen.css
+  feed: //chimbori.com/feed.xml
+  touch-icon: //chimbori.com/media/favicon.png
+  favicon: //chimbori.com/media/favicon.png
+theme-color: "#fe7a4d"
+imports:
+  - link-preview
+  - go-import
+go-import:
+  repo: butterfly.chimbori.dev
+  git-url: https://github.com/chimbori/butterfly

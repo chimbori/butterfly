@@ -1,0 +1,50 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch: # Can be run manually from the Actions tab.
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # While Inkwell (our own static site generator) is under development,
+      # we use it locally to generate the `/public` directory so we can iterate faster.
+      # Once it’s production-ready, add a `build` step here that will create the `/public`
+      # directory during deployment, and delete the checked-in copy of the public directory.
+      # - name: Build with Inkwell
+      #   run: <TODO>
+
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "./docs/public"
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

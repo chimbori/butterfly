@@ -1,0 +1,7 @@
+{{ define "link-preview" }}
+<div class="hidden relative mx-auto px-24 py-16 w-[1200px] h-[630px] text-white background-orange" id="link-preview">
+  <h1 class="text-shadow-lg mb-12 text-7xl/21 line-clamp-3">{{ .Page.Title }}</h1>
+  <h2 class="text-shadow-md pr-24 text-5xl/18 line-clamp-3">{{ .Page.Description }}</h2>
+  <img class="right-24 bottom-16 absolute size-24" style="filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));" src="{{ .Site.Urls.TouchIcon }}">
+</div>
+{{ end }}

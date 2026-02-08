@@ -1,0 +1,50 @@
+{{- define "app-page" -}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+  <meta name="robots" content="noodp,noydir">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title itemprop="name">{{ .Page.Title }}</title>
+  <meta name="description" itemprop="description" content="{{ .Page.Description }}">
+  <meta name="theme-color" content="{{ .Site.ThemeColor }}">
+
+  <meta property="og:url" content="{{ .Site.Urls.Root }}{{ .Page.Url }}">
+  <meta property="og:title" content="{{ .Page.Title }}">
+  <meta property="og:description" content="{{ .Page.Description }}">
+  <meta property="og:image" content="https://bfly.chimbori.net/link-previews/v1?url={{ .Site.Urls.Root }}{{ .Page.Url }}">
+
+  <link rel="canonical" href="{{ .Site.Urls.Root }}{{ .Page.Url }}">
+  <link rel="apple-touch-icon-precomposed" sizes="192x192" href="{{ .Site.Urls.TouchIcon }}">
+  <link rel="shortcut icon" type="image/x-icon" href="{{ .Site.Urls.Favicon }}">
+  <link rel="stylesheet" href="{{ .Site.Urls.Css }}">
+  <link rel="alternate" type="application/atom+xml" title="{{ .Site.Title }}" href="{{ .Site.Urls.Feed }}">
+  {{ template "go-import" . }}
+</head>
+
+<body hx-boost="true">
+  <header class="py-8 background-blue">
+    <div class="width-limit">
+      <a class="inline-block mb-4 font-display font-medium text-2xl" href="/">{{- .Page.Title -}}</a>
+      {{- template "nav-top" . -}}
+    </div>
+  </header>
+  <article class="my-8 md:my-16 width-limit prose-lite">
+    {{- .Content -}}
+  </article>
+
+  <footer>
+    <div class="md:flex font-display width-limit">
+      <div class="md:flex-auto">
+        {{- template "nav-bottom" . -}}
+      </div>
+    </div>
+  </footer>
+  {{- template "link-preview" . -}}
+</body>
+
+</html>
+{{- end -}}
