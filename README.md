@@ -89,9 +89,9 @@ Use this URL format:
 <img src="https://butterfly.your-server.com/qr-codes/v1?url=your-site.com/some/page">
 ```
 
-## How to deploy
+## Install & Deploy
 
-We strongly recommend deploying using the official Docker image, which includes Chrome Headless for convenience. Thanks to the [chromedp](https://github.com/chromedp/chromedp) project for making this possible!
+We strongly recommend deploying using the official container image, which includes Chrome Headless for convenience. Thanks to the [chromedp](https://github.com/chromedp/chromedp) project for making this possible!
 
 - Butterfly is designed to be used behind a TLS reverse proxy for SSL termination (among other things). We recommend [Caddy](https://caddyserver.com/); see sample Caddyfile below.
 - If you expect a lot of traffic, consider using a CDN.
@@ -123,6 +123,16 @@ services:
 volumes:
   butterfly-data:
   butterfly-db-data:
+```
+
+```shell
+sudo chmod -R a+rw butterfly-data
+```
+
+#### If you prefer to install using the Go binary on raw metal, use `go install`
+
+```shell
+go install butterfly.chimbori.dev@latest
 ```
 
 ### Sample `butterfly.yml`
