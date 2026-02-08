@@ -23,6 +23,9 @@
   <link rel="stylesheet" href="{{ .Site.Urls.Css }}">
   <link rel="alternate" type="application/atom+xml" title="{{ .Site.Title }}" href="{{ .Site.Urls.Feed }}">
   {{ template "go-import" . }}
+
+  <script src="/htmx.min.js"></script>
+  <meta name="htmx-config" content='{"selfRequestsOnly":false}' />
 </head>
 
 <body hx-boost="true">

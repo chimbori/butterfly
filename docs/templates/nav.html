@@ -8,6 +8,13 @@
         <input type="hidden" name="sitesearch" value="chimbori.com">
       </form>
     </li>
+    <li>
+      <a target="_blank" href="https://github.com/chimbori/butterfly"
+        class="bg-linear-to-b from-zinc-50 hover:from-zinc-100 to-zinc-100 hover:to-zinc-200 shadow mr-2 px-3 py-2 rounded-lg text-black text-sm no-underline">
+        <img src="/github.svg" class="inline mr-1 size-4" alt="GitHub" />
+        <span hx-get="https://bfly.chimbori.net/github/v1/chimbori/butterfly/stars" hx-trigger="load"></span> stars
+      </a>
+    </li>
   </ul>
 </nav>
 {{- end -}}
