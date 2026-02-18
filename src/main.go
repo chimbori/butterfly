@@ -94,17 +94,6 @@ func main() {
 	slog.SetDefault(slog.New(slogdb.NewDBHandler(tintHandler, db.Pool)))
 	slog.Info("Database error logging enabled")
 
-	// Set up cron task for routine maintenance.
-	go func() {
-		// Do a one-off cleanup before scheduling a recurring task.
-		performMaintenance()
-		ticker := time.Tick(2 * time.Hour)
-		for {
-			<-ticker
-			performMaintenance()
-		}
-	}()
-
 	// Set up a graceful cleanup for when the process is terminated.
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
@@ -127,6 +116,17 @@ func main() {
 	qrcode.Init(mux)
 	github.Init(mux)
 	dashboard.Init(mux)
+
+	// Set up cron task for routine maintenance.
+	go func() {
+		// Do a one-off cleanup before scheduling a recurring task.
+		performMaintenance()
+		ticker := time.Tick(2 * time.Hour)
+		for {
+			<-ticker
+			performMaintenance()
+		}
+	}()
 
 	addr := net.JoinHostPort("", strconv.Itoa(conf.Config.Web.Port))
 	slog.Info("Listening", "url", "http://localhost"+addr) // Not "https://", since this app does not terminate SSL.
