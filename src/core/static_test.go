@@ -54,7 +54,7 @@ func TestServeWebManifest(t *testing.T) {
 			}
 
 			// Parse JSON to verify it’s valid
-			var manifest map[string]interface{}
+			var manifest map[string]any
 			if err := json.Unmarshal(w.Body.Bytes(), &manifest); err != nil {
 				t.Fatalf("Failed to parse manifest JSON: %v\nBody: %s", err, w.Body.String())
 			}
@@ -72,7 +72,7 @@ func TestServeWebManifest(t *testing.T) {
 			if display, ok := manifest["display"].(string); !ok || display != "standalone" {
 				t.Errorf("Expected display %q, got %v", "standalone", manifest["display"])
 			}
-			icons, ok := manifest["icons"].([]interface{})
+			icons, ok := manifest["icons"].([]any)
 			if !ok {
 				t.Fatal("Expected icons to be an array")
 			}
@@ -80,7 +80,7 @@ func TestServeWebManifest(t *testing.T) {
 				t.Errorf("Expected 1 icon, got %d", len(icons))
 			}
 			if len(icons) > 0 {
-				icon, ok := icons[0].(map[string]interface{})
+				icon, ok := icons[0].(map[string]any)
 				if !ok {
 					t.Fatal("Expected icon to be an object")
 				}

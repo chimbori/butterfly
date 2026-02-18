@@ -144,7 +144,7 @@ func handleGithubV1(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	var result map[string]interface{}
+	var result map[string]any
 	if err := json.Unmarshal(data, &result); err != nil {
 		slog.Error("Error unmarshaling GitHub JSON", tint.Err(err),
 			"method", req.Method,

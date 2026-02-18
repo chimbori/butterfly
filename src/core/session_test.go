@@ -64,7 +64,7 @@ func TestInMemorySessionStore_Concurrency(t *testing.T) {
 	concurrency := 100
 	done := make(chan bool)
 
-	for i := 0; i < concurrency; i++ {
+	for range concurrency {
 		go func() {
 			id, err := store.Create()
 			if err != nil {
@@ -87,7 +87,7 @@ func TestInMemorySessionStore_Concurrency(t *testing.T) {
 	}
 
 	// Wait for all goroutines
-	for i := 0; i < concurrency; i++ {
+	for range concurrency {
 		<-done
 	}
 }

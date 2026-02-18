@@ -150,8 +150,7 @@ func FetchTitleAndDescription(ctx context.Context, url string) (title, descripti
 	var doc *html.Node
 
 	// Handle data URIs directly
-	if strings.HasPrefix(url, "data:text/html,") {
-		htmlContent := strings.TrimPrefix(url, "data:text/html,")
+	if htmlContent, ok := strings.CutPrefix(url, "data:text/html,"); ok {
 		doc, err = html.Parse(strings.NewReader(htmlContent))
 		if err != nil {
 			return "", "", err
