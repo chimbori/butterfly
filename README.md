@@ -44,35 +44,18 @@ Just one step: Paste the Butterfly `<meta>` tag into the original page, and you�
 
 Test your Butterfly installation by posting your original page URL to any social platform.
 
-## How it works
+### How it works
 
-1. Butterfly fetches the URL you provide to it, using a Chrome Headless instance;
-2. runs JavaScript to un-hide the hidden element;
-3. takes a screenshot of it;
-4. and serves it
-5. (while also caching & compressing it).
-
-That’s it.
+Butterfly fetches the URL you provide to it, using a Chrome Headless instance, runs JavaScript to un-hide the hidden element, takes a screenshot of it, and serves it (while also caching & compressing it).
 
 Butterfly works well with static sites (using any static site generator) as well as dynamically-generated sites (using any CMS or platform).
 
 ### Can I use…
 
-- Images?
-
-  Yes.
-
-- SVG backgrounds?
-
-  Also, yes.
-
-- Flexbox? Grid?
-
-  Yes, of course.
-
-- Custom fonts? Proprietary fonts?
-
-  Absolutely.
+- Images? Yes.
+- SVG backgrounds? Also, yes.
+- Flexbox? Grid? Yes, of course.
+- Custom fonts? Proprietary fonts? Absolutely.
 
 Why limit yourself to the customization possible in a random WYSIWYG editor, when you have the entire Web platform available to you!
 
@@ -94,7 +77,7 @@ Use this URL format:
 We strongly recommend deploying using the official container image, which includes Chrome Headless for convenience. Thanks to the [chromedp](https://github.com/chromedp/chromedp) project for making this possible!
 
 - Butterfly is designed to be used behind a TLS reverse proxy for SSL termination (among other things). We recommend [Caddy](https://caddyserver.com/); see sample Caddyfile below.
-- If you expect a lot of traffic, consider using a CDN.
+- If you expect a lot of traffic, consider putting a CDN in front.
 
 ### Sample `compose.yml` (for Docker and Podman)
 
@@ -163,7 +146,7 @@ Butterfly requires basic configuration to be provided via a config file.
 
 - Link Previews config _(optional)_
 
-  Performance will be seriously affected by disabling the cache. This is only to be used during development.
+  Performance will be seriously affected by disabling the cache. Only turn off during development.
 
   ```yml
   link-previews:
@@ -177,7 +160,7 @@ Butterfly requires basic configuration to be provided via a config file.
 
 - QR Codes config _(optional)_
 
-  Performance will be seriously affected by disabling the cache. This is only to be used during development.
+  Performance will be seriously affected by disabling the cache. Only turn off during development.
 
   ```yml
   qr-codes:
