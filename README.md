@@ -210,15 +210,21 @@ You can configure the Authorized Domains list using the Dashboard UI at `https:/
 
 <img src="assets/screenshot-pwa.png">
 
-# Dual Licensed: AGPL & Proprietary
+# License
 
-This service is dual-licensed as [Affero GPL](LICENSE.md) (an OSI-approved open-source license) and a Proprietary License.
+Copyright 2025, Chimbori
 
-Feel free (as in freedom!) to install it on your own cheap VPS, as long as you commit to sharing improvements back upstream.
+Licensed under the [Apache License, Version 2.0](LICENSE.md) (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-Or, if the AGPL license does not work for your company or organization,
-and/or you’d like to support ongoing development and new features,
-please [contact us](mailto:hello+butterfly@chimbori.com) for a Proprietary License.
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 # Comparison with Alternatives
 

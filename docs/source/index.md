@@ -208,7 +208,6 @@ Butterfly requires basic configuration to be provided via a config file.
   debug: true
   ```
 
-
 ### Sample `Caddyfile`
 
 ```caddy
@@ -224,15 +223,9 @@ You can configure the Authorized Domains list using the Dashboard UI at `https:/
 
 <img src="screenshot-pwa.png">
 
-# Dual Licensed: AGPL & Proprietary
+# License
 
-This service is dual-licensed as [Affero GPL](LICENSE.md) (an OSI-approved open-source license) and a Proprietary License.
-
-Feel free (as in freedom!) to install it on your own cheap VPS, as long as you commit to sharing improvements back upstream.
-
-Or, if the AGPL license does not work for your company or organization,
-and/or you’d like to support ongoing development and new features,
-please [contact us](mailto:hello+butterfly@chimbori.com) for a Proprietary License.
+This project is licensed under the Apache License 2.0.
 
 # Comparison with Alternatives
 
