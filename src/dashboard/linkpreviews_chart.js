@@ -103,14 +103,10 @@ function initUserAgentChart() {
       matrix.set(key, row.TotalAccesses);
     });
 
-    const datasets = agents.map((agent, index) => {
-      const hue = Math.round((index * 360) / Math.max(agents.length, 1));
-      return {
-        label: agent,
-        data: labels.map(day => matrix.get(`${day}::${agent}`) || 0),
-        backgroundColor: `hsl(${hue}, 65%, 55%)`
-      };
-    });
+    const datasets = agents.map(agent => ({
+      label: agent,
+      data: labels.map(day => matrix.get(`${day}::${agent}`) || 0)
+    }));
 
     return { labels, datasets };
   }
