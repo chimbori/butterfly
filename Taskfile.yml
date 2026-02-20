@@ -109,6 +109,7 @@ tasks:
       - go get -u -t ./...
       - go clean -modcache
       - go mod tidy
+      - go fix ./...
 
   install:
     desc: Build and install the binary
