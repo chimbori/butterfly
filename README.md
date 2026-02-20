@@ -40,7 +40,7 @@ Just one step: Paste the Butterfly `<meta>` tag into the original page, and you�
 
 ### How it’s rendered
 
-![Example](assets/example.png)
+![Example](https://butterfly.chimbori.dev/example.png)
 
 Test your Butterfly installation by posting your original page URL to any social platform.
 
@@ -208,7 +208,7 @@ butterfly.your-server.com {
 
 You can configure the Authorized Domains list using the Dashboard UI at `https://butterfly.your-server.com/dashboard`. The Dashboard is available as an installable PWA (Progressive Web Application) that can be “installed” locally using any modern browser.
 
-<img src="assets/screenshot-pwa.png">
+<img src="https://butterfly.chimbori.dev/screenshot-pwa.webp">
 
 # License
 

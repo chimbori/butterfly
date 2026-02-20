@@ -54,39 +54,22 @@ Just one step: Paste the Butterfly `<meta>` tag into the original page, and you�
 
 ### How it’s rendered
 
-![Example](example.png)
+![Example](https://butterfly.chimbori.dev/example.png)
 
 Test your Butterfly installation by posting your original page URL to any social platform.
 
-## How it works
+### How it works
 
-1. Butterfly fetches the URL you provide to it, using a Chrome Headless instance;
-2. runs JavaScript to un-hide the hidden element;
-3. takes a screenshot of it;
-4. and serves it
-5. (while also caching & compressing it).
-
-That’s it.
+Butterfly fetches the URL you provide to it, using a Chrome Headless instance, runs JavaScript to un-hide the hidden element, takes a screenshot of it, and serves it (while also caching & compressing it).
 
 Butterfly works well with static sites (using any static site generator) as well as dynamically-generated sites (using any CMS or platform).
 
 ### Can I use…
 
-- Images?
-
-  Yes.
-
-- SVG backgrounds?
-
-  Also, yes.
-
-- Flexbox? Grid?
-
-  Yes, of course.
-
-- Custom fonts? Proprietary fonts?
-
-  Absolutely.
+- Images? Yes.
+- SVG backgrounds? Also, yes.
+- Flexbox? Grid? Yes, of course.
+- Custom fonts? Proprietary fonts? Absolutely.
 
 Why limit yourself to the customization possible in a random WYSIWYG editor, when you have the entire Web platform available to you!
 
@@ -221,7 +204,7 @@ butterfly.your-server.com {
 
 You can configure the Authorized Domains list using the Dashboard UI at `https://butterfly.your-server.com/dashboard`. The Dashboard is available as an installable PWA (Progressive Web Application) that can be “installed” locally using any modern browser.
 
-<img src="screenshot-pwa.png">
+<img src="screenshot-pwa.webp">
 
 # License
 
