@@ -94,7 +94,7 @@ function initUserAgentChart() {
       );
     });
 
-    const labels = Array.from(labelSet).sort();
+    const labels = Array.from(labelSet).sort((a, b) => b.localeCompare(a));
     const agents = Array.from(agentSet).sort((a, b) => (totalsByAgent.get(b) || 0) - (totalsByAgent.get(a) || 0));
     const matrix = new Map();
 
@@ -145,19 +145,20 @@ function initUserAgentChart() {
           datasets
         },
         options: {
+          indexAxis: 'y',
           responsive: true,
           scales: {
             x: {
-              stacked: true
-            },
-            y: {
               stacked: true,
               beginAtZero: true
+            },
+            y: {
+              stacked: true
             }
           },
           plugins: {
             legend: {
-              position: 'bottom'
+              position: 'right'
             }
           }
         }

@@ -55,4 +55,4 @@ SELECT
   FROM link_previews
   WHERE last_accessed_at >= NOW() - ($1 * INTERVAL '1 day')
   GROUP BY day, canonical_user_agent
-  ORDER BY day ASC, total_accesses DESC;
+  ORDER BY day DESC, total_accesses DESC;
